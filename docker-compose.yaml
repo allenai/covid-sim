@@ -1,0 +1,15 @@
+version: '3'
+services:
+    api:
+        build: ./api 
+        container_name: covid-search-demo
+        environment:
+            # This ensures that errors are printed as they occur, which
+            # makes debugging easier.
+            - 'PYTHONUNBUFFERED=1'
+            - 'LOG_LEVEL=DEBUG'
+        stdin_open: true # docker run -i
+    proxy:
+        build: ./proxy
+        ports:
+            - '8080:80'

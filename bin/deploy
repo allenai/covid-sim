@@ -1,0 +1,202 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from os import getlogin, path, getcwd, devnull
+from argparse import ArgumentParser
+from subprocess import check_output, call, check_call
+from sys import version_info
+import json
+
+def get_repo_root():
+    return path.abspath(path.join(path.dirname(__file__), ".."))
+
+def get_skiff_config(root):
+    return json.load(open(path.join(root, "skiff.json")))
+
+def get_kube_resources_for_env(env, namespace):
+    return json.loads(check_output([
+        "kubectl",
+        "get",
+        "service,deployment,ingress",
+        "-l", "env=%s" % env,
+        "--namespace", namespace,
+        "-o", "json"
+    ]))
+
+def prompt(text):
+    """
+    A helper that handles differences between input and raw_input in Python3
+    and Python2.
+    """
+    if version_info.major >= 3:
+        return input(text)
+    else:
+        return raw_input(text)
+
+def deploy(env, sha, user, force=False):
+    # Read in the Skiff config file.
+    root = get_repo_root()
+    config = get_skiff_config(root)
+    ns = config["appName"]
+
+    # See if the environment already exists
+    exists = len(get_kube_resources_for_env(env, ns)["items"]) > 0
+    if exists and not force:
+        print("")
+        print("It appears https://%s.%s.apps.allenai.org/ already exists." % (config["appName"], env))
+        confirm = prompt("Is it ok to overwrite this environment? [y|n]: ")
+        if confirm.lower() != "y":
+            return None
+
+    # Build and push the required Docker images.
+    print("⚡️ Building images, this may take a moment...")
+    images = json.loads(check_output([
+        "%s/bin/build" % root,
+        "--image", "gcr.io/ai2-reviz/%s-%s" % (config["appName"], user),
+        "--tag", sha,
+        "--output", "json",
+        "--silent"
+    ]))
+    for image in images.values():
+        check_call([ "docker", "push", image ])
+
+    # Generate the required Kubernetes configuration files.
+    print("⚡️ Generating Kubernetes configuration files...")
+    manifest = json.loads(check_output([
+        "%s/bin/kubeconf" % root,
+        "--env", env,
+        "--api", images["api"],
+        "--proxy", images["proxy"],
+        "--message", "Adhoc deploy by %s of SHA %s" % (user, sha),
+        "--output", "json",
+        "--silent"
+    ]))
+
+    # Apply the changes
+    # TODO: We should use rudder instead.
+    print("⚡️ Deploying...")
+    check_call([ "kubectl", "apply", "-f", manifest ])
+
+    # Block on the status of the deploy.
+    # TODO: If we use rudder we won't have to do this.
+    kube_id = "%s-%s" % (config["appName"], env)
+    check_call([
+        "kubectl",
+        "rollout", "status", "deployment/%s" % kube_id,
+        "--namespace", ns
+    ])
+    return {
+        "url": "https://%s.%s.apps.allenai.org" % (config["appName"], env),
+    }
+
+def destroy(env):
+    root = get_repo_root()
+    config = get_skiff_config(root)
+    ns = config["appName"]
+
+    # Find the resources associated with the environment label.
+    items_to_delete = []
+    for item in get_kube_resources_for_env(env, ns)["items"]:
+        kind = item["kind"].lower()
+        if kind == "ingress":
+            # We need to delete the ingress resource first, otherwise the
+            # secret will be recreated automatically by LetsEncrypt. Each
+            # item is accordingly a tuple, where the first value is an integer
+            # determining deletion order.
+            order = 0
+            for tls in item["spec"]["tls"]:
+                items_to_delete.append((1, "secret/%s" % tls["secretName"]))
+        else:
+            order = 1
+        items_to_delete.append((order, "%s/%s" % (kind, item["metadata"]["name"])))
+
+    if len(items_to_delete) == 0:
+        raise RuntimeError(
+            "No resources for %s, are you sure that's the right env?" % env
+        )
+
+    # Sort the items so we delete things in the required order.
+    sorted_items_to_delete = sorted(items_to_delete, key = lambda i : i[0])
+
+    # Confirm that the user is ok with deleting everything.
+    print("")
+    print("You are about to delete the following resources: ")
+    print("")
+    for _, item in sorted_items_to_delete:
+        print("  %s" % item)
+    print("")
+    confirm = prompt("Proceed? [y|n] ")
+    if confirm.lower() == "y":
+        for _, item in sorted_items_to_delete:
+            check_call([ "kubectl", "delete", item, "--namespace", ns ])
+        return True
+    else:
+        return False
+
+if __name__ == "__main__":
+    required_commands = [ "gcloud", "kubectl" ]
+    for cmd in required_commands:
+        code = call([ "command", "-v", cmd ], stdout=open(devnull))
+        if code != 0:
+            raise RuntimeError("%s isn't installed. Please install it." % cmd)
+
+    parser = ArgumentParser(prog="deploy",
+        description="A simple CLI for deploying and managing Skiff applications.")
+    commands = set([ "up", "down" ])
+    parser.add_argument("command", default="up", choices=commands,
+        help="The command to run.")
+    parser.add_argument("--env", "-e", default=None, type=str,
+        help="A unique identifier for the deployment. " +
+            "If not specified, the first 6 characters of the current SHA will " +
+            "used instead.")
+    parser.add_argument("--force", "-f", default=False, action="store_true",
+        help="If true all checks for pending changes and protected environments " +
+             "will be circumvented. Use with caution.")
+    args = parser.parse_args()
+
+    # Make sure the user isn't trying to overwrite prod or staging. We don't
+    # allow this unless the force parameter is True.
+    protected_envs = set([ "prod", "staging" ])
+    if args.env in protected_envs and args.force == False:
+        raise RuntimeError("The %s environment cannot be deployed " % env +
+            "using this script. Commit and push your code instead.")
+
+    # Make sure the user's repo is in a clean state. We want the SHA we
+    # attach to the deployed version to mean something.
+    code = call([ "git", "diff-index", "--quiet", "HEAD", "--" ])
+    if code != 0 and args.force == False:
+        raise RuntimeError("You have pending changes. Commit them first.")
+
+    # Get the current SHA.
+    sha = check_output([ "git", "rev-parse", "HEAD" ]).decode('utf-8').strip()
+    if args.env is None:
+        args.env = sha[0:6]
+
+    # Auth against the K8s cluster
+    check_call([ "gcloud", "container", "clusters", "get-credentials", "skiff-production" ])
+
+    if args.command == "up":
+        deployment = deploy(args.env, sha, getlogin(), args.force)
+        if deployment is not None:
+            print("")
+            print("🚀 Your deployment is live:")
+            print("")
+            print("  %s" % deployment["url"])
+            print("")
+            print("When you're finished with your deployment, make sure to run:")
+            print("")
+            print("  deploy down --env %s" % args.env)
+            print("")
+            print("⛵️ Smooth sailing!")
+        else:
+            print("👌 No action taken.")
+    elif args.command == "down":
+        destroyed = destroy(args.env)
+        print("")
+        if destroyed:
+            print("💥 Your deployment is being shutdown and will be removed shortly.")
+        else:
+            print("👌 No action taken.")
+    else:
+        raise RuntimeError("Invalid command: %s" % args.command)
+
