@@ -175,6 +175,12 @@ function(
                                     memory: '21Gi'
                                 }
                             },
+                            env: [
+                                {
+                                    name: 'DATASET_URL',
+                                    value: 'https://storage.googleapis.com/skiff-models/covid-sim/demo-data-partial/demo_data.zip'
+                                },
+                            ]
                         },
                         {
                             name: fullyQualifiedName + '-proxy',
