@@ -29,7 +29,7 @@ RUN sh ./install.sh
 
 # get python files for the demo
 
-RUN git clone https://github.com/Shaul1321/covid-ai2 
+RUN git clone https://github.com/Shaul1321/covid-ai2 #
 
 WORKDIR /usr/src/app/covid-ai2
 RUN ls
