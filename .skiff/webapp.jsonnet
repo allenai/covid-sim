@@ -170,11 +170,13 @@ function(
                         {
                             name: fullyQualifiedName + '-api',
                             image: apiImage,
-                            volumeMounts: {
-                              mountPath: '/skiff_files',
-                              name: 'skiff-files',
-                              readOnly: true
-                            },
+                            volumeMounts: [
+                                {
+                                    mountPath: '/skiff_files',
+                                    name: 'skiff-files',
+                                    readOnly: true
+                                }
+                            ],
                             readinessProbe: apiHealthCheck,
                             # The liveness probe restarts the container. Only
                             # restart if the TCP socket has been unresponsive
