@@ -158,10 +158,18 @@ function(
                     annotations: annotations
                 },
                 spec: {
+                    volumes:
+                    - name: 'skiff-files'
+                      persistentVolumeClaim:
+                        claimName: 'skiff-files-server-experimental-covid-sim'
                     containers: [
                         {
                             name: fullyQualifiedName + '-api',
                             image: apiImage,
+                            volumeMounts:
+                            - mountPath: '/skiff_files'
+                              name: 'skiff-files'
+                              readOnly: true
                             readinessProbe: apiHealthCheck,
                             # The liveness probe restarts the container. Only
                             # restart if the TCP socket has been unresponsive
@@ -174,13 +182,7 @@ function(
                                     cpu: '1.0',
                                     memory: '21Gi'
                                 }
-                            },
-                            env: [
-                                {
-                                    name: 'DATASET_URL',
-                                    value: 'https://storage.googleapis.com/skiff-models/covid-sim/demo-data-partial/demo_data_01.zip'
-                                },
-                            ]
+                            }
                         },
                         {
                             name: fullyQualifiedName + '-proxy',
