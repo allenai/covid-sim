@@ -178,7 +178,7 @@ function(
                             env: [
                                 {
                                     name: 'DATASET_URL',
-                                    value: 'https://storage.googleapis.com/ai2i/shauli-covid/demo-data-partial/demo_data.zip' #'https://storage.googleapis.com/skiff-models/covid-sim/demo-data-partial/demo_data.zip'
+                                    value: 'value: 'https://storage.googleapis.com/skiff-models/covid-sim/demo-data-partial/demo_data_01.zip'
                                 },
                             ]
                         },
