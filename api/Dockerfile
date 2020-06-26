@@ -31,6 +31,9 @@ RUN sh ./install.sh
 
 RUN git clone https://github.com/Shaul1321/covid-ai2
 
+# Use a specific version of the repo (because the one following this one has a bug/typo.)
+RUN cd covid-12 && git reset --hard 5c8a9f2f21392bdd72c8197940152da68213de7a
+
 WORKDIR /usr/src/app/covid-ai2
 RUN ls
 # download data & run streamlit
