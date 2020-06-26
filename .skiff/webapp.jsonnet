@@ -162,7 +162,7 @@ function(
                         { 
                             name: 'skiff-files',
                             persistentVolumeClaim: {
-                                claimName: 'skiff-files-server-experimental-covid-sim'
+                                claimName: 'skiff-files-server-covid-sim'
                             }
                         }
                     ],
