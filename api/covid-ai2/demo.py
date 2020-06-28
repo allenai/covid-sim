@@ -153,7 +153,7 @@ if start:
         #st.write(encoding.shape, pca.components_.shape, index.d)
         #st.write(help(index))
         
-        D,I = index.search(np.ascontiguousarray(encoding), number_of_sentence_results)
+        D,I = index.search(np.ascontiguousarray(encoding).astype("float32"), number_of_sentence_results)
     
     else:
         
@@ -176,7 +176,7 @@ if start:
     st.table(query_sents) 
     encoding = np.array([index.reconstruct(id2ind[i]) for i in input_ids])
     encoding = np.mean(encoding, axis = 0)
-    D,I = index.search(np.ascontiguousarray([encoding]), 100)
+    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 100)
 
 
  elif "SPIKE" in mode:
@@ -195,7 +195,7 @@ if start:
             encoding = np.array([index.reconstruct(id2ind[i]) for i in results_ids if i in id2ind])
             if encoding.shape[0] > 0:
                 encoding = np.mean(encoding, axis = 0)
-                D,I = index.search(np.ascontiguousarray([encoding]), 100)
+                D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 100)
             else:
                 show_results = False
                 st.write("SPIKE search results are not indexed.")           
