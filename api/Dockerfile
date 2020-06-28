@@ -25,11 +25,10 @@ WORKDIR /usr/src/app
 COPY install.sh .
 COPY requirements.txt .
 COPY download_bert_model.py .
-COPY covid-ai2 ./covid-ai2
 RUN sh ./install.sh
 
 #RUN git clone https://github.com/Shaul1321/covid-ai2
-
+COPY covid-ai2 ./covid-ai2
 WORKDIR /usr/src/app/covid-ai2
 RUN ls
 # download data & run streamlit
