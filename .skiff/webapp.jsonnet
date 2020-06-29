@@ -187,7 +187,7 @@ function(
                             resources: {
                                 requests: {
                                     cpu: '1.0',
-                                    memory: '21Gi'
+                                    memory: '70Gi'
                                 }
                             }
                         },
