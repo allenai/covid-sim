@@ -1,10 +1,8 @@
 #!/bin/bash
-DATASET_NAME="${DATASET_NAME:-data}"
-DATASET_URL="${DATASET_URL:-https://storage.googleapis.com/skiff-models/covid-sim/demo-data-partial/demo_data_01.zip}"
-LOCAL_DATASET_DIR=/usr/src/app/covid-ai2
 
-echo "INFO: Downloading dataset from ${DATASET_URL})..."
-wget ${DATASET_URL} || exit 1
-unzip demo_data_01.zip -d ${LOCAL_DATASET_DIR}/${DATASET_NAME}
+# Dataset files are expected to be available at this /skiff_files location.
+# But, the application reads files from /usr/src/app/covid-ai2/data so this
+# symlink lets it find the files it needs.
+ln -s /skiff_files/apps/covid-sim/demo_data /usr/src/app/covid-ai2/data
 
 streamlit run demo.py --server.enableCORS false
