@@ -93,7 +93,7 @@ print("Try accessing the demo under localhost:8080 (or the default port).")
 #    results_ids = [hash(s) for s in results_sents]
 #"""
 
-if mode == "Sentence":
+if mode == "Start with Sentence":
 
     input_sentence = st.text_input('Enter a sentence for similarity search', 'The virus can spread rapidly via different transimission vectors.')
 
@@ -122,7 +122,7 @@ if mode == "Sentence":
 
         number_of_sentence_results  = st.slider('Number of results', 1, 1000, 100) #int(st.text_input('Number of results',  100))
 
-elif "SPIKE" in mode:
+elif mode == "Start with Query":
 
     query_type = st.radio("Query type", ("Boolean", "Token", "Syntactic"))
     query_type = query_type.lower()
@@ -141,7 +141,7 @@ start = st.button('Run')
 
 
 if start:
- if mode == "Sentence":
+ if mode == "Start with Sentence":
 
     #input_sentence = st.text_input('Input sentence', 'The virus can spread rapidly via different transimission vectors.')
     encoding = pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False))#.squeeze()
@@ -181,7 +181,7 @@ if start:
     D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 100)
 
 
- elif "SPIKE" in mode:
+ elif mode == "Start with Query":
 
     with st.spinner('Performing SPIKE query...'):
         results_df = spike_queries.perform_query(input_query, dataset_name = "covid19", num_results = max_results, query_type = query_type)
