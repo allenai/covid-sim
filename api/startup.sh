@@ -6,3 +6,4 @@
 ln -s /skiff_files/apps/covid-sim/demo_data_01 /usr/src/app/covid-ai2/data
 
 streamlit run demo.py --server.enableCORS false
+wget http://covid-sim.apps.allenai.org/
