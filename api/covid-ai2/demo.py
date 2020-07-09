@@ -51,7 +51,7 @@ def load_pca(pooling):
 st.title('COVID-19 Similarity Search')
 
 #a = st.empty()
-mode = st.sidebar.radio("Mode", ("Sentence", "SPIKE-covid19"))
+mode = st.sidebar.radio("Mode", ("Start with Sentence", "Start with Query"))
 similarity = "dot product" #st.sidebar.selectbox('Similarity', ('dot product', "l2"))
 pooling = st.sidebar.selectbox('Pooling', ('cls', 'mean-cls'))
 
@@ -159,10 +159,12 @@ if start:
         
         encoding_of_spike_results = np.array([index.reconstruct(id2ind[i]) for i in results_ids if i in id2ind])
         if encoding_of_spike_results.shape[0] > 0:
-            sims = sklearn.metrics.pairwise.cosine_similarity(encoding, encoding_of_spike_results)
-            idx_sorted = sims.argsort()[0]
-            spike_sents_sorted = results_sents[idx_sorted][::-1]
-            I = np.array([[id2ind[hash(s)] for s in spike_sents_sorted if hash(s) in id2ind]])
+            
+            with st.spinner('Calculating similarity...'):
+                sims = sklearn.metrics.pairwise.cosine_similarity(encoding, encoding_of_spike_results)
+                idx_sorted = sims.argsort()[0]
+                spike_sents_sorted = results_sents[idx_sorted][::-1]
+                I = np.array([[id2ind[hash(s)] for s in spike_sents_sorted if hash(s) in id2ind]])
         else:
             show_results = False
             st.write("SPIKE search results are not indexed.")
@@ -194,8 +196,10 @@ if start:
             
             encoding = np.array([index.reconstruct(id2ind[i]) for i in results_ids if i in id2ind])
             if encoding.shape[0] > 0:
-                encoding = np.mean(encoding, axis = 0)
-                D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 100)
+                
+                with st.spinner('Calculating similarity...'):
+                    encoding = np.mean(encoding, axis = 0)
+                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 100)
             else:
                 show_results = False
                 st.write("SPIKE search results are not indexed.")           
