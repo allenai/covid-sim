@@ -160,7 +160,7 @@ if start:
         encoding_of_spike_results = np.array([index.reconstruct(id2ind[i]) for i in results_ids if i in id2ind])
         if encoding_of_spike_results.shape[0] > 0:
             
-            with st.spinner('Calculating similarity...'):
+            with st.spinner('Retrieving simialr sentences...'):
                 sims = sklearn.metrics.pairwise.cosine_similarity(encoding, encoding_of_spike_results)
                 idx_sorted = sims.argsort()[0]
                 spike_sents_sorted = results_sents[idx_sorted][::-1]
@@ -197,7 +197,7 @@ if start:
             encoding = np.array([index.reconstruct(id2ind[i]) for i in results_ids if i in id2ind])
             if encoding.shape[0] > 0:
                 
-                with st.spinner('Calculating similarity...'):
+                with st.spinner('Retrieving similar sentences...'):
                     encoding = np.mean(encoding, axis = 0)
                     D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 100)
             else:
