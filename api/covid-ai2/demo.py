@@ -178,7 +178,7 @@ if start:
     st.table(query_sents) 
     encoding = np.array([index.reconstruct(id2ind[i]) for i in input_ids])
     encoding = np.mean(encoding, axis = 0)
-    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 100)
+    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 1000)
 
 
  elif mode == "Start with Query":
@@ -199,7 +199,7 @@ if start:
                 
                 with st.spinner('Retrieving similar sentences...'):
                     encoding = np.mean(encoding, axis = 0)
-                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 100)
+                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 1000)
             else:
                 show_results = False
                 st.write("SPIKE search results are not indexed.")           
