@@ -9,6 +9,10 @@ import pickle
 import spike_queries
 import sklearn
 import time
+import alignment
+import bert_all_seq
+
+NUM_RESULTS_TO_ALIGN = 50
 
 @st.cache(allow_output_mutation=True)
 def load_sents_and_ids():
@@ -37,6 +41,12 @@ def load_index(similarity, pooling):
 def load_bert():
     with st.spinner('Loading BERT...'):
         model = bert.BertEncoder("cpu")
+        return model
+
+@st.cache(allow_output_mutation=True)
+def load_bert_all_seq():
+    with st.spinner('Loading BERT...'):
+        model = bert_all_seq.BertEncoder("cpu")
         return model
 
 @st.cache(allow_output_mutation=True)        
@@ -69,6 +79,7 @@ print("len sents", len(sents))
 
 index = load_index(similarity, pooling)
 bert = load_bert()
+bert_all_seq = load_bert_all_seq()
 pca = load_pca(pooling)
 st.write("Uses {}-dimensional vectors".format(pca.components_.shape[0]))
 st.write("Number of indexed sentences: {}".format(len(sents)))
@@ -103,7 +114,7 @@ if mode == "Start with Sentence":
     filter_by_spike = query_type is not None
 
     if query_type == "syntactic":
-        filter_query = st.text_input('SPIKE query', 'The [subj:l coronavirus] [copula:w is] prevalent among [w:e bats].')
+        filter_query = st.text_input('SPIKE query', 'The [arg1:l coronavirus] [copula:w is] prevalent among [arg2:e bats].')
     elif query_type == "boolean":
        filter_query = st.text_input('SPIKE query', 'virus lemma=persist on')
     elif query_type == "token":
@@ -127,7 +138,7 @@ elif mode == "Start with Query":
     query_type = st.radio("Query type", ("Boolean", "Token", "Syntactic"))
     query_type = query_type.lower()
     if query_type == "syntactic":
-        input_query = st.text_input('Query', 'The [subj:l coronavirus] [copula:w is] prevalent among [w:e bats].')
+        input_query = st.text_input('Query', 'The [arg1:l coronavirus] [copula:w is] prevalent among [arg2:e bats].')
     elif query_type == "boolean":
        input_query = st.text_input('Query', 'virus lemma=persist on')
     elif query_type == "token":
@@ -187,7 +198,8 @@ if start:
         results_df = spike_queries.perform_query(input_query, dataset_name = "covid19", num_results = max_results, query_type = query_type)
         results_sents = results_df["sentence_text"].tolist()
         results_ids = [hash(s) for s in results_sents] #results_df["sentence_id"].tolist()
-         
+        spike_arguments_rep = alignment.get_spike_results_arguments_representations(bert_all_seq, results_df.head(NUM_RESULTS_TO_ALIGN), [-1])
+        st.write("shape of argument rep is {}".format(spike_arguments_rep.shape))
         st.write("Found {} matches".format(len(results_ids)))
 
         if len(results_sents) > 0:
