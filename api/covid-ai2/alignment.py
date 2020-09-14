@@ -40,7 +40,7 @@ def get_spike_results_arguments_representations(model, spike_results, layers):
     return arg1_mean, arg2_mean
 
 
-def get_similarity_to_arguments(padded_representations, arg1, arg2):
+def get_similarity_to_arguments(padded_representations, arg1_rep, arg2_rep):
     num_sents, seq_len, bert_dim = padded_representations.shape
     padded_representations = padded_representations.reshape((num_sents*seq_len, bert_dim))
     #print(padded_representations.shape)
