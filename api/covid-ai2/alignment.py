@@ -40,6 +40,9 @@ def get_spike_results_arguments_representations(model, spike_results, layers):
 
     for s, arg1_start, arg2_start, arg1_end, arg2_end in zip(sents, arg1_idx_start, arg2_idx_start, arg1_idx_end,
                                                              arg2_idx_end):
+
+        if not type(s) == str: continue
+
         # idx_to_mask = [arg1_start, arg2_start, arg1_end, arg2_end]
         H, _, _, orig2tok = model.encode(s, layers=layers)
 
@@ -154,6 +157,8 @@ def main(model, results_sents, spike_results, layers, num_results):
     orig_sents = []
 
     for i, s in enumerate(results_sents):
+        if not type(s) == str: continue
+
         H, tokenized_text, tok_to_orig_map, orig2tok = model.encode(s, layers=layers)
         orig_sents.append(s)
         representations.append(H)
