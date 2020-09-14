@@ -200,8 +200,9 @@ if start:
         results_ids = [hash(s) for s in results_sents] #results_df["sentence_id"].tolist()
         if query_type == "syntactic":
             #arg1_rep, arg2_rep = alignment.get_spike_results_arguments_representations(bert_all_seq, results_df.head(NUM_RESULTS_TO_ALIGN), [-1])
-            arg2preds = alignment.main(bert_all_seq, results_sents, results_df, [-1], NUM_RESULTS_TO_ALIGN)
-            st.write("first dict is {}".format(arg2preds[0][0]))
+            colored_sents = alignment.main(bert_all_seq, results_sents, results_df, [-1], NUM_RESULTS_TO_ALIGN)
+            for s in colored_sents:
+                st.table(colored_sents)
         st.write("Found {} matches".format(len(results_ids)))
 
         if len(results_sents) > 0:

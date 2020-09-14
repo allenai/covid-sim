@@ -11,6 +11,21 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 
+
+class color:
+   PURPLE = '\033[95m'
+   CYAN = '\033[96m'
+   DARKCYAN = '\033[36m'
+   BLUE = '\033[94m'
+   GREEN = '\033[92m'
+   YELLOW = '\033[93m'
+   RED = '\033[91m'
+   BOLD = '\033[1m'
+   UNDERLINE = '\033[4m'
+   END = '\033[0m'
+
+
+
 def get_spike_results_arguments_representations(model, spike_results, layers):
     sents = spike_results["sentence_text"].tolist()
     arg1_idx_start = spike_results["arg1_first_index"].to_numpy().astype(int)
@@ -81,6 +96,30 @@ def get_probable_alignments(sims_args, mappings_to_orig):
 
     return argument2sent2alignments
 
+
+def print_nicely(sent, arg1_borders, arg2_borders):
+    def is_start(k, borders):
+        return len([(s, e) for (s, e) in borders if s == k]) != 0
+
+    def is_end(k, borders):
+        return len([(s, e) for (s, e) in borders if e == k]) != 0
+
+    sent_lst = sent.split(" ")
+    sent_new = []
+    for i, w in enumerate(sent_lst):
+
+        if is_start(i, arg1_borders) or is_start(i, arg2_borders):
+            type_arg = color.BLUE + "ARG1" if is_start(i, arg1_borders) else color.BLUE + "ARG2"
+            sent_new.append(color.BOLD + "[" + type_arg)
+
+        sent_new.append(w)
+
+        if is_end(i, arg1_borders) or is_end(i, arg2_borders):
+            # type_arg = color.BLUE + "ARG1" if is_end(i,arg1_borders) else "ARG2" + color.END
+            sent_new.append("]" + color.END)
+
+    return " ".join(sent_new)
+
 def main(model, results_sents, spike_results, layers, num_results):
     arg2preds = {}
 
@@ -114,4 +153,12 @@ def main(model, results_sents, spike_results, layers, num_results):
 
         arg2preds[arg] = dicts
 
-    return arg2preds
+    colored_sents = []
+    for i in range(num_results):
+        arg1_dict, arg2_dict = arg2preds[0][i], arg2preds[1][i]
+        sent = arg1_dict["sent"]
+        arg1_idx, arg2_idx = arg1_dict["pred_idx"][0], arg2_dict["pred_idx"][0]
+        colored_sent = print_nicely(sent, [arg1_idx, arg1_idx+1], [arg2_idx, arg2_idx+1])
+        colored_sents.append(colored_sent)
+
+    return colored_sents
