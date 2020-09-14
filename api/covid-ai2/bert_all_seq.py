@@ -2,11 +2,11 @@ import torch
 from transformers import BertTokenizer, BertModel, BertForMaskedLM, BertConfig, RobertaModel, RobertaForMaskedLM, \
     RobertaTokenizer, RobertaConfig
 from transformers import AutoTokenizer, AutoModel, AutoConfig
-from transformers import AlbertTokenizer, AlbertModel, AlbertConfig
-from transformers import XLNetTokenizer, XLNetModel, XLNetConfig
-import numpy as np
+#from transformers import AlbertTokenizer, AlbertModel, AlbertConfig
+#from transformers import XLNetTokenizer, XLNetModel, XLNetConfig
+#import numpy as np
 from typing import List, Tuple, Dict
-import tqdm
+#import tqdm
 
 
 class BertEncoder(object):
