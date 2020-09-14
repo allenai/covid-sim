@@ -207,6 +207,7 @@ if start:
 
             st.write("NOW PRINTING ALIGNED RESULTS")
             if query_type == "syntactic":
+                st.write("QUERY IS SYNTACTIC")
                 # arg1_rep, arg2_rep = alignment.get_spike_results_arguments_representations(bert_all_seq, results_df.head(NUM_RESULTS_TO_ALIGN), [-1])
                 colored_sents = alignment.main(bert_all_seq, results_sents, results_df, [-1], NUM_RESULTS_TO_ALIGN)
 
