@@ -154,7 +154,7 @@ def main(model, results_sents, spike_results, layers, num_results):
         arg2preds[arg] = dicts
 
     colored_sents = []
-    for i in range(num_results):
+    for i in range( len(arg2preds[0]) ):
         arg1_dict, arg2_dict = arg2preds[0][i], arg2preds[1][i]
         sent = arg1_dict["sent"]
         arg1_idx, arg2_idx = arg1_dict["pred_idx"][0], arg2_dict["pred_idx"][0]
