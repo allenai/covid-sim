@@ -125,7 +125,7 @@ def print_nicely(sent, arg1_borders, arg2_borders):
 def perform_annotation(sent, arg1_borders, arg2_borders):
 
     def is_between(k, borders):
-        return len([(s, e) for (s, e) in borders if s <= k <= e]) != 0
+        return len([(s, e) for (s, e) in borders if s <= k < e]) != 0
 
     sent_lst = sent.split(" ")
     sent_new = []
@@ -138,7 +138,7 @@ def perform_annotation(sent, arg1_borders, arg2_borders):
             sent_new.append((w, "ARG1" if is_arg1 else "ARG2", arg1_color if is_arg1 else arg2_color))
         else:
 
-            sent_new.append(w)
+            sent_new.append(" " + w)
 
     return sent_new
 
