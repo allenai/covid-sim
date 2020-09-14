@@ -11,7 +11,7 @@ import sklearn
 import time
 import alignment
 import bert_all_seq
-from annot import annotation
+from annot import annotation, annotated_text
 
 NUM_RESULTS_TO_ALIGN = 50
 
@@ -212,7 +212,7 @@ if start:
                 # arg1_rep, arg2_rep = alignment.get_spike_results_arguments_representations(bert_all_seq, results_df.head(NUM_RESULTS_TO_ALIGN), [-1])
                 colored_sents, annotated_sents= alignment.main(bert_all_seq, results_sents, results_df, [-1], NUM_RESULTS_TO_ALIGN)
                 for s in annotated_sents:
-                    annotation(s)
+                    annotated_text(s)
 
             encoding = np.array([index.reconstruct(id2ind[i]) for i in results_ids if i in id2ind])
             if encoding.shape[0] > 0:
