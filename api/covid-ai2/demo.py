@@ -115,7 +115,7 @@ if mode == "Start with Sentence":
     filter_by_spike = query_type is not None
 
     if query_type == "syntactic":
-        filter_query = st.text_input('SPIKE query', 'The [arg1:l coronavirus] [copula:w is] prevalent among [arg2:e bats].')
+        filter_query = st.text_input('SPIKE query', 'arg1:[e]paracetamol is $not useful for treating arg2:[e]asthma.')
     elif query_type == "boolean":
        filter_query = st.text_input('SPIKE query', 'virus lemma=persist on')
     elif query_type == "token":
@@ -139,7 +139,7 @@ elif mode == "Start with Query":
     query_type = st.radio("Query type", ("Boolean", "Token", "Syntactic"))
     query_type = query_type.lower()
     if query_type == "syntactic":
-        input_query = st.text_input('Query', 'The [arg1:l coronavirus] [copula:w is] prevalent among [arg2:e bats].')
+        input_query = st.text_input('Query', 'arg1:[e]paracetamol is $not useful for treating arg2:[e]asthma.')
     elif query_type == "boolean":
        input_query = st.text_input('Query', 'virus lemma=persist on')
     elif query_type == "token":
