@@ -138,7 +138,7 @@ def perform_annotation(sent, arg1_borders, arg2_borders):
             sent_new.append((w, "ARG1" if is_arg1 else "ARG2", arg1_color if is_arg1 else arg2_color))
         else:
 
-            sent_new.append(" " + w)
+            sent_new.append(" " + w + " ")
 
     return sent_new
 

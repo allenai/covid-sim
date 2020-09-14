@@ -196,7 +196,7 @@ if start:
  elif mode == "Start with Query":
 
     with st.spinner('Performing SPIKE query...'):
-        results_df = spike_queries.perform_query(input_query, dataset_name = "covid19", num_results = max_results, query_type = query_type)
+        results_df = spike_queries.perform_query(input_query, dataset_name = "covid19", num_results = max_results, query_type = query_type).dropna()
         results_sents = results_df["sentence_text"].tolist()
         results_ids = [hash(s) for s in results_sents] #results_df["sentence_id"].tolist()
 
@@ -206,9 +206,7 @@ if start:
             st.write("First sentences retrieved:")
             st.table(results_sents[:10])
 
-            st.write("NOW PRINTING ALIGNED RESULTS")
             if query_type == "syntactic":
-                st.write("QUERY IS SYNTACTIC")
                 # arg1_rep, arg2_rep = alignment.get_spike_results_arguments_representations(bert_all_seq, results_df.head(NUM_RESULTS_TO_ALIGN), [-1])
                 colored_sents, annotated_sents= alignment.main(bert_all_seq, results_sents, results_df, [-1], NUM_RESULTS_TO_ALIGN)
                 for s in annotated_sents:
