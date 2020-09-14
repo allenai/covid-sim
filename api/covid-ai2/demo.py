@@ -13,7 +13,7 @@ import alignment
 import bert_all_seq
 from annot import annotation, annotated_text
 
-NUM_RESULTS_TO_ALIGN = 50
+NUM_RESULTS_TO_ALIGN = 100
 
 @st.cache(allow_output_mutation=True)
 def load_sents_and_ids():
