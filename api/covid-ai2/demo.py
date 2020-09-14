@@ -197,7 +197,7 @@ if start:
 
     with st.spinner('Performing SPIKE query...'):
         results_df = spike_queries.perform_query(input_query, dataset_name = "covid19", num_results = max_results, query_type = query_type)
-        results_sents = results_df["sentence_text"].tolist()
+        #results_sents = results_df["sentence_text"].tolist()
         results_ids = [hash(s) for s in results_sents] #results_df["sentence_id"].tolist()
 
         st.write("Found {} matches".format(len(results_ids)))
@@ -206,18 +206,18 @@ if start:
             st.write("First sentences retrieved:")
             st.table(results_sents[:10])
 
-            if query_type == "syntactic":
-                # arg1_rep, arg2_rep = alignment.get_spike_results_arguments_representations(bert_all_seq, results_df.head(NUM_RESULTS_TO_ALIGN), [-1])
-                colored_sents, annotated_sents= alignment.main(bert_all_seq, results_sents, results_df, [-1], NUM_RESULTS_TO_ALIGN)
-                for s in annotated_sents:
-                    annotated_text(*s)
-
             encoding = np.array([index.reconstruct(id2ind[i]) for i in results_ids if i in id2ind])
             if encoding.shape[0] > 0:
                 
                 with st.spinner('Retrieving similar sentences...'):
                     encoding = np.mean(encoding, axis = 0)
                     D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 1000)
+                    result_sents = [sents[i] for i in I.squeeze()]
+                    if query_type == "syntactic":
+                        colored_sents, annotated_sents= alignment.main(bert_all_seq, result_sents, results_df, [-1], NUM_RESULTS_TO_ALIGN)
+                        for s in annotated_sents:
+                            annotated_text(*s)
+
             else:
                 show_results = False
                 st.write("SPIKE search results are not indexed.")           
