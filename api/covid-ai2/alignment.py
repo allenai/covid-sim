@@ -8,6 +8,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 #import random
 #from collections import Counter, defaultdict
 #from viterbi_trellis import ViterbiTrellis
+import streamlit as st
 
 
 
@@ -154,7 +155,8 @@ def main(model, results_sents, spike_results, layers, num_results):
         arg2preds[arg] = dicts
 
     colored_sents = []
-    for i in range( len(arg2preds[0]) ):
+    st.write("LEN IS {}".format(len()))
+    for i in range(num_sents):
         arg1_dict, arg2_dict = arg2preds[0][i], arg2preds[1][i]
         sent = arg1_dict["sent"]
         arg1_idx, arg2_idx = arg1_dict["pred_idx"][0], arg2_dict["pred_idx"][0]

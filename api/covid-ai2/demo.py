@@ -202,7 +202,7 @@ if start:
             #arg1_rep, arg2_rep = alignment.get_spike_results_arguments_representations(bert_all_seq, results_df.head(NUM_RESULTS_TO_ALIGN), [-1])
             colored_sents = alignment.main(bert_all_seq, results_sents, results_df, [-1], NUM_RESULTS_TO_ALIGN)
             for s in colored_sents:
-                st.table(colored_sents)
+                st.write(s)
         st.write("Found {} matches".format(len(results_ids)))
 
         if len(results_sents) > 0:
