@@ -198,7 +198,8 @@ if start:
         results_df = spike_queries.perform_query(input_query, dataset_name = "covid19", num_results = max_results, query_type = query_type)
         results_sents = results_df["sentence_text"].tolist()
         results_ids = [hash(s) for s in results_sents] #results_df["sentence_id"].tolist()
-        spike_arguments_rep = alignment.get_spike_results_arguments_representations(bert_all_seq, results_df.head(NUM_RESULTS_TO_ALIGN), [-1])
+        if query_type == "syntactic":
+            arg1_rep, arg2_rep = alignment.get_spike_results_arguments_representations(bert_all_seq, results_df.head(NUM_RESULTS_TO_ALIGN), [-1])
         st.write("shape of argument rep is {}".format(spike_arguments_rep.shape))
         st.write("Found {} matches".format(len(results_ids)))
 
