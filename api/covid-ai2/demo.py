@@ -205,6 +205,7 @@ if start:
             st.write("First sentences retrieved:")
             st.table(results_sents[:10])
 
+            st.write("NOW PRINTING ALIGNED RESULTS")
             if query_type == "syntactic":
                 # arg1_rep, arg2_rep = alignment.get_spike_results_arguments_representations(bert_all_seq, results_df.head(NUM_RESULTS_TO_ALIGN), [-1])
                 colored_sents = alignment.main(bert_all_seq, results_sents, results_df, [-1], NUM_RESULTS_TO_ALIGN)
