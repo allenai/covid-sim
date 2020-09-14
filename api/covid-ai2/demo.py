@@ -199,8 +199,9 @@ if start:
         results_sents = results_df["sentence_text"].tolist()
         results_ids = [hash(s) for s in results_sents] #results_df["sentence_id"].tolist()
         if query_type == "syntactic":
-            arg1_rep, arg2_rep = alignment.get_spike_results_arguments_representations(bert_all_seq, results_df.head(NUM_RESULTS_TO_ALIGN), [-1])
-        st.write("shape of argument rep is {} and {}".format(arg1_rep.shape, arg2_rep.shape))
+            #arg1_rep, arg2_rep = alignment.get_spike_results_arguments_representations(bert_all_seq, results_df.head(NUM_RESULTS_TO_ALIGN), [-1])
+            arg2preds = alignment.main(bert_all_seq, results_sents, results_df, [-1], NUM_RESULTS_TO_ALIGN)
+            st.write("first dict is {}".format(arg2preds[0][0]))
         st.write("Found {} matches".format(len(results_ids)))
 
         if len(results_sents) > 0:
