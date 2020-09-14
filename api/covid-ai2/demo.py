@@ -198,17 +198,17 @@ if start:
         results_df = spike_queries.perform_query(input_query, dataset_name = "covid19", num_results = max_results, query_type = query_type)
         results_sents = results_df["sentence_text"].tolist()
         results_ids = [hash(s) for s in results_sents] #results_df["sentence_id"].tolist()
-        if query_type == "syntactic":
-            #arg1_rep, arg2_rep = alignment.get_spike_results_arguments_representations(bert_all_seq, results_df.head(NUM_RESULTS_TO_ALIGN), [-1])
-            colored_sents = alignment.main(bert_all_seq, results_sents, results_df, [-1], NUM_RESULTS_TO_ALIGN)
-            for s in colored_sents:
-                st.write(s)
+
         st.write("Found {} matches".format(len(results_ids)))
 
         if len(results_sents) > 0:
             st.write("First sentences retrieved:")
             st.table(results_sents[:10])
-            
+
+            if query_type == "syntactic":
+                # arg1_rep, arg2_rep = alignment.get_spike_results_arguments_representations(bert_all_seq, results_df.head(NUM_RESULTS_TO_ALIGN), [-1])
+                colored_sents = alignment.main(bert_all_seq, results_sents, results_df, [-1], NUM_RESULTS_TO_ALIGN)
+
             encoding = np.array([index.reconstruct(id2ind[i]) for i in results_ids if i in id2ind])
             if encoding.shape[0] > 0:
                 

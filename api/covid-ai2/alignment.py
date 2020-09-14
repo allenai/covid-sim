@@ -9,6 +9,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 #from collections import Counter, defaultdict
 #from viterbi_trellis import ViterbiTrellis
 import streamlit as st
+from annot import annotation
 
 
 
@@ -121,6 +122,26 @@ def print_nicely(sent, arg1_borders, arg2_borders):
 
     return " ".join(sent_new)
 
+def perform_annotation(sent, arg1_borders, arg2_borders):
+
+    def is_between(k, borders):
+        return len([(s, e) for (s, e) in borders if s <= k <= e]) != 0
+
+    sent_lst = sent.split(" ")
+    sent_new = []
+    arg1_color = "#8ef"
+    arg2_color = "#fea"
+    for i, w in enumerate(sent_lst):
+
+        if is_between(i, arg1_borders) or is_between(i, arg2_borders):
+            is_arg1 = is_between(i, arg1_borders)
+            sent_new.append((w, "ARG1" if is_arg1 else "ARG2", arg1_color if is_arg1 else arg2_color))
+        else:
+
+            sent_new.append(w)
+
+    return sent_new
+
 def main(model, results_sents, spike_results, layers, num_results):
     arg2preds = {}
 
@@ -160,6 +181,7 @@ def main(model, results_sents, spike_results, layers, num_results):
         sent = arg1_dict["sent"]
         arg1_idx, arg2_idx = arg1_dict["pred_idx"][0], arg2_dict["pred_idx"][0]
         colored_sent = print_nicely(sent, [(arg1_idx, arg1_idx+1)], [(arg2_idx, arg2_idx+1)])
+        annotation(perform_annotation(sent, [(arg1_idx, arg1_idx+1)], [(arg2_idx, arg2_idx+1)]))
         colored_sents.append(colored_sent)
 
     return colored_sents
