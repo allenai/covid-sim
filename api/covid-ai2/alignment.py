@@ -123,20 +123,23 @@ def print_nicely(sent, arg1_borders, arg2_borders):
 
     return " ".join(sent_new)
 
-def perform_annotation(sent, arg1_borders, arg2_borders):
+def perform_annotation(sent, arg_borders):
 
     def is_between(k, borders):
         return len([(s, e) for (s, e) in borders if s <= k < e]) != 0
 
     sent_lst = sent.split(" ")
     sent_new = []
-    arg1_color = "#8ef"
+    arg1_color =
     arg2_color = "#fea"
+    arg_colors = ["#8ef", "#fea", "#faa", "#fea", "#8ef", "#afa", "#d8ff35", "#8c443b", "#452963"]
+
     for i, w in enumerate(sent_lst):
 
-        if is_between(i, arg1_borders) or is_between(i, arg2_borders):
-            is_arg1 = is_between(i, arg1_borders)
-            sent_new.append((w, "ARG1" if is_arg1 else "ARG2", arg1_color if is_arg1 else arg2_color))
+        for arg in range(len(arg_borders)):
+            if is_between(i, arg_borders[i]):
+                sent_new.append((w, "ARG{}".format(arg+1), arg_colors[arg]))
+                break
         else:
 
             sent_new.append(" " + w + " ")
@@ -181,7 +184,7 @@ def main(model, results_sents, spike_results, spike_query, layers, num_results):
     num_tokens = num_sents * seq_len
     sims_args = get_similarity_to_arguments(padded_representations, args_reps)
     arguments2sent2alignments = get_probable_alignments(sims_args, mappings_to_orig)
-    for arg in range(2):
+    for arg in range(num_args):
         dicts = [{"sent": orig_sents[i], "pred_idx": list(zip(*arguments2sent2alignments[arg][i]))[0],
                   "preds_sims": list(zip(*arguments2sent2alignments[arg][i]))[1]} for i in range(num_sents)]
 
@@ -191,11 +194,18 @@ def main(model, results_sents, spike_results, spike_query, layers, num_results):
     annotated_sents = []
 
     for i in range(num_sents):
-        arg1_dict, arg2_dict = arg2preds[0][i], arg2preds[1][i]
-        sent = arg1_dict["sent"]
-        arg1_idx, arg2_idx = arg1_dict["pred_idx"][0], arg2_dict["pred_idx"][0]
-        colored_sent = print_nicely(sent, [(arg1_idx, arg1_idx+1)], [(arg2_idx, arg2_idx+1)])
-        annotated_sents.append(perform_annotation(sent, [(arg1_idx, arg1_idx+1)], [(arg2_idx, arg2_idx+1)]))
+        #arg1_dict, arg2_dict = arg2preds[0][i], arg2preds[1][i]
+        arg_dicts = [arg2preds[j][i] for j in range(num_args)]
+        sent = arg_dicts[0]["sent"]
+        #arg1_idx, arg2_idx = arg1_dict["pred_idx"][0], arg2_dict["pred_idx"][0]
+        arg_idx = [arg_dict["pred_idx"][0] for arg_dict in arg_dicts]
+        #colored_sent = print_nicely(sent, [(arg1_idx, arg1_idx+1)], [(arg2_idx, arg2_idx+1)])
+        #annotated_sents.append(perform_annotation(sent, [(arg1_idx, arg1_idx+1)], [(arg2_idx, arg2_idx+1)]))
+
+        borders = [(k,k+1) for k in arg_idx]
+        colored_sent = None#print_nicely(sent, borders)
+        annotated_sents.append(perform_annotation(sent, borders))
+
         colored_sents.append(colored_sent)
 
     return colored_sents, annotated_sents
