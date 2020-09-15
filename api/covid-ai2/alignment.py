@@ -130,8 +130,6 @@ def perform_annotation(sent, arg_borders):
 
     sent_lst = sent.split(" ")
     sent_new = []
-    arg1_color =
-    arg2_color = "#fea"
     arg_colors = ["#8ef", "#fea", "#faa", "#fea", "#8ef", "#afa", "#d8ff35", "#8c443b", "#452963"]
 
     for i, w in enumerate(sent_lst):
