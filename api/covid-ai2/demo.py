@@ -214,7 +214,7 @@ if start:
                     D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 1000)
                     result_sents = [sents[i] for i in I.squeeze()]
                     if query_type == "syntactic":
-                        colored_sents, annotated_sents= alignment.main(bert_all_seq, result_sents, results_df, [-1], NUM_RESULTS_TO_ALIGN)
+                        colored_sents, annotated_sents= alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], NUM_RESULTS_TO_ALIGN)
                         for s in annotated_sents:
                             annotated_text(*s)
 

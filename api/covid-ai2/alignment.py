@@ -6,7 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 #import spike_queries
 #from termcolor import colored
 #import random
-#from collections import Counter, defaultdict
+from collections import Counter, defaultdict
 #from viterbi_trellis import ViterbiTrellis
 import streamlit as st
 from annot import annotation
@@ -28,36 +28,34 @@ class color:
 
 
 
-def get_spike_results_arguments_representations(model, spike_results, layers):
+def get_spike_results_arguments_representations(model, spike_results, layers, num_args):
     sents = spike_results["sentence_text"].tolist()
-    arg1_idx_start = spike_results["arg1_first_index"].to_numpy().astype(int)
-    arg2_idx_start = spike_results["arg2_first_index"].to_numpy().astype(int)
-    arg1_idx_end = spike_results["arg1_last_index"].to_numpy().astype(int)
-    arg2_idx_end = spike_results["arg2_last_index"].to_numpy().astype(int)
+    #arg1_idx_start = spike_results["arg1_first_index"].to_numpy().astype(int)
+    #arg2_idx_start = spike_results["arg2_first_index"].to_numpy().astype(int)
+    #arg1_idx_end = spike_results["arg1_last_index"].to_numpy().astype(int)
+    #arg2_idx_end = spike_results["arg2_last_index"].to_numpy().astype(int)
 
-    arg1_rep = []
-    arg2_rep = []
+    arguments_borders = []
+    for i in range(num_args):
+        start = spike_results["arg{}_first_index".format(i + 1)].to_numpy().astype(int)
+        end = spike_results["arg{}_last_index".format(i + 1)].to_numpy().astype(int)
+        arguments_borders.append((start, end))
 
-    for s, arg1_start, arg2_start, arg1_end, arg2_end in zip(sents, arg1_idx_start, arg2_idx_start, arg1_idx_end,
-                                                             arg2_idx_end):
+    args_rep = defaultdict(list)
+
+    for i,s in enumerate(sents):
 
         if not type(s) == str: continue
 
-        # idx_to_mask = [arg1_start, arg2_start, arg1_end, arg2_end]
         H, _, _, orig2tok = model.encode(s, layers=layers)
 
-        h1, h2 = H[orig2tok[arg1_start]:orig2tok[arg1_end] + 1], H[orig2tok[arg2_start]:orig2tok[arg2_end] + 1]
+        for arg_ind in range(num_args):
+            start, end = arguments_borders[arg_ind][0][i], arguments_borders[arg_ind][1][i]
+            arg_vecs = H[orig2tok[start]:orig2tok[end] + 1]
+            arg_mean = np.mean(arg_vecs, axis = 0)
+            args_rep[arg_ind].append(arg_mean)
 
-        h1 = np.mean(h1, axis=0)
-        h2 = np.mean(h2, axis=0)
-
-        arg1_rep.append(h1)
-        arg2_rep.append(h2)
-
-    arg1_mean = np.mean(arg1_rep, axis=0)
-    arg2_mean = np.mean(arg2_rep, axis=0)
-
-    return arg1_mean, arg2_mean
+    return (np.mean(args_rep[arg], axis = 0) for arg in range(num_args))
 
 
 def get_similarity_to_arguments(padded_representations, arg1_rep, arg2_rep):
@@ -145,10 +143,10 @@ def perform_annotation(sent, arg1_borders, arg2_borders):
 
     return sent_new
 
-def main(model, results_sents, spike_results, layers, num_results):
+def main(model, results_sents, spike_results, spike_query, layers, num_results):
     arg2preds = {}
-
-    arg1_rep, arg2_rep = get_spike_results_arguments_representations(model, spike_results.head(num_results), layers)
+    num_args = spike_query.count(" arg")
+    arg1_rep, arg2_rep = get_spike_results_arguments_representations(model, spike_results.head(num_results), layers, num_args)
 
     representations = []
     mappings_to_orig = []
