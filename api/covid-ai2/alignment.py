@@ -55,7 +55,7 @@ def get_spike_results_arguments_representations(model, spike_results, layers, nu
             arg_mean = np.mean(arg_vecs, axis = 0)
             args_rep[arg_ind].append(arg_mean)
 
-    return (np.mean(args_rep[arg], axis = 0) for arg in range(num_args))
+    return [np.mean(args_rep[arg], axis = 0) for arg in range(num_args)]
 
 
 def get_similarity_to_arguments(padded_representations, arg1_rep, arg2_rep):
@@ -147,6 +147,7 @@ def main(model, results_sents, spike_results, spike_query, layers, num_results):
     arg2preds = {}
     num_args = spike_query.count(" arg")
     args_reps = get_spike_results_arguments_representations(model, spike_results.head(num_results), layers, num_args)
+    arg1_rep, arg2_rep = args_reps[0], args_reps[1]
     st.write("TESTT: {}, {}".format(len(args_reps), args_reps[0].shape))
 
     representations = []
