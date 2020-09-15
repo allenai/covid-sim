@@ -154,7 +154,7 @@ def main(model, results_sents, spike_results, spike_query, layers, num_results):
     # represent args
 
     args_reps = get_spike_results_arguments_representations(model, spike_results.head(num_results), layers, num_args)
-    st.write("TEST: {}, {}".format(len(args_reps)))
+    st.write("TEST: {}".format(len(args_reps)))
     arg1_rep, arg2_rep = args_reps[0], args_reps[1]
 
     representations = []
