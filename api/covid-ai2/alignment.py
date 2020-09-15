@@ -135,7 +135,7 @@ def perform_annotation(sent, arg_borders):
     for i, w in enumerate(sent_lst):
 
         for arg in range(len(arg_borders)):
-            if is_between(i, arg_borders[i]):
+            if is_between(i, [arg_borders[i]]):
                 sent_new.append((w, "ARG{}".format(arg+1), arg_colors[arg]))
                 break
         else:
