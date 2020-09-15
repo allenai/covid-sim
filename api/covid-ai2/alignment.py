@@ -145,7 +145,7 @@ def perform_annotation(sent, arg1_borders, arg2_borders):
 
 def main(model, results_sents, spike_results, spike_query, layers, num_results):
     arg2preds = {}
-    num_args = spike_query.count(" arg")
+    num_args = spike_query.count("arg")
     st.write("#args is {}".format(num_args))
     args_reps = get_spike_results_arguments_representations(model, spike_results.head(num_results), layers, num_args)
     st.write("TEST: {}, {}".format(len(args_reps)))
