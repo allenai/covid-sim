@@ -10,7 +10,7 @@ from collections import Counter, defaultdict
 #from viterbi_trellis import ViterbiTrellis
 import streamlit as st
 from annot import annotation
-
+import re
 
 
 
@@ -145,8 +145,14 @@ def perform_annotation(sent, arg1_borders, arg2_borders):
 
 def main(model, results_sents, spike_results, spike_query, layers, num_results):
     arg2preds = {}
-    num_args = spike_query.count("arg")
+
+    # count args
+    regex = re.compile("arg.:")
+    num_args = len(re.findall(regex, spike_query))
     st.write("#args is {}".format(num_args))
+
+    # represent args
+
     args_reps = get_spike_results_arguments_representations(model, spike_results.head(num_results), layers, num_args)
     st.write("TEST: {}, {}".format(len(args_reps)))
     arg1_rep, arg2_rep = args_reps[0], args_reps[1]
