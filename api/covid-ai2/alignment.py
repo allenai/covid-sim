@@ -58,12 +58,12 @@ def get_spike_results_arguments_representations(model, spike_results, layers, nu
     return [np.mean(args_rep[arg], axis = 0) for arg in range(num_args)]
 
 
-def get_similarity_to_arguments(padded_representations, arg1_rep, arg2_rep):
+def get_similarity_to_arguments(padded_representations, args_reps):
     num_sents, seq_len, bert_dim = padded_representations.shape
     padded_representations = padded_representations.reshape((num_sents*seq_len, bert_dim))
     #print(padded_representations.shape)
-    sims = cosine_similarity([arg1_rep, arg2_rep], padded_representations)
-    sims = sims.reshape((2, num_sents, seq_len))
+    sims = cosine_similarity(args_reps, padded_representations)
+    sims = sims.reshape((len(args_reps), num_sents, seq_len))
     return sims
 
 def pad(representations):
@@ -155,7 +155,7 @@ def main(model, results_sents, spike_results, spike_query, layers, num_results):
 
     args_reps = get_spike_results_arguments_representations(model, spike_results.head(num_results), layers, num_args)
     st.write("TEST: {}".format(len(args_reps)))
-    arg1_rep, arg2_rep = args_reps[0], args_reps[1]
+    #arg1_rep, arg2_rep = args_reps[0], args_reps[1]
 
     representations = []
     mappings_to_orig = []
@@ -179,7 +179,7 @@ def main(model, results_sents, spike_results, spike_query, layers, num_results):
     padded_representations = pad(representations)
     num_sents, seq_len, bert_dim = padded_representations.shape
     num_tokens = num_sents * seq_len
-    sims_args = get_similarity_to_arguments(padded_representations, arg1_rep, arg2_rep)
+    sims_args = get_similarity_to_arguments(padded_representations, args_reps)
     arguments2sent2alignments = get_probable_alignments(sims_args, mappings_to_orig)
     for arg in range(2):
         dicts = [{"sent": orig_sents[i], "pred_idx": list(zip(*arguments2sent2alignments[arg][i]))[0],
