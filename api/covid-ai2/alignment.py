@@ -82,11 +82,11 @@ def get_probable_alignments(sims_args, mappings_to_orig):
     argument2sent2alignments = dict()
 
     """
-    :param sims_args: similarity to arguments per query, shape: [2,num_sents,padded_sent_len]
+    :param sims_args: similarity to arguments per query, shape: [num_args,num_sents,padded_sent_len]
     :return: 
     """
 
-    for arg in range(2):
+    for arg in range(sims_args.shape[0]):
         sent2alignments = dict()
         for sent_ind in range(sims_args.shape[1]):
             sorted_sims_idx = np.argsort(-sims_args[arg][sent_ind])
