@@ -13,7 +13,7 @@ import alignment
 import bert_all_seq
 from annot import annotation, annotated_text
 
-NUM_RESULTS_TO_ALIGN = 100
+NUM_RESULTS_TO_ALIGN = 75
 
 @st.cache(allow_output_mutation=True)
 def load_sents_and_ids():
@@ -190,7 +190,7 @@ if start:
     st.table(query_sents) 
     encoding = np.array([index.reconstruct(id2ind[i]) for i in input_ids])
     encoding = np.mean(encoding, axis = 0)
-    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 1000)
+    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 150)
 
 
  elif mode == "Start with Query":
@@ -211,7 +211,7 @@ if start:
                 
                 with st.spinner('Retrieving similar sentences...'):
                     encoding = np.mean(encoding, axis = 0)
-                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 1000)
+                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 150)
                     result_sents = [sents[i] for i in I.squeeze()]
                     if query_type == "syntactic":
                         colored_sents, annotated_sents= alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], NUM_RESULTS_TO_ALIGN)
