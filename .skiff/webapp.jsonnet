@@ -137,7 +137,7 @@ function(
     };
 
     local deployment = {
-        apiVersion: 'apps/v11',
+        apiVersion: 'apps/v1',
         kind: 'Deployment',
         metadata: {
             labels: labels,
