@@ -216,7 +216,7 @@ if start:
                 
                 with st.spinner('Retrieving similar sentences...'):
                     encoding = np.mean(encoding, axis = 0)
-                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 20)
+                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 150)
                     result_sents = [sents[i] for i in I.squeeze()]
 
                     if filter_by_spike:
@@ -237,19 +237,19 @@ if start:
                                 s = s.replace("The ", " ").replace("In ", " ").replace("Although ", " ").replace("It ", " ")
                                 return s
 
-                            all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:10])+")" for s in result_sents][:])
+                            all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:8])+")" for s in result_sents][:])
                             results_df_filtration = spike_queries.perform_query(filter_query, dataset_name="covid19",
                                                                       num_results=100000,
                                                                       query_type=query_type_filtration,
                                                                       lucene_query=all_words)
                             filtration_sents = results_df_filtration["sentence_text"].tolist()
-                            st.write("Num filtration results: {}".format(len(filtration_sents)))
-                            st.write("=====================")
-                            st.write(all_words)
-                            st.write(len(results_df_filtration))
+                            st.write("Num filtration results: {}".format(len(results_df_filtration)))
+                            #st.write("=====================")
+                            #st.write(all_words)
+                            #st.write(len(results_df_filtration))
                             #st.write("------------")
-                            st.write(st.table(filtration_sents[:5]))
-                            st.write("=====================")
+                            #st.write(st.table(filtration_sents[:5]))
+                            #st.write("=====================")
 
                             result_sents = [s for s in result_sents if s not in set(filtration_sents)] # take only sents not captured by the query
                             st.write("Filtration took {} seconds".format(time.time() - start))
