@@ -2,8 +2,8 @@ import requests
 import pandas as pd
 import streamlit as st
 
-COVID_URL = "http://35.242.203.108:5000/api/3/search/query"
-COVID_BASE_URL = "http://35.242.203.108:5000"
+COVID_URL = "https://spike.staging.apps.allenai.org/api/3/search/query" #"http://35.242.203.108:5000/api/3/search/query"
+COVID_BASE_URL = "https://spike.staging.apps.allenai.org" #"http://35.242.203.108:5000"
 
 PUBMED_URL = "http://34.89.172.235:5000/api/3/search/query"
 PUBMED_BASE_URL = "http://34.89.172.235:5000"
@@ -27,12 +27,12 @@ def perform_query(query: str, dataset_name: str = "pubmed", num_results: int = 1
 }}"""
 
     template = """{{
-      "queries": {{"{query_type}": "{query_content}", "lucene": ""}},
+      "queries": {{"{query_type}": "{query_content}", "lucene": "{lucene_query}"}},
       "data_set_name": "{dataset_name}"
     }}"""
 
 
-    query = template.format(query_content=query, dataset_name=dataset_name, query_type=query_type)#, lucene_query=" ")
+    query = template.format(query_content=query, dataset_name=dataset_name, query_type=query_type, lucene_query=lucene_query)
     st.write("THE QUERY IS {}".format(query))
 
     headers = {'content-type': 'application/json'}
@@ -46,6 +46,7 @@ def perform_query(query: str, dataset_name: str = "pubmed", num_results: int = 1
     response = requests.post(url, data=query, headers=headers)
     print(response)
     tsv_url = get_tsv_url(response, results_limit=num_results, base_url=base_url)
+
     df = pd.read_csv(tsv_url, sep="\t")
     # if remove_duplicates:
     #     df = df.drop_duplicates("sentence_text")
