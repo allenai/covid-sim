@@ -230,9 +230,13 @@ if start:
                                                                       num_results=100000,
                                                                       query_type=query_type_filtration,
                                                                       lucene_query=all_words)
-                            filteration_sents = set(results_df_filtration["sentence_text"].tolist())
-                            result_sents = [s for s in result_sents if s not in filteration_sents] # take only sents not captured by the query
-                            st.write("filteration took {} seconds".format(time.time() - start))
+                            filtration_sents = set(results_df_filtration["sentence_text"].tolist())
+                            st.write("=====================")
+                            st.write(st.table(filtration_sents))
+                            st.write("=====================")
+
+                            result_sents = [s for s in result_sents if s not in filtration_sents] # take only sents not captured by the query
+                            st.write("Filtration took {} seconds".format(time.time() - start))
                             st.write(len(result_sents))
 
                             # start = time.time()
