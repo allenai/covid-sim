@@ -230,7 +230,7 @@ if start:
                                                                       num_results=100000,
                                                                       query_type=query_type_filtration,
                                                                       lucene_query=all_words)
-                            #filtration_sents = set(results_df_filtration["sentence_text"].tolist())
+                            filtration_sents = set(results_df_filtration["sentence_text"].tolist())
                             #st.write("=====================")
                             #st.write(all_words)
                             #st.write("------------")
