@@ -27,7 +27,7 @@ def perform_query(query: str, dataset_name: str = "pubmed", num_results: int = 1
 }}"""
 
     template = """{{
-      "queries": {{"{query_type}": "{query_content}", lucene": ""}},
+      "queries": {{"{query_type}": "{query_content}", "lucene": ""}},
       "data_set_name": "{dataset_name}"
     }}"""
 
