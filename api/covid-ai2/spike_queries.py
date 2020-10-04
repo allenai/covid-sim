@@ -33,6 +33,9 @@ def perform_query(query: str, dataset_name: str = "pubmed", num_results: int = 1
 
 
     query = template.format(query_content=query, dataset_name=dataset_name, query_type=query_type, lucene_query=lucene_query)
+    st.write("******************")
+    st.write(query)
+    st.write("******************")
 
     headers = {'content-type': 'application/json'}
     if dataset_name == "pubmed":

@@ -139,11 +139,11 @@ elif mode == "Start with Query":
     query_type = st.radio("Query type", ("Boolean", "Token", "Syntactic"))
     query_type = query_type.lower()
     if query_type == "syntactic":
-        input_query = st.text_input('Query', 'arg1:[e]paracetamol is the recommended $treatment for arg2:[e]asthma.')
+        input_query = st.text_input('Query to augment', 'arg1:[e]paracetamol is the recommended $treatment for arg2:[e]asthma.')
     elif query_type == "boolean":
-       input_query = st.text_input('Query', 'virus lemma=persist on')
+       input_query = st.text_input('Query to augment', 'virus lemma=persist on')
     elif query_type == "token":
-       input_query = st.text_input('Query', 'novel coronavirus')
+       input_query = st.text_input('Query to augment', 'novel coronavirus')
 
     max_results = st.slider('Max number of results', 1, 5000, 25)  #int(st.text_input("Max number of results", 25))
     filter_by = st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
@@ -216,7 +216,7 @@ if start:
                 
                 with st.spinner('Retrieving similar sentences...'):
                     encoding = np.mean(encoding, axis = 0)
-                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 10)
+                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 3)
                     result_sents = [sents[i] for i in I.squeeze()]
 
                     if filter_by_spike:
@@ -225,13 +225,15 @@ if start:
                             start = time.time()
                             # filter by lucene queries
                             results_sents_filtered = []
-                            all_words = " OR ".join(["("+ " AND ".join(s.split(" ")[:12])+")" for s in result_sents])
+                            all_words = " OR ".join(["("+ " AND ".join(s.split(" ")[:5])+")" for s in result_sents])
                             results_df_filtration = spike_queries.perform_query(filter_query, dataset_name="covid19",
                                                                       num_results=100000,
                                                                       query_type=query_type_filtration,
                                                                       lucene_query=all_words)
                             filtration_sents = set(results_df_filtration["sentence_text"].tolist())
                             st.write("=====================")
+                            st.write(all_words)
+                            st.write("------------")
                             st.write(st.table(filtration_sents))
                             st.write("=====================")
 
