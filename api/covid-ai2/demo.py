@@ -60,7 +60,7 @@ def load_pca(pooling):
     
                
 st.title('COVID-19 Similarity Search')
-
+RESULT_FILTREATION = False
 #a = st.empty()
 mode = st.sidebar.radio("Mode", ("Start with Sentence", "Start with Query"))
 similarity = "dot product" #st.sidebar.selectbox('Similarity', ('dot product', "l2"))
@@ -151,7 +151,7 @@ elif mode == "Start with Query":
     filter_by_spike = query_type_filtration is not None
     if filter_by_spike:
         filter_query = st.text_input('Get only results NOT captured by this query', 'arg1:[e]paracetamol is the recommended $treatment for arg2:[e]asthma.')
-
+        RESULT_FILTREATION = True
 show_results = True
 start = st.button('Run')
 
@@ -267,5 +267,7 @@ if start:
 
  if show_results:
     results = [sents[i] for i in I.squeeze()]
+    if RESULT_FILTREATION:
+        results = result_sents
     st.write("Performed query of type '{}'. Similarity search results:".format(mode))
     st.write(st.table(results))
