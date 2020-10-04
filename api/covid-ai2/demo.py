@@ -12,7 +12,7 @@ import time
 import alignment
 import bert_all_seq
 from annot import annotation, annotated_text
-
+import time
 NUM_RESULTS_TO_ALIGN = 75
 
 @st.cache(allow_output_mutation=True)
@@ -202,6 +202,19 @@ if start:
     with st.spinner('Performing SPIKE query...'):
         results_df = spike_queries.perform_query(input_query, dataset_name = "covid19", num_results = max_results, query_type = query_type)
         results_sents = results_df["sentence_text"].tolist()
+        if filter_by_spike:
+            start = time.time()
+            # filter by lucene queries
+            results_sents_filtered = []
+            for s in results_sents:
+                words = " AND ".join(s.split(" "))
+                results_df = spike_queries.perform_query(filter_query, dataset_name="covid19", num_results=100000,
+                                                     query_type=query_type, lucene_query = words)
+                if len(results_df) != 0:
+                    results_sents_filtered.append(s)
+            results_sents = results_sents_filtered
+            st.write("filteration took {} seconds".format(time.time() - start))
+
         results_ids = [hash(s) for s in results_sents] #results_df["sentence_id"].tolist()
 
         st.write("Found {} matches".format(len(results_ids)))
