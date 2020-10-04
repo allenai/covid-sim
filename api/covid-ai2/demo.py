@@ -216,7 +216,7 @@ if start:
                 
                 with st.spinner('Retrieving similar sentences...'):
                     encoding = np.mean(encoding, axis = 0)
-                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 10)
+                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 100)
                     result_sents = [sents[i] for i in I.squeeze()]
 
                     if filter_by_spike:
@@ -225,7 +225,15 @@ if start:
                             start = time.time()
                             # filter by lucene queries
                             results_sents_filtered = []
-                            all_words = " OR ".join(["("+ " AND ".join(s.replace(" is", "").replace(" are","").replace(" the","").replace(" a ", " ").replace(" an ", " ").split(" ")[:7])+")" for s in result_sents][:])
+
+                            def remove_all_words(s):
+                                words_to_remove = [" is", " are ", " the ", " a ", " an ", " to ", " as ", " from ",
+                                                   " and ", " or ", " of ", " in ", " be "]
+                                for w in words_to_remove:
+                                    s = s.replace(w, " ")
+                                return s
+
+                            all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:5])+")" for s in result_sents][:])
                             results_df_filtration = spike_queries.perform_query(filter_query, dataset_name="covid19",
                                                                       num_results=100000,
                                                                       query_type=query_type_filtration,
