@@ -202,18 +202,6 @@ if start:
     with st.spinner('Performing SPIKE query...'):
         results_df = spike_queries.perform_query(input_query, dataset_name = "covid19", num_results = max_results, query_type = query_type)
         results_sents = results_df["sentence_text"].tolist()
-        if filter_by_spike:
-            start = time.time()
-            # filter by lucene queries
-            results_sents_filtered = []
-            for s in results_sents:
-                words = " AND ".join(s.split(" "))
-                results_df = spike_queries.perform_query(filter_query, dataset_name="covid19", num_results=100000,
-                                                     query_type=query_type_filtration, lucene_query = words)
-                if len(results_df) != 0:
-                    results_sents_filtered.append(s)
-            results_sents = results_sents_filtered
-            st.write("filteration took {} seconds".format(time.time() - start))
 
         results_ids = [hash(s) for s in results_sents] #results_df["sentence_id"].tolist()
 
@@ -228,8 +216,25 @@ if start:
                 
                 with st.spinner('Retrieving similar sentences...'):
                     encoding = np.mean(encoding, axis = 0)
-                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 150)
+                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 100)
                     result_sents = [sents[i] for i in I.squeeze()]
+
+                    if filter_by_spike:
+                        with st.spinner('Filtering...'):
+                            start = time.time()
+                            # filter by lucene queries
+                            results_sents_filtered = []
+                            for s in result_sents:
+                                words = " AND ".join(s.split(" ")[:12])
+                                results_df = spike_queries.perform_query(filter_query, dataset_name="covid19",
+                                                                     num_results=100000,
+                                                                     query_type=query_type_filtration,
+                                                                     lucene_query=words)
+                                if len(results_df) != 0:
+                                    results_sents_filtered.append(s)
+                            result_sents = results_sents_filtered
+                            st.write("filteration took {} seconds".format(time.time() - start))
+
                     if query_type == "syntactic":
                         colored_sents, annotated_sents= alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], NUM_RESULTS_TO_ALIGN)
                         for s in annotated_sents:

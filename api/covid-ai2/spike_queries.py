@@ -33,7 +33,6 @@ def perform_query(query: str, dataset_name: str = "pubmed", num_results: int = 1
 
 
     query = template.format(query_content=query, dataset_name=dataset_name, query_type=query_type, lucene_query=lucene_query)
-    st.write("THE QUERY IS {}".format(query))
 
     headers = {'content-type': 'application/json'}
     if dataset_name == "pubmed":
@@ -43,8 +42,7 @@ def perform_query(query: str, dataset_name: str = "pubmed", num_results: int = 1
     elif dataset_name == "wiki":
         url, base_url = WIKIPEDIA_URL, WIKIPEDIA_BASE_URL
 
-    response = requests.post(url, data=query, headers=headers)
-    print(response)
+    response = requests.post(url, data=query.encode('utf-8'), headers=headers)
     tsv_url = get_tsv_url(response, results_limit=num_results, base_url=base_url)
 
     df = pd.read_csv(tsv_url, sep="\t")
