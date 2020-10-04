@@ -216,7 +216,7 @@ if start:
                 
                 with st.spinner('Retrieving similar sentences...'):
                     encoding = np.mean(encoding, axis = 0)
-                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 15)
+                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 20)
                     result_sents = [sents[i] for i in I.squeeze()]
 
                     if filter_by_spike:
@@ -227,6 +227,7 @@ if start:
                             results_sents_filtered = []
 
                             def remove_all_words(s):
+                                return s
                                 words_to_remove = [" is", " are ", " the ", " a ", " an ", " to ", " as ", " from ",
                                                    " and ", " or ", " of ", " in ", " be ", " this ", " that ", " , ", " these ", " those ",
                                                    " with ", " within ", " can "]
