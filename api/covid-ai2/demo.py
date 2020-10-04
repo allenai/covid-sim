@@ -225,7 +225,7 @@ if start:
                             start = time.time()
                             # filter by lucene queries
                             results_sents_filtered = []
-                            all_words = " OR ".join(["("+ " AND ".join(s.split(" ")[:4])+")" for s in result_sents])
+                            all_words = " OR ".join(["("+ " AND ".join(s.split(" ")[:6])+")" for s in result_sents][:2])
                             results_df_filtration = spike_queries.perform_query(filter_query, dataset_name="covid19",
                                                                       num_results=100000,
                                                                       query_type=query_type_filtration,
@@ -234,6 +234,7 @@ if start:
                             st.write("Num filtration results: {}".format(len(filtration_sents)))
                             st.write("=====================")
                             st.write(all_words)
+                            st.write(len(results_df_filtration))
                             #st.write("------------")
                             st.write(st.table(filtration_sents[:5]))
                             st.write("=====================")
