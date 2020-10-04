@@ -216,7 +216,7 @@ if start:
                 
                 with st.spinner('Retrieving similar sentences...'):
                     encoding = np.mean(encoding, axis = 0)
-                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 100)
+                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 10)
                     result_sents = [sents[i] for i in I.squeeze()]
 
                     if filter_by_spike:
@@ -234,6 +234,7 @@ if start:
                                     results_sents_filtered.append(s)
                             result_sents = results_sents_filtered
                             st.write("filteration took {} seconds".format(time.time() - start))
+                            st.write(len(result_sents))
 
                     if query_type == "syntactic":
                         colored_sents, annotated_sents= alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], NUM_RESULTS_TO_ALIGN)
