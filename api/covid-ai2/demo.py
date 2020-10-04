@@ -225,20 +225,20 @@ if start:
                             start = time.time()
                             # filter by lucene queries
                             results_sents_filtered = []
-                            all_words = " OR ".join(["("+ " AND ".join(s.split(" ")[:12])+")" for s in result_sents])
+                            all_words = " OR ".join(["("+ " AND ".join(s.split(" ")[:4])+")" for s in result_sents])
                             results_df_filtration = spike_queries.perform_query(filter_query, dataset_name="covid19",
                                                                       num_results=100000,
                                                                       query_type=query_type_filtration,
                                                                       lucene_query=all_words)
-                            filtration_sents = set(results_df_filtration["sentence_text"].tolist())
+                            filtration_sents = results_df_filtration["sentence_text"].tolist()
                             st.write("Num filtration results: {}".format(len(filtration_sents)))
                             st.write("=====================")
-                            #st.write(all_words)
+                            st.write(all_words)
                             #st.write("------------")
                             st.write(st.table(filtration_sents[:5]))
                             st.write("=====================")
 
-                            result_sents = [s for s in result_sents if s not in filtration_sents] # take only sents not captured by the query
+                            result_sents = [s for s in result_sents if s not in set(filtration_sents)] # take only sents not captured by the query
                             st.write("Filtration took {} seconds".format(time.time() - start))
                             st.write(len(result_sents))
 
