@@ -236,8 +236,8 @@ if start:
                                 s = s.replace("The ", "").replace("In ", "").replace("Although ", "").replace("It ", "").replace(" (", "").replace(" )", " ").replace("A ", "").replace("An ", "")
                                 return s
 
-                            all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:4])+")" for s in result_sents][:])
-
+                            all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:5])+")" for s in result_sents][:10])
+                            all_words = all_words.replace("AND AND", "AND")
                             results_df_filtration = spike_queries.perform_query(filter_query, dataset_name="covid19",
                                                                       num_results=100000,
                                                                       query_type=query_type_filtration,
