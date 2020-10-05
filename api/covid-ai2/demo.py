@@ -146,7 +146,7 @@ elif mode == "Start with Query":
        input_query = st.text_input('Query to augment', 'novel coronavirus')
 
     max_results = st.slider('Max number of SPIKE results', 1, 1000, 25)  #int(st.text_input("Max number of results", 25))
-    max_number_of_augmented_results = st.slider('Number of Augmented results', 1, 250, 10)
+    max_number_of_augmented_results = st.slider('Number of Augmented results', 1, 250, 100)
     if query_type == "syntactic":
         perform_alignment = st.checkbox("Perform argument alignment", value=False, key=None)
     else:
@@ -222,7 +222,7 @@ if start:
                 with st.spinner('Retrieving similar sentences...'):
                     encoding = np.mean(encoding, axis = 0)
                     D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), max_number_of_augmented_results)
-                    result_sents = [sents[i] for i in I.squeeze()]
+                    result_sents = [sents[i].replace("/","-") for i in I.squeeze()]
 
                     if filter_by_spike:
                         with st.spinner('Filtering...'):
@@ -234,11 +234,13 @@ if start:
                             def remove_all_words(s):
                                 words_to_remove = [" is ", " are ", " the ", " a ", " an ", " to ", " as ", " from ",
                                                    " and ", " or ", " of ", " in ", " be ", " this ", " that ", " , ", " these ", " those ",
-                                                   " with ", " within ", " can "]
-                                for w in words_to_remove:
-                                    s = s.replace(w, " ")
+                                                   " with ", " within ", " can ", " / "]
+                                
                                 s = s.replace("The ", "").replace("In ", "").replace("Although ", "").replace("It ", "").replace(" (", "").replace(" )", " ").replace("A ", "").replace("An ", "")
                                 s = s.replace(' " ', ' ').replace(" ' ", " ")
+                                for w in words_to_remove:
+                                    s = s.replace(w, " ")
+                                #s = s.replace("/", "-")
                                 while "  " in s:
                                     s = s.replace("  ", " ")
 
