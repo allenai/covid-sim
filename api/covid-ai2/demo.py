@@ -236,8 +236,9 @@ if start:
                                                    " and ", " or ", " of ", " in ", " be ", " this ", " that ", " , ", " these ", " those ",
                                                    " with ", " within ", " can ", " / "]
                                 
-                                s = s.replace("The ", "").replace("In ", "").replace("Although ", "").replace("It ", "").replace(" (", "").replace(" )", " ").replace("A ", "").replace("An ", "")
+                                s = s.replace("The ", "").replace("In ", "").replace("Although ", "").replace("It ", "").replace(" (", "").replace(" )", "").replace("A ", "").replace("An ", "").replace(" [", "").replace(" ]", "")
                                 s = s.replace(' " ', ' ').replace(" ' ", " ")
+                                s = s.replace(" 's "," ").replace("(","").replace(")", "").replace("[","").replace("]","")
                                 for w in words_to_remove:
                                     s = s.replace(w, " ")
                                 #s = s.replace("/", "-")
