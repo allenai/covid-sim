@@ -242,9 +242,13 @@ if start:
                                 for w in words_to_remove:
                                     s = s.replace(w, " ")
                                 #s = s.replace("/", "-")
+
                                 while "  " in s:
                                     s = s.replace("  ", " ")
-
+                                    
+                                words = s.split(" ")
+                                s = " ".join([w for w in words if "-" not in w and "/" not in w and "'" not in w and ")" not in w and "(" not in w and "]" not in w
+                                             and "[" not in w and "," not in w])
                                
                                 return s
 
