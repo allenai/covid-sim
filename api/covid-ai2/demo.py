@@ -268,8 +268,8 @@ if start:
             
                             #filtration_sents = results_df_filtration["sentence_text"].tolist()
                             st.write("Num filtration results: {}".format(len(results_df_filtration)))
-                            st.write("Filtration sentences:")
-                            st.write(st.table(filtration_sents))
+                            #st.write("Filtration sentences:")
+                            #st.write(st.table(filtration_sents))
                             st.write("==============================")
                             #st.write(all_words)
                             #st.write(len(results_df_filtration))
