@@ -233,10 +233,11 @@ if start:
                                 for w in words_to_remove:
                                     s = s.replace(w, " ")
 
-                                s = s.replace("The ", " ").replace("In ", " ").replace("Although ", " ").replace("It ", " ")
+                                s = s.replace("The ", " ").replace("In ", " ").replace("Although ", " ").replace("It ", " ").replace(" (", " ").replace(" )", " ")
                                 return s
 
                             all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:4])+")" for s in result_sents][:])
+
                             results_df_filtration = spike_queries.perform_query(filter_query, dataset_name="covid19",
                                                                       num_results=100000,
                                                                       query_type=query_type_filtration,
