@@ -237,11 +237,13 @@ if start:
                                                    " with ", " within ", " can "]
                                 for w in words_to_remove:
                                     s = s.replace(w, " ")
+                                s = s.replace("The ", "").replace("In ", "").replace("Although ", "").replace("It ", "").replace(" (", "").replace(" )", " ").replace("A ", "").replace("An ", "")
+                                s = s.replace(' " ', ' ').replace(" ' ", " ")
                                 while "  " in s:
                                     s = s.replace("  ", " ")
 
-                                s = s.replace("The ", "").replace("In ", "").replace("Although ", "").replace("It ", "").replace(" (", "").replace(" )", " ").replace("A ", "").replace("An ", "")
-                                return s.replace("  ", " ")
+                               
+                                return s
 
                             all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:9])+")" for s in result_sents][:])
                             all_words = all_words.replace("AND AND", "AND")
