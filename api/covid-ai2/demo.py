@@ -254,6 +254,7 @@ if start:
 
                             filtration_batch_size = 50
                             filtration_sents = []
+                            start_time = time.time()
                             for b in range(0, len(result_sents), filtration_batch_size):
                                 start, end = b, b+filtration_batch_size     
                                 all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:8])+")" for s in result_sents[start:end]][:])
@@ -275,7 +276,7 @@ if start:
                             #st.write("=====================")
 
                             result_sents = [s for s in result_sents if s not in set(filtration_sents)] # take only sents not captured by the query
-                            st.write("Filtration took {} seconds".format(time.time() - start))
+                            st.write("Filtration took {} seconds".format(time.time() - start_time))
                             st.write(len(result_sents))
 
                             # start = time.time()
