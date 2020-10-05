@@ -155,7 +155,8 @@ elif mode == "Start with Query":
     query_type_filtration = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
     filter_by_spike = query_type_filtration is not None
     if filter_by_spike:
-        filter_query = st.text_input('Get only results NOT captured by this query', 'arg1:[e]paracetamol is the recommended $treatment for arg2:[e]asthma.')
+        filter_query = st.text_input('Get only results NOT captured by this query', '')
+        filtration_batch_size = st.slider('Number of Augmented results', 1, 250, 50)
         RESULT_FILTREATION = True
 show_results = True
 start = st.button('Run')
@@ -252,7 +253,6 @@ if start:
                                
                                 return s
 
-                            filtration_batch_size = 50
                             filtration_sents = []
                             start_time = time.time()
                             for b in range(0, len(result_sents), filtration_batch_size):
