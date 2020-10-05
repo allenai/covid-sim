@@ -146,6 +146,7 @@ elif mode == "Start with Query":
        input_query = st.text_input('Query to augment', 'novel coronavirus')
 
     max_results = st.slider('Max number of results', 1, 1000, 25)  #int(st.text_input("Max number of results", 25))
+    perform_alignment = st.checkbox("Perform argument alignment", value=False, key=None)
     filter_by = st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
     query_type_filtration = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
     filter_by_spike = query_type_filtration is not None
@@ -273,7 +274,7 @@ if start:
                             # st.write("filteration took {} seconds".format(time.time() - start))
                             # st.write(len(result_sents))
 
-                    if query_type == "syntactic":
+                    if query_type == "syntactic"  and perform_alignment:
                         with st.spinner('Performing argument alignment...'):
                             colored_sents, annotated_sents= alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], NUM_RESULTS_TO_ALIGN)
                             for s in annotated_sents:
