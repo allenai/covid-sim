@@ -48,7 +48,12 @@ def perform_query(query_str: str, dataset_name: str = "pubmed", num_results: int
     response = requests.post(url, data=query.encode('utf-8'), headers=headers)
     tsv_url = get_tsv_url(response, results_limit=num_results, base_url=base_url)
 
-    df = pd.read_csv(tsv_url, sep="\t")
+    try:
+        df = pd.read_csv(tsv_url, sep="\t")
+    except Exception as e:
+        st.write("Invalid SPIKE query. Please check query content and/or its type.")
+        st.write(e)
+        
     # if remove_duplicates:
     #     df = df.drop_duplicates("sentence_text")
     return df
