@@ -227,7 +227,6 @@ if start:
                             results_sents_filtered = []
 
                             def remove_all_words(s):
-                                return s
                                 words_to_remove = [" is", " are ", " the ", " a ", " an ", " to ", " as ", " from ",
                                                    " and ", " or ", " of ", " in ", " be ", " this ", " that ", " , ", " these ", " those ",
                                                    " with ", " within ", " can "]
@@ -237,7 +236,7 @@ if start:
                                 s = s.replace("The ", " ").replace("In ", " ").replace("Although ", " ").replace("It ", " ")
                                 return s
 
-                            all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:8])+")" for s in result_sents][:])
+                            all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:4])+")" for s in result_sents][:])
                             results_df_filtration = spike_queries.perform_query(filter_query, dataset_name="covid19",
                                                                       num_results=100000,
                                                                       query_type=query_type_filtration,
