@@ -248,20 +248,24 @@ if start:
                                     
                                 words = s.split(" ")
                                 s = " ".join([w for w in words if "-" not in w and "/" not in w and "'" not in w and ")" not in w and "(" not in w and "]" not in w
-                                             and "[" not in w and "," not in w])
+                                             and "[" not in w and "," not in w and not w=="has" and not w=="have" and not w=="been" and not w=="on"])
                                
                                 return s
 
-                            all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:9])+")" for s in result_sents][:])
-                            all_words = all_words.replace("AND AND", "AND")
-                            #st.write("TEST {}" + "AND AND" in all_words)
-                            #st.write(all_words)
-                            #st.write("######################################3")
-                            results_df_filtration = spike_queries.perform_query(filter_query, dataset_name="covid19",
+                            filtration_batch_size = 50
+                            filtration_sents = []
+                            for b in range(0, len(result_sents), filtration_batch_size):
+                                start, end = b, b+filtration_batch_size     
+                                all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:8])+")" for s in result_sents[start:end]][:])
+                                #all_words = all_words.replace("AND AND", "AND")
+    
+                                results_df_filtration = spike_queries.perform_query(filter_query, dataset_name="covid19",
                                                                       num_results=100000,
                                                                       query_type=query_type_filtration,
                                                                       lucene_query=all_words)
-                            filtration_sents = results_df_filtration["sentence_text"].tolist()
+                                filtration_sents.extend(results_df_filtration["sentence_text"].tolist())
+            
+                            #filtration_sents = results_df_filtration["sentence_text"].tolist()
                             st.write("Num filtration results: {}".format(len(results_df_filtration)))
                             #st.write("=====================")
                             #st.write(all_words)
