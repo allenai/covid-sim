@@ -243,7 +243,7 @@ if start:
                                 s = s.replace("The ", "").replace("In ", "").replace("Although ", "").replace("It ", "").replace(" (", "").replace(" )", " ").replace("A ", "").replace("An ", "")
                                 return s.replace("  ", " ")
 
-                            all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:5])+")" for s in result_sents][:])
+                            all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:6])+")" for s in result_sents][:])
                             all_words = all_words.replace("AND AND", "AND")
                             #st.write("TEST {}" + "AND AND" in all_words)
                             #st.write(all_words)
