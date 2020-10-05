@@ -156,7 +156,7 @@ elif mode == "Start with Query":
     filter_by_spike = query_type_filtration is not None
     if filter_by_spike:
         filter_query = st.text_input('Get only results NOT captured by this query', '')
-        filtration_batch_size = st.slider('Number of Augmented results', 1, 250, 50)
+        filtration_batch_size = st.slider('Filtration batch size', 1, 250, 50)
         RESULT_FILTREATION = True
 show_results = True
 start = st.button('Run')
