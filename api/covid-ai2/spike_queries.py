@@ -19,7 +19,7 @@ def get_tsv_url(response: requests.models.Response, results_limit: int, base_url
     return tsv_url
 
 
-def perform_query(query: str, dataset_name: str = "pubmed", num_results: int = 10, query_type: str = "syntactic",
+def perform_query(query_str: str, dataset_name: str = "pubmed", num_results: int = 10, query_type: str = "syntactic",
                   remove_duplicates: bool = True, lucene_query="") -> pd.DataFrame:
     template = """{{
   "queries": {{"{query_type}": "{query_content}", "lucene": "{lucene_query}"}},
@@ -32,7 +32,7 @@ def perform_query(query: str, dataset_name: str = "pubmed", num_results: int = 1
     }}"""
 
 
-    query = template.format(query_content=query, dataset_name=dataset_name, query_type=query_type, lucene_query=lucene_query)
+    query = template.format(query_content=query_str, dataset_name=dataset_name, query_type=query_type, lucene_query=lucene_query)
     st.write("******************")
     st.write(query)
     st.write("******************")
