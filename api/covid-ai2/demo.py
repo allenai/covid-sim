@@ -279,7 +279,6 @@ if start:
 
                             result_sents = [s for s in result_sents if s not in set(filtration_sents)] # take only sents not captured by the query
                             st.write("Filtration took {} seconds".format(time.time() - start_time))
-                            st.write(len(result_sents))
 
                             # start = time.time()
                             # # filter by lucene queries
