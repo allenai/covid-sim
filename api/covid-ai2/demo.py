@@ -217,7 +217,7 @@ if start:
                 
                 with st.spinner('Retrieving similar sentences...'):
                     encoding = np.mean(encoding, axis = 0)
-                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 150)
+                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 15)
                     result_sents = [sents[i] for i in I.squeeze()]
 
                     if filter_by_spike:
