@@ -146,7 +146,10 @@ elif mode == "Start with Query":
        input_query = st.text_input('Query to augment', 'novel coronavirus')
 
     max_results = st.slider('Max number of results', 1, 1000, 25)  #int(st.text_input("Max number of results", 25))
-    perform_alignment = st.checkbox("Perform argument alignment", value=False, key=None)
+    if query_type == "syntactic":
+        perform_alignment = st.checkbox("Perform argument alignment", value=False, key=None)
+    else:
+        perform_alignment = False
     filter_by = st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
     query_type_filtration = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
     filter_by_spike = query_type_filtration is not None
@@ -217,7 +220,7 @@ if start:
                 
                 with st.spinner('Retrieving similar sentences...'):
                     encoding = np.mean(encoding, axis = 0)
-                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 15)
+                    D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), 150)
                     result_sents = [sents[i] for i in I.squeeze()]
 
                     if filter_by_spike:
@@ -239,7 +242,7 @@ if start:
                                 s = s.replace("The ", "").replace("In ", "").replace("Although ", "").replace("It ", "").replace(" (", "").replace(" )", " ").replace("A ", "").replace("An ", "")
                                 return s.replace("  ", " ")
 
-                            all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:5])+")" for s in result_sents][:])
+                            all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:6])+")" for s in result_sents][:])
                             all_words = all_words.replace("AND AND", "AND")
                             #st.write("TEST {}" + "AND AND" in all_words)
                             #st.write(all_words)
