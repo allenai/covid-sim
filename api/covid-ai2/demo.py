@@ -238,6 +238,7 @@ if start:
 
                             all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:5])+")" for s in result_sents][:10])
                             all_words = all_words.replace("AND AND", "AND")
+                            st.write("TEST {}" + "AND AND" in all_words)
                             results_df_filtration = spike_queries.perform_query(filter_query, dataset_name="covid19",
                                                                       num_results=100000,
                                                                       query_type=query_type_filtration,
