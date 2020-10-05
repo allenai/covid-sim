@@ -147,13 +147,12 @@ elif mode == "Start with Query":
 
     max_results = st.slider('Max number of results', 1, 1000, 25)  #int(st.text_input("Max number of results", 25))
     perform_alignment = st.checkbox("Perform argument alignment", value=False, key=None)
-    if perform_alignment:
-        filter_by = st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
-        query_type_filtration = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
-        filter_by_spike = query_type_filtration is not None
-        if filter_by_spike:
-            filter_query = st.text_input('Get only results NOT captured by this query', 'arg1:[e]paracetamol is the recommended $treatment for arg2:[e]asthma.')
-            RESULT_FILTREATION = True
+    filter_by = st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
+    query_type_filtration = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
+    filter_by_spike = query_type_filtration is not None
+    if filter_by_spike:
+        filter_query = st.text_input('Get only results NOT captured by this query', 'arg1:[e]paracetamol is the recommended $treatment for arg2:[e]asthma.')
+        RESULT_FILTREATION = True
 show_results = True
 start = st.button('Run')
 
