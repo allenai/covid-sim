@@ -33,11 +33,11 @@ def perform_query(query_str: str, dataset_name: str = "pubmed", num_results: int
 
 
     query = template.format(query_content=query_str, dataset_name=dataset_name, query_type=query_type, lucene_query=lucene_query.replace("AND AND", "AND"))
-    st.write("******************")
-    st.write(query)
-    st.write("-------------------------------------------")
-    st.write(query.replace("AND AND", "AND"))
-    st.write("******************")
+    #st.write("******************")
+    #st.write(query)
+    #st.write("-------------------------------------------")
+    #st.write(query.replace("AND AND", "AND"))
+    #st.write("******************")
 
     headers = {'content-type': 'application/json'}
     if dataset_name == "pubmed":
