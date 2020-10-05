@@ -233,7 +233,7 @@ if start:
                                 for w in words_to_remove:
                                     s = s.replace(w, " ")
 
-                                s = s.replace("The ", " ").replace("In ", " ").replace("Although ", " ").replace("It ", " ").replace(" (", " ").replace(" )", " ")
+                                s = s.replace("The ", "").replace("In ", "").replace("Although ", "").replace("It ", "").replace(" (", "").replace(" )", " ").replace("A ", "").replace("An ", "")
                                 return s
 
                             all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:4])+")" for s in result_sents][:])
