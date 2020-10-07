@@ -14,6 +14,10 @@ import bert_all_seq
 from annot import annotation, annotated_text
 import time
 NUM_RESULTS_TO_ALIGN = 75
+BOOLEAN_QUERY_DEFAULT = "virus lemma=originate"
+TOKEN_QUERY_DEFAULT = "novel coronavirus"
+SYNTACTIC_QUERY_DEFAULT = "arg1:[e]paracetamol is the recommended $treatment for arg2:[e]asthma."
+
 
 @st.cache(allow_output_mutation=True)
 def load_sents_and_ids():
@@ -115,11 +119,11 @@ if mode == "Start with Sentence":
     filter_by_spike = query_type is not None
 
     if query_type == "syntactic":
-        filter_query = st.text_input('SPIKE query', 'arg1:[e]paracetamol is the recommended $treatment for arg2:[e]asthma.')
+        filter_query = st.text_input('SPIKE query', SYNTACTIC_QUERY_DEFAULT)
     elif query_type == "boolean":
-       filter_query = st.text_input('SPIKE query', 'virus lemma=originate')
+       filter_query = st.text_input('SPIKE query', BOOLEAN_QUERY_DEFAULT)
     elif query_type == "token":
-       filter_query = st.text_input('SPIKE query', 'novel coronavirus')
+       filter_query = st.text_input('SPIKE query', TOKEN_QUERY_DEFAULT)
     
     if query_type is not None:
 
@@ -139,11 +143,11 @@ elif mode == "Start with Query":
     query_type = st.radio("Query type", ("Boolean", "Token", "Syntactic"))
     query_type = query_type.lower()
     if query_type == "syntactic":
-        input_query = st.text_input('Query to augment', 'arg1:[e]paracetamol is the recommended $treatment for arg2:[e]asthma.')
+        input_query = st.text_input('Query to augment', SYNTACTIC_QUERY_DEFAULT)
     elif query_type == "boolean":
-       input_query = st.text_input('Query to augment', 'virus lemma=originate')
+       input_query = st.text_input('Query to augment', BOOLEAN_QUERY_DEFAULT)
     elif query_type == "token":
-       input_query = st.text_input('Query to augment', 'novel coronavirus')
+       input_query = st.text_input('Query to augment', TOKEN_QUERY_DEFAULT)
 
     max_results = st.slider('Max number of SPIKE results', 1, 1000, 25)  #int(st.text_input("Max number of results", 25))
     max_number_of_augmented_results = st.slider('Number of Augmented results', 1, 250, 100)
@@ -155,7 +159,14 @@ elif mode == "Start with Query":
     query_type_filtration = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
     filter_by_spike = query_type_filtration is not None
     if filter_by_spike:
-        filter_query = st.text_input('Get only results NOT captured by this query', "virus lemma=originate")
+        message = "Get only results NOT captured by this query"
+        if query_type_filtration == "syntactic":
+            filter_query = st.text_input(message, SYNTACTIC_QUERY_DEFAULT)
+        elif query_type_filtration == "boolean":
+            filter_query = st.text_input(message, BOOLEAN_QUERY_DEFAULT)
+        elif query_type_filtration == "token":
+            filter_query = st.text_input(message, TOKEN_QUERY_DEFAULT)
+
         filtration_batch_size = st.slider('Filtration batch size', 1, 250, 50)
         RESULT_FILTREATION = True
 show_results = True
