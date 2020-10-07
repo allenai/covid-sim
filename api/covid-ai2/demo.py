@@ -117,7 +117,7 @@ if mode == "Start with Sentence":
     if query_type == "syntactic":
         filter_query = st.text_input('SPIKE query', 'arg1:[e]paracetamol is the recommended $treatment for arg2:[e]asthma.')
     elif query_type == "boolean":
-       filter_query = st.text_input('SPIKE query', 'virus lemma=persist')
+       filter_query = st.text_input('SPIKE query', 'virus lemma=originate')
     elif query_type == "token":
        filter_query = st.text_input('SPIKE query', 'novel coronavirus')
     
@@ -141,7 +141,7 @@ elif mode == "Start with Query":
     if query_type == "syntactic":
         input_query = st.text_input('Query to augment', 'arg1:[e]paracetamol is the recommended $treatment for arg2:[e]asthma.')
     elif query_type == "boolean":
-       input_query = st.text_input('Query to augment', 'virus lemma=persist')
+       input_query = st.text_input('Query to augment', 'virus lemma=originate')
     elif query_type == "token":
        input_query = st.text_input('Query to augment', 'novel coronavirus')
 
@@ -155,7 +155,7 @@ elif mode == "Start with Query":
     query_type_filtration = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
     filter_by_spike = query_type_filtration is not None
     if filter_by_spike:
-        filter_query = st.text_input('Get only results NOT captured by this query', "arg1:[e]paracetamol is the recommended $treatment for arg2:[e]asthma.")
+        filter_query = st.text_input('Get only results NOT captured by this query', "virus lemma=originate")
         filtration_batch_size = st.slider('Filtration batch size', 1, 250, 50)
         RESULT_FILTREATION = True
 show_results = True
