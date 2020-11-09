@@ -369,7 +369,7 @@ def main(model, results_sents, spike_df, num_results):
     results = evaluate_model(sents1, sents2, query_used_arg1, query_used_arg2, model, max_ngrams = 3, num_examples = len(sents1))
     annotated = []
     
-    for d in results:
+    for p in results:
         pred_arg1, pred_arg2 = p["preds_arg1_tokens"], p["preds_arg2_tokens"]
         ngram_pred_arg1_idx, ngram_pred_arg2_idx = p["all_ngrams"][pred_arg1[0]], p["all_ngrams"][pred_arg2[0]]     
         arg1_start = p["tok2orig"][ngram_pred_arg1_idx[0]]
