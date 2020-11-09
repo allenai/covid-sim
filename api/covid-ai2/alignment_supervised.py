@@ -304,7 +304,7 @@ def evaluate_model(sents1, sents2, arg1_sent1, arg2_sent1, model, max_ngrams = 5
     return preds
 
 
-def main(model, results_sents, spike_df, num_results):
+def main(model, results_sents, spike_df, num_results, max_ngrams):
 
 
     def pretty_print(sent, idx_arg1, idx_arg2):
@@ -353,7 +353,7 @@ def main(model, results_sents, spike_df, num_results):
     query_used_arg1 = [query_used_arg1] * len(sents2)
     query_used_arg2 = [query_used_arg2] * len(sents2)
     
-    results = evaluate_model(sents1, sents2, query_used_arg1, query_used_arg2, model, max_ngrams = 3, num_examples = len(sents1))
+    results = evaluate_model(sents1, sents2, query_used_arg1, query_used_arg2, model, max_ngrams = max_ngrams, num_examples = len(sents1))
     annotated = []
     
     for p in results:
