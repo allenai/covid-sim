@@ -17,7 +17,7 @@ import time
 NUM_RESULTS_TO_ALIGN_DEFAULT = 25
 BOOLEAN_QUERY_DEFAULT = "virus lemma=originate"
 TOKEN_QUERY_DEFAULT = "novel coronavirus"
-SYNTACTIC_QUERY_DEFAULT = "arg1:[e]paracetamol is the recommended $treatment for arg2:[e]asthma."
+SYNTACTIC_QUERY_DEFAULT = "<>arg1:[e]paracetamol is the recommended $treatment for <>arg2:[e]asthma."
 
 
 @st.cache(allow_output_mutation=True)
