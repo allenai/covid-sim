@@ -352,8 +352,8 @@ def main(model, results_sents, spike_df, num_results):
     
     sents2 = results_sents
     sents1 = [query_used] * len(sents2)
-    query_used_arg1 = query_used_arg1 * len(sents2)
-    query_used_arg2 = query_used_arg2 * len(sents2)
+    query_used_arg1 = [query_used_arg1] * len(sents2)
+    query_used_arg2 = [query_used_arg2] * len(sents2)
     
     results = evaluate_model(sents1, sents2, query_used_arg1, query_used_arg2, model, max_ngrams = 3, num_examples = len(sents1))
     annotated = []
