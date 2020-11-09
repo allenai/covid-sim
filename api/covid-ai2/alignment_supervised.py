@@ -23,17 +23,9 @@ from collections import defaultdict
 from nltk import ngrams as get_ngrams
 from termcolor import colored
 
+class BertModel(torch.nn.Module):
 
-
-global total 
-global count
-
-total = 0
-count = 0
-
-class BertModel(pl.LightningModule):
-
-    def __init__(self, train_dataset: Dataset, dev_dataset: Dataset, batch_size, device: str, mode: str = "eval", load_existing = False):
+    def __init__(self, device: str, mode: str = "eval", load_existing = False):
         
         super().__init__()
         
@@ -49,8 +41,6 @@ class BertModel(pl.LightningModule):
             self.model = AutoModel.from_pretrained('allenai/scibert_scivocab_uncased', config=config)    
             self.tokenizer = AutoTokenizer.from_pretrained('allenai/scibert_scivocab_uncased')
         
-        self.train_dataset = train_dataset
-        self.dev_dataset = dev_dataset
         self.linear_arg1_1 = torch.nn.Linear(768, 64)
         self.linear_arg2_1 = torch.nn.Linear(768, 64)
         self.linear_arg1_2 = torch.nn.Linear(768, 64)
@@ -63,28 +53,7 @@ class BertModel(pl.LightningModule):
             self.model.train()
         
         for p in self.model.parameters():
-            p.requires_grad = True
-        for p in self.model.encoder.layer[-1].parameters():
-            p.requires_grad = True
-        for p in self.model.encoder.layer[-2].parameters():
-            p.requires_grad = True       
-        for p in self.model.encoder.layer[-3].parameters():
-            p.requires_grad = True    
-        for p in self.model.encoder.layer[-4].parameters():
-            p.requires_grad = True 
-            
-        for p in self.model.embeddings.parameters():
-            p.requires_grad = True
-            
-        self.linear_arg1_1.requires_grad = True
-        self.linear_arg2_1.requires_grad = True
-        self.linear_arg1_2.requires_grad = True
-        self.linear_arg2_2.requires_grad = True
-        
-    
-        self.train_gen = torch.utils.data.DataLoader(self.train_dataset, batch_size=batch_size, drop_last=False, shuffle=True)
-        self.dev_gen = torch.utils.data.DataLoader(self.dev_dataset, batch_size=batch_size, drop_last=False, shuffle=False)
-        self.acc = None
+            p.requires_grad = False
 
         
     def tokenize(self, original_sentence: List[str]) -> Tuple[List[str], Dict[int, int]]:
@@ -128,102 +97,7 @@ class BertModel(pl.LightningModule):
         states = outputs[0][0] #[seq_len, 768]
         return states
     
-    def forward_with_loss_calculation2(self, bert_tokens, x, range_sent1, range_sent2, orig_to_tok_map, l, l_tokens,
-                                      metric = "l2", n_max = 5, alpha = 1, mode = "train", normalize=False, nb=0):
-        
-        range_sent2[0][0] -= l_tokens
-        range_sent2[0][1] -= l_tokens
-        range_sent2[1][0] -= l_tokens
-        range_sent2[1][1] -= l_tokens
-        
-        idx_arg1_all, idx_arg2_all, all_ngrams = None, None, None
-        
-        x_1, x_2 = x[0,:l_tokens], x[0,l_tokens:]
-        x_1, x_2 = torch.unsqueeze(x_1,0), torch.unsqueeze(x_2,0)
-        
-        outputs_1, outputs_2 = self.model(x_1), self.model(x_2)
-        states_1 = outputs_1[0][0] #[seq_len, 768]
-        states_2 = outputs_2[0][0] #[seq_len, 768]
-        
-        if metric == "cosine" or normalize:
-            states_1 = states_1 / (torch.norm(states_1, dim = 1, keepdim = True)+1e-8)
-            states_2 = states_2 / (torch.norm(states_2, dim = 1, keepdim = True)+1e-8)
-        
-        states_1 = self.linear_arg1_1(states_1)
-        states_2 = self.linear_arg1_2(states_2)
-        states = torch.cat([states_1, states_2], dim = 0)
-        
-        arg1_sent1, arg2_sent1 = range_sent1
-        arg1_sent2, arg2_sent2 = range_sent2
-        
-        sent1_arg1_vec, sent1_arg2_vec = states_1[arg1_sent1[0]:arg1_sent1[1]].mean(dim=0), states_1[arg2_sent1[0]:arg2_sent1[1]].mean(dim=0)
-        sent2_arg1_vec, sent2_arg2_vec = states_2[arg1_sent2[0]:arg1_sent2[1]].mean(dim=0), states_2[arg2_sent2[0]:arg2_sent2[1]].mean(dim=0)        
-        
-        all_false_ngrams_ranges = get_all_ngrams_spans(len(states_2), [arg1_sent2, arg2_sent2], start_ind = 0,
-                                                      n_max = n_max)      
-        negatives = [states_2[ngram[0]:ngram[1]].mean(dim=0) for ngram in all_false_ngrams_ranges]
-        negatives_arg1 = negatives + [sent2_arg2_vec]
-        negatives_arg2 = negatives + [sent2_arg1_vec]
-        negatives_arg1 = torch.stack(negatives_arg1).to(self.device)
-        negatives_arg2 = torch.stack(negatives_arg2).to(self.device)
-        
 
-        if mode == "eval":
-            all_ngrams = get_all_ngrams_spans(len(states), [], start_ind = l_tokens,
-                                                      n_max = n_max)
-            ngrams = [states[ngram[0]:ngram[1]].mean(dim=0) for ngram in all_ngrams]
-            ngrams = torch.stack(ngrams).to(self.device)
-        
-        
-        if metric == "l2":
-            dists_arg1 = torch.sqrt(((negatives_arg1-sent1_arg1_vec)**2).sum(dim = 1))
-            dists_arg2 = torch.sqrt(((negatives_arg2-sent1_arg2_vec)**2).sum(dim = 1))
-            dist_arg1_gold = (sent1_arg1_vec - sent2_arg1_vec).norm()
-            dist_arg2_gold = (sent1_arg2_vec - sent2_arg2_vec).norm()
-            if mode == "eval":
-                dist_arg1_all = torch.sqrt(((ngrams-sent1_arg1_vec)**2).sum(dim = 1))
-                dist_arg2_all = torch.sqrt(((ngrams-sent1_arg2_vec)**2).sum(dim = 1))
-                idx_arg1_all = torch.argsort(dist_arg1_all).detach().cpu().numpy()
-                idx_arg2_all = torch.argsort(dist_arg2_all).detach().cpu().numpy()   
-                
-        elif metric == "cosine":
-            dists_arg1 = 1 - negatives_arg1@sent1_arg1_vec.T
-            dists_arg2 = 1 - negatives_arg2@sent1_arg2_vec.T
-            dist_arg1_gold = 1 - sent1_arg1_vec@sent2_arg1_vec.T
-            dist_arg2_gold = 1 - sent1_arg2_vec@sent2_arg2_vec.T
-        
-        idx_arg1 = torch.argsort(dists_arg1).detach().cpu().numpy()
-        idx_arg2 = torch.argsort(dists_arg2).detach().cpu().numpy()
-        l = max(int(len(negatives)*0.3),1)
-        k = random.choice(range(min(len(negatives), 4))) if np.random.random() < 0.5 else random.choice(range(l))
-
-        dist_arg1_argmax = dists_arg1[idx_arg1[k]]
-        dist_arg2_argmax = dists_arg2[idx_arg2[k]]
-        
-        loss_arg1 = torch.max(torch.zeros(1).to(self.device), dist_arg1_gold - dist_arg1_argmax + alpha)
-        loss_arg2 = torch.max(torch.zeros(1).to(self.device), dist_arg2_gold - dist_arg2_argmax + alpha)
-        
-        loss = states[0,0:1]**2 #torch.zeros(1).to(self.device)
-        loss2_isnan = np.isnan(loss_arg2.detach().cpu().numpy().item())
-        loss1_isnan = np.isnan(loss_arg1.detach().cpu().numpy().item())
-        if not loss2_isnan:
-            loss += loss_arg2
-        if not loss1_isnan:
-            loss += loss_arg1
-        
-        if loss1_isnan or loss2_isnan:
-            print("ERROR: nan loss", loss1_isnan, loss2_isnan, nb)
-            return
-        
-        global count
-        global total
-        total += 1                                                      
-        #if loss.detach().cpu().numpy().item() < 1e-5:
-        if (dist_arg1_gold - dist_arg1_argmax).detach().cpu().numpy().item() < 0 and (dist_arg2_gold - dist_arg2_argmax).detach().cpu().numpy().item() < 0:
-            count += 1
-        
-        return loss, idx_arg1, idx_arg2, idx_arg1_all, idx_arg2_all, all_false_ngrams_ranges, all_ngrams
-        #return loss, np.argsort(dists_arg1+mask_gold_arg1)
 
     def forward_with_loss_calculation(self, bert_tokens, x, range_sent1, range_sent2, orig_to_tok_map, l, l_tokens,
                                       metric = "l2", n_max = 5, alpha = 0.075, mode = "train", normalize=False, nb=0):
@@ -311,91 +185,9 @@ class BertModel(pl.LightningModule):
             print("ERROR: nan loss", loss1_isnan, loss2_isnan, nb)
             return
         
-        global count
-        global total
-        total += 1                                                      
-        #if loss.detach().cpu().numpy().item() < 1e-5:
-        if (dist_arg1_gold - dist_arg1_argmax).detach().cpu().numpy().item() < 0 and (dist_arg2_gold - dist_arg2_argmax).detach().cpu().numpy().item() < 0:
-            count += 1
-        
         return loss, idx_arg1, idx_arg2, idx_arg1_all, idx_arg2_all, all_false_ngrams_ranges, all_ngrams
         #return loss, np.argsort(dists_arg1+mask_gold_arg1)
-        
-    def training_step(self, batch, batch_nb):
-        
-        sents_concat, idx, l, sent2_with_args = batch
-        idx = idx.detach().cpu().numpy()[0]
 
-        bert_tokens, orig_to_tok_map, tok_to_orig_map, tokens_tensor = self.tokenize(sents_concat[0].split(" "))        
-        
-        l_tokens = len(bert_tokens[:orig_to_tok_map[l.detach().cpu().numpy().item()-1]]) 
-        sent1_range_arg1 = get_entity_range_multiword_expression(idx[0][0], orig_to_tok_map)
-        sent1_range_arg2 = get_entity_range_multiword_expression(idx[0][1], orig_to_tok_map)
-        sent2_range_arg1 = get_entity_range_multiword_expression(idx[1][0], orig_to_tok_map)
-        sent2_range_arg2 = get_entity_range_multiword_expression(idx[1][1], orig_to_tok_map)
-
-        range_sent1 = [sent1_range_arg1, sent1_range_arg2]
-        range_sent2 = [sent2_range_arg1, sent2_range_arg2]
-        
-#         print("******************From training:*********", len(bert_tokens),l_tokens)
-#         print(sents_concat)
-#         print("****************END FROM TRAINING**********")
-        loss, _, _, _, _, _, _ = self.forward_with_loss_calculation(bert_tokens, tokens_tensor, range_sent1, range_sent2, orig_to_tok_map, l, l_tokens, nb = batch_nb)
-        
-#         if np.isnan(loss.detach().cpu().numpy().item()) or loss.detach().cpu().numpy().item() > 1e4:
-#             print("ERRROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-#             print(sents_concat, range_sent1, range_sent2, sent1_idx, sent2_idx)
-#             return {"loss": loss*0}
-
-        if total%1000 == 0:
-            print("count", count/total)
-        return {'loss': loss}
-    
-    def validation_step(self, batch, batch_nb):
-
-        sents_concat, idx, l, sent2_with_args = batch
-        idx = idx.detach().cpu().numpy()[0]
-        bert_tokens, orig_to_tok_map, tok_to_orig_map, tokens_tensor = self.tokenize(sents_concat[0].split(" "))
-        l_tokens = len(bert_tokens[:orig_to_tok_map[l.detach().cpu().numpy().item()-1]]) 
-        sent1_range_arg1 = get_entity_range_multiword_expression(idx[0][0], orig_to_tok_map)
-        sent1_range_arg2 = get_entity_range_multiword_expression(idx[0][1], orig_to_tok_map)
-        sent2_range_arg1 = get_entity_range_multiword_expression(idx[1][0], orig_to_tok_map)
-        sent2_range_arg2 = get_entity_range_multiword_expression(idx[1][1], orig_to_tok_map)
-        
-        range_sent1 = [sent1_range_arg1,sent1_range_arg2]
-        range_sent2 = [sent2_range_arg1,sent2_range_arg2]
-        loss, _, _, _, _, _, _ = self.forward_with_loss_calculation(bert_tokens, tokens_tensor, range_sent1, range_sent2, orig_to_tok_map, l, l_tokens)
-        
-#         print(sents_concat)
-#         print("---------------")
-#         print(sent2_with_args)
-#         print("------------")
-#         print(" ".join(bert_tokens[sent1_range_arg1[0]:sent1_range_arg1[1]]))
-#         print(" ".join(bert_tokens[sent1_range_arg2[0]:sent1_range_arg2[1]]))
-#         print(" ".join(bert_tokens[sent2_range_arg1[0]:sent2_range_arg1[1]]))
-#         print(" ".join(bert_tokens[sent2_range_arg2[0]:sent2_range_arg2[1]]))
-#         print("============================================")
-        #loss, argsort = self.forward_with_loss_calculation(tokens_tensor, sent1_idx, sent2_idx, orig_to_tok_map, tok_to_orig_map, l, l_tokens)
-
-        return {'val_loss': loss}
-    
-    def validation_end(self, outputs):
-        avg_loss = torch.stack([x['val_loss'] for x in output])
-    def configure_optimizers(self):
-        #return torch.optim.RMSprop(self.parameters())
-        #return torch.optim.ASGD(self.parameters())
-        return torch.optim.SGD(self.parameters(), lr=1e-4, momentum=0.75)        
-        #return torch.optim.Adam(self.parameters())
-    
-    @pl.data_loader
-    def train_dataloader(self):
-        return self.train_gen
-
-    @pl.data_loader
-    def val_dataloader(self):
-        # OPTIONAL
-        # can also return a list of val dataloaders
-        return self.dev_gen
     
     
 def get_entity_range(index_orig, orig_to_tok_map):
