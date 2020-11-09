@@ -18,7 +18,7 @@ NUM_RESULTS_TO_ALIGN_DEFAULT = 25
 DEFAULT_MAX_NGRAM = 5
 BOOLEAN_QUERY_DEFAULT = "virus lemma=originate"
 TOKEN_QUERY_DEFAULT = "novel coronavirus"
-SYNTACTIC_QUERY_DEFAULT = "The $mechanism $of $action of <>arg1:paracetamol is <>arg2:activation of something" #"<>arg1:[e]paracetamol is the recommended $treatment for <>arg2:[e]asthma."
+SYNTACTIC_QUERY_DEFAULT = "<>arg1:[e=CHEMICAL|SIMPLE_CHEMICAL]paracetamol $[lemma=word|act]works $by <>arg2:activation of something" #"<>arg1:[e]paracetamol is the recommended $treatment for <>arg2:[e]asthma."
 
 
 @st.cache(allow_output_mutation=True)
