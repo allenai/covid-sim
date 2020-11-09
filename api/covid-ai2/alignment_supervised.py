@@ -264,10 +264,10 @@ def prepare_example(sent1, sent2, arg1_sent1, arg2_sent1):
             
             sent1 = add_arguments(sent1, arg1_sent1[0], arg1_sent1[1], arg2_sent1[0], arg2_sent1[1])
             l = len(sent1.split(" ")) + 1 
-            arg1_sent1[0] += l
-            arg1_sent1[1] += l
-            arg2_sent1[0] += l
-            arg2_sent1[1] += l
+            #arg1_sent1[0] += l
+            #arg1_sent1[1] += l
+            #arg2_sent1[0] += l
+            #arg2_sent1[1] += l
 
             sents_concat = sent1 + " ***** " + sent2 #sents_concat.split(" ")[l] is the first token in the 2nd sent
             #create idx tensor. # 1stdim: sents, 2st dim: arg, 3st dim: start and end
