@@ -299,7 +299,7 @@ def evaluate_model(sents1, sents2, arg1_sent1, arg2_sent1, model, max_ngrams = 5
             loss, idx_arg1, idx_arg2, idx_arg1_all, idx_arg2_all, all_false_ngrams_ranges, all_ngrams = model.forward_with_loss_calculation(bert_tokens, tokens_tensor, range_sent1, range_sent2, orig_to_tok_map, l, l_tokens, mode = "eval", n_max=max_ngrams)
         preds.append({"sent": sents_concat, "tokens": bert_tokens, "tok2orig": tok_to_orig_map, "orig2tok": orig_to_tok_map,
                      "preds_arg1_tokens": idx_arg1_all, "preds_arg2_tokens": idx_arg2_all, "false_ngrams": all_false_ngrams_ranges,
-                      "all_ngrams": all_ngrams, "gold_arg1_range_tokens": sent2_range_arg1, "gold_arg2_range_tokens": sent2_range_arg2})
+                      "all_ngrams": all_ngrams, "gold_arg1_range_tokens": sent2_range_arg1, "gold_arg2_range_tokens": sent2_range_arg2, "l": l})
         
     return preds
 
@@ -364,6 +364,8 @@ def main(model, results_sents, spike_df, num_results, max_ngrams):
         arg2_start = p["tok2orig"][ngram_pred_arg2_idx[0]]
         arg2_end = p["tok2orig"][ngram_pred_arg2_idx[1]]        
         sent = p["sent"]
+       
         annotated_sent = perform_annotation(sent, [[arg1_start, arg1_end], [arg2_start, arg2_end]])
+        annotated_sent = annotated_sent[p["l"]:]
         annotated.append(annotated_sent)
     return annotated
