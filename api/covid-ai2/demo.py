@@ -163,6 +163,10 @@ elif mode == "Start with Query":
         perform_alignment = st.checkbox("Perform argument alignment", value=False, key=None)
     else:
         perform_alignment = False
+    
+    if perform_alignment:        
+        max_ngrams = st.select_slider('Maximum span size to align', options=[1, 2, 3, 4, 5, 6, 7])
+        
     filter_by = st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
     query_type_filtration = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
     filter_by_spike = query_type_filtration is not None
@@ -317,7 +321,7 @@ if start:
                     if query_type == "syntactic"  and perform_alignment:
                         with st.spinner('Performing argument alignment...'):
                             #colored_sents, annotated_sents= alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], NUM_RESULTS_TO_ALIGN)
-                            annotated_sents= alignment_supervised.main(bert_alignment_supervised, result_sents, results_df, NUM_RESULTS_TO_ALIGN)
+                            annotated_sents= alignment_supervised.main(bert_alignment_supervised, result_sents, results_df, NUM_RESULTS_TO_ALIGN, max_ngrams+1)
                             for s in annotated_sents:
                                 annotated_text(*s)
 
