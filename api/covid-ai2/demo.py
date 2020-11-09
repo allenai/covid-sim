@@ -14,7 +14,7 @@ import bert_all_seq
 import alignment_supervised
 from annot import annotation, annotated_text
 import time
-NUM_RESULTS_TO_ALIGN = 75
+NUM_RESULTS_TO_ALIGN = 25
 BOOLEAN_QUERY_DEFAULT = "virus lemma=originate"
 TOKEN_QUERY_DEFAULT = "novel coronavirus"
 SYNTACTIC_QUERY_DEFAULT = "arg1:[e]paracetamol is the recommended $treatment for arg2:[e]asthma."
