@@ -14,7 +14,7 @@ import bert_all_seq
 import alignment_supervised
 from annot import annotation, annotated_text
 import time
-NUM_RESULTS_TO_ALIGN = 25
+NUM_RESULTS_TO_ALIGN_DEFAULT = 25
 BOOLEAN_QUERY_DEFAULT = "virus lemma=originate"
 TOKEN_QUERY_DEFAULT = "novel coronavirus"
 SYNTACTIC_QUERY_DEFAULT = "arg1:[e]paracetamol is the recommended $treatment for arg2:[e]asthma."
@@ -165,6 +165,8 @@ elif mode == "Start with Query":
         perform_alignment = False
     
     if perform_alignment:
+        
+        number_of_sentences_to_align = st.select_slider('Number of sentences to align.', options=[1, 10, 25, 50, 100, 250, 500], value = NUM_RESULTS_TO_ALIGN_DEFAULT)
         alignment_method = st.radio("Alignment model", ('Naive', 'Metric model'))
         if alignment_method != "Naive": 
             max_ngrams = st.select_slider('Maximum span size to align', options=[1, 2, 3, 4, 5, 6, 7], value = 3)
@@ -324,9 +326,9 @@ if start:
                         with st.spinner('Performing argument alignment...'):
                             #colored_sents, annotated_sents= alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], NUM_RESULTS_TO_ALIGN)
                             if alignment_method == "Naive":
-                                colored_sents, annotated_sents = alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], NUM_RESULTS_TO_ALIGN)
+                                colored_sents, annotated_sents = alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], number_of_sentences_to_align)
                             else:
-                                annotated_sents= alignment_supervised.main(bert_alignment_supervised, result_sents, results_df, NUM_RESULTS_TO_ALIGN, max_ngrams+1)
+                                annotated_sents= alignment_supervised.main(bert_alignment_supervised, result_sents, results_df, number_of_sentences_to_align, max_ngrams+1)
                             for s in annotated_sents:
                                 annotated_text(*s)
 
