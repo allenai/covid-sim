@@ -164,8 +164,10 @@ elif mode == "Start with Query":
     else:
         perform_alignment = False
     
-    if perform_alignment:        
-        max_ngrams = st.select_slider('Maximum span size to align', options=[1, 2, 3, 4, 5, 6, 7])
+    if perform_alignment:
+        alignment_method = st.radio("Alignment model", ('Naive', 'Metric model'))
+        if alignment_method != "Naive": 
+            max_ngrams = st.select_slider('Maximum span size to align', options=[1, 2, 3, 4, 5, 6, 7], value = 3)
         
     filter_by = st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
     query_type_filtration = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
@@ -321,7 +323,10 @@ if start:
                     if query_type == "syntactic"  and perform_alignment:
                         with st.spinner('Performing argument alignment...'):
                             #colored_sents, annotated_sents= alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], NUM_RESULTS_TO_ALIGN)
-                            annotated_sents= alignment_supervised.main(bert_alignment_supervised, result_sents, results_df, NUM_RESULTS_TO_ALIGN, max_ngrams+1)
+                            if alignment_method == "Naive":
+                                colored_sents, annotated_sents = alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], NUM_RESULTS_TO_ALIGN)
+                            else:
+                                annotated_sents= alignment_supervised.main(bert_alignment_supervised, result_sents, results_df, NUM_RESULTS_TO_ALIGN, max_ngrams+1)
                             for s in annotated_sents:
                                 annotated_text(*s)
 
