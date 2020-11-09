@@ -20,6 +20,7 @@ from torch.utils.data import Dataset
 from typing import Dict, Tuple
 from scipy.spatial.distance import cosine as cosine_distance
 from collections import defaultdict
+import nltk
 from nltk import ngrams as get_ngrams
 from termcolor import colored
 
