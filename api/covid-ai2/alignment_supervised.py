@@ -270,7 +270,7 @@ def prepare_example(sent1, sent2, arg1_sent1, arg2_sent1):
             return sents_concat, torch.tensor(idx).int(), l, sent2_with_args
         
         
-def evaluate_model(sents1, sents2, arg1_sent1, arg2_sent1, model, max_ngrams = 2, num_examples = 200):
+def evaluate_model(sents1, sents2, arg1_sent1, arg2_sent1, model, max_ngrams = 5, num_examples = 200):
     
     preds = []
     count = 0
