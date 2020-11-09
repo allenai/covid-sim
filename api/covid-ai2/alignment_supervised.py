@@ -298,7 +298,7 @@ def evaluate_model(sents1, sents2, arg1_sent1, arg2_sent1, model, max_ngrams = 5
         st.write("=====================")
         st.write(bert_tokens)
         st.write("=====================")
-        st.write(orig_to_top_map)
+        st.write(orig_to_tok_map)
         
         sent1_range_arg1 = get_entity_range_multiword_expression(idx[0][0], orig_to_tok_map)
         sent1_range_arg2 = get_entity_range_multiword_expression(idx[0][1], orig_to_tok_map)
