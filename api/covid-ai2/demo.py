@@ -15,6 +15,7 @@ import alignment_supervised
 from annot import annotation, annotated_text
 import time
 NUM_RESULTS_TO_ALIGN_DEFAULT = 25
+DEFAULT_MAX_NGRAM = 5
 BOOLEAN_QUERY_DEFAULT = "virus lemma=originate"
 TOKEN_QUERY_DEFAULT = "novel coronavirus"
 SYNTACTIC_QUERY_DEFAULT = "<>arg1:[e]paracetamol is the recommended $treatment for <>arg2:[e]asthma."
@@ -169,7 +170,7 @@ elif mode == "Start with Query":
         number_of_sentences_to_align = st.select_slider('Number of sentences to align.', options=[1, 10, 25, 50, 100, 250, 500], value = NUM_RESULTS_TO_ALIGN_DEFAULT)
         alignment_method = st.radio("Alignment model", ('Naive', 'Metric model'))
         if alignment_method != "Naive": 
-            max_ngrams = st.select_slider('Maximum span size to align', options=[1, 2, 3, 4, 5, 6, 7], value = 3)
+            max_ngrams = st.select_slider('Maximum span size to align', options=[1, 2, 3, 4, 5, 6, 7, 8], value = DEFAULT_MAX_NGRAM)
         
     filter_by = st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
     query_type_filtration = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
