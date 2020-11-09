@@ -288,7 +288,18 @@ def evaluate_model(sents1, sents2, arg1_sent1, arg2_sent1, model, max_ngrams = 5
         
         idx = idx.detach().cpu().numpy()
         bert_tokens, orig_to_tok_map, tok_to_orig_map, tokens_tensor = model.tokenize(sents_concat.split(" "))
-        l_tokens = len(bert_tokens[:orig_to_tok_map[l-1]]) 
+        l_tokens = len(bert_tokens[:orig_to_tok_map[l-1]])
+        
+        st.write(sents_concat)
+        st.write("=====================")
+        st.write(idx)
+        st.write("=====================")
+        st.write(l)
+        st.write("=====================")
+        st.write(bert_tokens)
+        st.write("=====================")
+        st.write(orig_to_top_map)
+        
         sent1_range_arg1 = get_entity_range_multiword_expression(idx[0][0], orig_to_tok_map)
         sent1_range_arg2 = get_entity_range_multiword_expression(idx[0][1], orig_to_tok_map)
         sent2_range_arg1 = get_entity_range_multiword_expression(idx[1][0], orig_to_tok_map)
