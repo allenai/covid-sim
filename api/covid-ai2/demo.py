@@ -11,6 +11,7 @@ import sklearn
 import time
 import alignment
 import bert_all_seq
+import alignment_supervised
 from annot import annotation, annotated_text
 import time
 NUM_RESULTS_TO_ALIGN = 75
@@ -53,7 +54,13 @@ def load_bert_all_seq():
     with st.spinner('Loading BERT...'):
         model = bert_all_seq.BertEncoder("cpu")
         return model
-
+    
+@st.cache(allow_output_mutation=True)
+def load_bert_alignment_supervised():
+    with st.spinner('Loading BERT...'):
+        model = alignment_supervised.BertModel("cpu")
+        return model    
+    
 @st.cache(allow_output_mutation=True)        
 def load_pca(pooling):
 
@@ -85,6 +92,7 @@ print("len sents", len(sents))
 index = load_index(similarity, pooling)
 bert = load_bert()
 bert_all_seq = load_bert_all_seq()
+bert_alignment_supervised = load_bert_alignment_supervised()
 pca = load_pca(pooling)
 st.write("Uses {}-dimensional vectors".format(pca.components_.shape[0]))
 st.write("Number of indexed sentences: {}".format(len(sents)))
@@ -308,7 +316,8 @@ if start:
 
                     if query_type == "syntactic"  and perform_alignment:
                         with st.spinner('Performing argument alignment...'):
-                            colored_sents, annotated_sents= alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], NUM_RESULTS_TO_ALIGN)
+                            #colored_sents, annotated_sents= alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], NUM_RESULTS_TO_ALIGN)
+                            annotated_sents= alignment_supervised.main(bert_alignment_supervised, result_sents, results_df, NUM_RESULTS_TO_ALIGN)
                             for s in annotated_sents:
                                 annotated_text(*s)
 
