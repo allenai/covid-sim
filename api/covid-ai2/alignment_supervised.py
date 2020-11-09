@@ -117,7 +117,7 @@ class BertModel(torch.nn.Module):
         sent1_arg1_vec, sent1_arg2_vec = states[arg1_sent1[0]:arg1_sent1[1]].mean(dim=0), states[arg2_sent1[0]:arg2_sent1[1]].mean(dim=0)
         sent2_arg1_vec, sent2_arg2_vec = states[arg1_sent2[0]:arg1_sent2[1]].mean(dim=0), states[arg2_sent2[0]:arg2_sent2[1]].mean(dim=0)        
         
-        all_false_ngrams_ranges = get_all_ngrams_spans(len(states), [arg1_sent1, arg1_sent2, arg2_sent1, arg2_sent2], start_ind = 0,
+        all_false_ngrams_ranges = get_all_ngrams_spans(len(states), [arg1_sent1, arg1_sent2, arg2_sent1, arg2_sent2], start_ind = l_tokens,
                                                       n_max = n_max)      
         negatives = [states[ngram[0]:ngram[1]].mean(dim=0) for ngram in all_false_ngrams_ranges]
         negatives_arg1 = negatives + [sent1_arg2_vec, sent2_arg2_vec]
