@@ -19,7 +19,7 @@ DEFAULT_MAX_NGRAM = 5
 BOOLEAN_QUERY_DEFAULT = "virus lemma=originate"
 TOKEN_QUERY_DEFAULT = "novel coronavirus"
 SYNTACTIC_QUERY_DEFAULT = "<>arg1:[e=CHEMICAL|SIMPLE_CHEMICAL]paracetamol $[lemma=word|act]works $by <>arg2:activation of something" #"<>arg1:[e]paracetamol is the recommended $treatment for <>arg2:[e]asthma."
-
+SPIKE_RESULTS_DEFAULT = 50
 
 @st.cache(allow_output_mutation=True)
 def load_sents_and_ids():
@@ -158,8 +158,8 @@ elif mode == "Start with Query":
     elif query_type == "token":
        input_query = st.text_input('Query to augment', TOKEN_QUERY_DEFAULT)
 
-    max_results = st.slider('Max number of SPIKE results', 1, 1000, 25)  #int(st.text_input("Max number of results", 25))
-    max_number_of_augmented_results = st.slider('Number of Augmented results', 1, 250, 100)
+    max_results = st.slider('Max number of SPIKE results', 1, 1000, SPIKE_RESULTS_DEFAULT)  #int(st.text_input("Max number of results", 25))
+    max_number_of_augmented_results = st.slider('Number of Augmented results', 1, 500, 100)
     if query_type == "syntactic":
         perform_alignment = st.checkbox("Perform argument alignment", value=False, key=None)
     else:
