@@ -34,9 +34,9 @@ class BertModel(torch.nn.Module):
         self.device = device
         
         if load_existing:
-            config = AutoConfig.from_pretrained('Shauli/IE-metric-model-spike', output_hidden_states=True)
-            self.model = AutoModel.from_pretrained('Shauli/IE-metric-model-spike', config=config)    
-            self.tokenizer = AutoTokenizer.from_pretrained('Shauli/IE-metric-model-spike')
+            config = AutoConfig.from_pretrained('Shauli/RE-metric-model-spike', output_hidden_states=True)
+            self.model = AutoModel.from_pretrained('Shauli/RE-metric-model-spike', config=config)    
+            self.tokenizer = AutoTokenizer.from_pretrained('Shauli/RE-metric-model-spike')
         
         else:
             config = AutoConfig.from_pretrained('allenai/scibert_scivocab_uncased', output_hidden_states=True)
