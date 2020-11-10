@@ -43,7 +43,10 @@ class BertModel(torch.nn.Module):
             self.model = AutoModel.from_pretrained('allenai/scibert_scivocab_uncased', config=config)    
             self.tokenizer = AutoTokenizer.from_pretrained('allenai/scibert_scivocab_uncased')
         
-        self.linear_arg1_1 = torch.nn.Linear(768, 64)
+        if load_existing:
+            self.linear_arg1_1 = torch.load("Shauli/RE-metric-model-spike/linear.pt")
+        else:
+            self.linear_arg1_1 = torch.nn.Linear(768, 64)
         self.linear_arg2_1 = torch.nn.Linear(768, 64)
         self.linear_arg1_2 = torch.nn.Linear(768, 64)
         self.linear_arg2_2 = torch.nn.Linear(768, 64)
