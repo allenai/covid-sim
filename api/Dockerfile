@@ -26,9 +26,9 @@ COPY install.sh .
 COPY requirements.txt .
 COPY download_bert_model.py .
 RUN sh ./install.sh
-
 #RUN git clone https://github.com/Shaul1321/covid-ai2
 COPY covid-ai2 ./covid-ai2
+RUN wget https://s3.amazonaws.com/models.huggingface.co/bert/Shauli/RE-metric-model-spike/linear.pt -O ./covid-ai2/linear.pt
 WORKDIR /usr/src/app/covid-ai2
 RUN ls
 # download data & run streamlit
