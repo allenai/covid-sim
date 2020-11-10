@@ -19,7 +19,7 @@ DEFAULT_MAX_NGRAM = 5
 BOOLEAN_QUERY_DEFAULT = "virus lemma=originate"
 TOKEN_QUERY_DEFAULT = "novel coronavirus"
 SYNTACTIC_QUERY_DEFAULT = "<>arg1:[e=CHEMICAL|SIMPLE_CHEMICAL]paracetamol $[lemma=word|act]works $by <>arg2:activation of something" #"<>arg1:[e]paracetamol is the recommended $treatment for <>arg2:[e]asthma."
-SPIKE_RESULTS_DEFAULT =  50
+SPIKE_RESULTS_DEFAULT = 50
 
 @st.cache(allow_output_mutation=True)
 def load_sents_and_ids():
