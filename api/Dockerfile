@@ -23,6 +23,7 @@ RUN wget \
 WORKDIR /usr/src/app
 
 COPY install.sh .
+
 COPY requirements.txt .
 COPY download_bert_model.py .
 RUN sh ./install.sh
