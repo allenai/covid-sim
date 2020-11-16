@@ -14,7 +14,7 @@ import bert_all_seq
 import alignment_supervised
 from annot import annotation, annotated_text
 import time
-NUM_RESULTS_TO_ALIGN_DEFAULT = 200
+NUM_RESULTS_TO_ALIGN_DEFAULT = 25
 DEFAULT_MAX_NGRAM = 5
 BOOLEAN_QUERY_DEFAULT = "virus lemma=originate"
 TOKEN_QUERY_DEFAULT = "novel coronavirus"
@@ -159,7 +159,7 @@ elif mode == "Start with Query":
        input_query = st.text_input('Query to augment', TOKEN_QUERY_DEFAULT)
 
     max_results = st.slider('Max number of SPIKE results', 1, 1000, SPIKE_RESULTS_DEFAULT)  #int(st.text_input("Max number of results", 25))
-    max_number_of_augmented_results = st.slider('Number of Augmented results', 1, 1500, 300)
+    max_number_of_augmented_results = st.slider('Number of Augmented results', 1, 1500, 100)
     if query_type == "syntactic":
         perform_alignment = st.checkbox("Perform argument alignment", value=False, key=None)
     else:
