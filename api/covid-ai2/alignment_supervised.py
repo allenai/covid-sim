@@ -380,4 +380,4 @@ def main(model, results_sents, spike_df, num_results, max_ngrams):
     args1, args2 = list(zip(*captures))
     arg1_counter, arg2_counter = Counter(args1), Counter(args2)
     
-    return annotated, list(arg1_counter.items()), list(arg2_counter.item()) 
+    return annotated, arg1_counter.most_common(500), arg2_counter.most_common(500) 
