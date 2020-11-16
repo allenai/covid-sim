@@ -370,7 +370,7 @@ def main(model, results_sents, spike_df, num_results, max_ngrams):
         arg2_end = p["tok2orig"][ngram_pred_arg2_idx[1]]        
         sent = p["sent"]
         sent_lst = sent.split(" ")
-        captures.append((sent_lst[arg1_start:arg1_end], sent_lst[arg2_start:arg2_end]))
+        captures.append((" ".join(sent_lst[arg1_start:arg1_end]), " ".join(sent_lst[arg2_start:arg2_end])))
        
         annotated_sent = perform_annotation(sent, [[arg1_start, arg1_end], [arg2_start, arg2_end]])
         annotated_sent = annotated_sent[p["l"]:]
