@@ -159,7 +159,7 @@ elif mode == "Start with Query":
        input_query = st.text_input('Query to augment', TOKEN_QUERY_DEFAULT)
 
     max_results = st.slider('Max number of SPIKE results', 1, 1000, SPIKE_RESULTS_DEFAULT)  #int(st.text_input("Max number of results", 25))
-    max_number_of_augmented_results = st.slider('Number of Augmented results', 1, 2500, 500)
+    max_number_of_augmented_results = st.slider('Number of Augmented results', 1, 1500, 300)
     if query_type == "syntactic":
         perform_alignment = st.checkbox("Perform argument alignment", value=False, key=None)
     else:
@@ -329,18 +329,14 @@ if start:
                             if alignment_method == "Naive":
                                 colored_sents, annotated_sents = alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], number_of_sentences_to_align)
                             else:
-                                annotated_sents, arg1_items, arg2_items, tuples_counts_df = alignment_supervised.main(bert_alignment_supervised, result_sents, results_df, number_of_sentences_to_align, max_ngrams+1)
-                                arg1_counts_df = pd.DataFrame(arg1_items, columns =['entity', 'count'])
-                                arg2_counts_df = pd.DataFrame(arg2_items, columns =['entity', 'count'])
-                                tuples_counts_df = pd.DataFrame(tuples_items, columns =['entity', 'count'])
-                            
-                                st.sidebar.write('ARG1 Aggregation:')
-                                st.sidebar.write(arg1_counts_df.head(15))
-                                st.sidebar.write('ARG2 Aggregation:')
-                                st.sidebar.write(arg2_counts_df.head(15))
-                                st.sidebar.write('Tuples Aggregation:')
-                                st.sidebar.write(tuples_counts_df.head(15))
-                            
+                                annotated_sents, arg1_items, arg2_items = alignment_supervised.main(bert_alignment_supervised, result_sents, results_df, number_of_sentences_to_align, max_ngrams+1)
+                            arg1_counts_df = pd.DataFrame(arg1_items, columns =['entity', 'count'])
+                            arg2_counts_df = pd.DataFrame(arg2_items, columns =['entity', 'count']) 
+                            st.sidebar.write('ARG1 Aggregation')
+                            st.sidebar.write(arg1_counts_df.head(15))
+                            st.sidebar.write('ARG2 Aggregation')
+                            st.sidebar.write(arg2_counts_df.head(15))
+                           
                             for s in annotated_sents:
                                 annotated_text(*s)
 
