@@ -260,7 +260,11 @@ def add_arguments(sent:str, arg1_start, arg1_end, arg2_start, arg2_end):
         return s_with_args
     
 def prepare_example(sent1, sent2, arg1_sent1, arg2_sent1):
-
+            st.write(arg1_sent1)
+            st.write(arg2_sent1)
+            st.write(sent1)
+            st.write(sent2)
+            
             sent1 = add_arguments(sent1, arg1_sent1[0], arg1_sent1[1], arg2_sent1[0], arg2_sent1[1])
             l = len(sent1.split(" ")) + 1 
             #arg1_sent1[0] += l
