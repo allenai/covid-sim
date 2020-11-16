@@ -18,7 +18,7 @@ from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
 from typing import Dict, Tuple
 from scipy.spatial.distance import cosine as cosine_distance
-from collections import defaultdict, Counter
+from collections import defaultdict
 import nltk
 from nltk import ngrams as get_ngrams
 from termcolor import colored
@@ -260,11 +260,7 @@ def add_arguments(sent:str, arg1_start, arg1_end, arg2_start, arg2_end):
         return s_with_args
     
 def prepare_example(sent1, sent2, arg1_sent1, arg2_sent1):
-            st.write(arg1_sent1)
-            st.write(arg2_sent1)
-            st.write(sent1)
-            st.write(sent2)
-            
+
             sent1 = add_arguments(sent1, arg1_sent1[0], arg1_sent1[1], arg2_sent1[0], arg2_sent1[1])
             l = len(sent1.split(" ")) + 1 
             #arg1_sent1[0] += l
@@ -313,8 +309,7 @@ def evaluate_model(sents1, sents2, arg1_sent1, arg2_sent1, model, max_ngrams = 5
 
 def main(model, results_sents, spike_df, num_results, max_ngrams):
 
-    captures = []
-    
+
     def pretty_print(sent, idx_arg1, idx_arg2):
     
         sent_lst = sent.split(" ")
@@ -372,15 +367,8 @@ def main(model, results_sents, spike_df, num_results, max_ngrams):
         arg2_start = p["tok2orig"][ngram_pred_arg2_idx[0]]
         arg2_end = p["tok2orig"][ngram_pred_arg2_idx[1]]        
         sent = p["sent"]
-        sent_lst = sent.split(" ")
-        captures.append((" ".join(sent_lst[arg1_start:arg1_end]), " ".join(sent_lst[arg2_start:arg2_end])))
        
         annotated_sent = perform_annotation(sent, [[arg1_start, arg1_end], [arg2_start, arg2_end]])
         annotated_sent = annotated_sent[p["l"]:]
         annotated.append(annotated_sent)
-    
-    # aggregate arguments
-    args1, args2 = list(zip(*captures))
-    arg1_counter, arg2_counter = Counter(args1), Counter(args2)
-    
-    return annotated, arg1_counter.most_common(500), arg2_counter.most_common(500) 
+    return annotated
