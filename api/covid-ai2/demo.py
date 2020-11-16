@@ -159,7 +159,7 @@ elif mode == "Start with Query":
        input_query = st.text_input('Query to augment', TOKEN_QUERY_DEFAULT)
 
     max_results = st.slider('Max number of SPIKE results', 1, 1000, SPIKE_RESULTS_DEFAULT)  #int(st.text_input("Max number of results", 25))
-    max_number_of_augmented_results = st.slider('Number of Augmented results', 1, 1500, 100)
+    max_number_of_augmented_results = st.slider('Number of Augmented results', 1, 500, 100)
     if query_type == "syntactic":
         perform_alignment = st.checkbox("Perform argument alignment", value=False, key=None)
     else:
@@ -167,7 +167,7 @@ elif mode == "Start with Query":
     
     if perform_alignment:
         
-        number_of_sentences_to_align = st.select_slider('Number of sentences to align.', options=[1, 10, 25, 50, 100, 200, 250, 500], value = NUM_RESULTS_TO_ALIGN_DEFAULT)
+        number_of_sentences_to_align = st.select_slider('Number of sentences to align.', options=[1, 10, 25, 50, 100, 250, 500], value = NUM_RESULTS_TO_ALIGN_DEFAULT)
         alignment_method = st.radio("Alignment model", ('Metric model', 'Naive'))
         if alignment_method != "Naive": 
             max_ngrams = st.select_slider('Maximum span size to align', options=[1, 2, 3, 4, 5, 6, 7, 8,9,10,11,12,13,14,15], value = DEFAULT_MAX_NGRAM)
@@ -329,14 +329,7 @@ if start:
                             if alignment_method == "Naive":
                                 colored_sents, annotated_sents = alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], number_of_sentences_to_align)
                             else:
-                                annotated_sents, arg1_items, arg2_items = alignment_supervised.main(bert_alignment_supervised, result_sents, results_df, number_of_sentences_to_align, max_ngrams+1)
-                            arg1_counts_df = pd.DataFrame(arg1_items, columns =['entity', 'count'])
-                            arg2_counts_df = pd.DataFrame(arg2_items, columns =['entity', 'count']) 
-                            st.sidebar.write('ARG1 Aggregation')
-                            st.sidebar.write(arg1_counts_df.head(15))
-                            st.sidebar.write('ARG2 Aggregation')
-                            st.sidebar.write(arg2_counts_df.head(15))
-                           
+                                annotated_sents= alignment_supervised.main(bert_alignment_supervised, result_sents, results_df, number_of_sentences_to_align, max_ngrams+1)
                             for s in annotated_sents:
                                 annotated_text(*s)
 
