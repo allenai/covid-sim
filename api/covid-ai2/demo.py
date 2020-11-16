@@ -335,11 +335,11 @@ if start:
                                 tuples_counts_df = pd.DataFrame(tuples_items, columns =['entity', 'count'])
                             
                                 st.sidebar.write('ARG1 Aggregation:')
-                                st.sidebar.write(arg1_counts_df.head(15))
+                                st.sidebar.write(arg1_counts_df.head(30))
                                 st.sidebar.write('ARG2 Aggregation:')
-                                st.sidebar.write(arg2_counts_df.head(15))
+                                st.sidebar.write(arg2_counts_df.head(30))
                                 st.sidebar.write('Tuples Aggregation:')
-                                st.sidebar.write(tuples_counts_df.head(15))
+                                st.sidebar.write(tuples_counts_df.head(30))
                             
                             for s in annotated_sents:
                                 annotated_text(*s)
