@@ -1,4 +1,3 @@
-
 import pandas as pd
 import tqdm
 import pickle
@@ -311,7 +310,6 @@ def evaluate_model(sents1, sents2, arg1_sent1, arg2_sent1, model, max_ngrams = 5
 def main(model, results_sents, spike_df, num_results, max_ngrams):
 
     captures = []
-    captures_tuples = []
     
     def pretty_print(sent, idx_arg1, idx_arg2):
     
@@ -371,13 +369,8 @@ def main(model, results_sents, spike_df, num_results, max_ngrams):
         arg2_end = p["tok2orig"][ngram_pred_arg2_idx[1]]        
         sent = p["sent"]
         sent_lst = sent.split(" ")
-        
-        arg1_str = " ".join(sent_lst[arg1_start:arg1_end])
-        arg2_str = " ".join(sent_lst[arg2_start:arg2_end])
-        #captures.append((arg1_str, arg2_str))
         captures.append((" ".join(sent_lst[arg1_start:arg1_end]), " ".join(sent_lst[arg2_start:arg2_end])))
-        
-        #captures_tuples.append("ARG1: {}; ARG2: {}".format(arg1_str, arg2_str))
+       
         annotated_sent = perform_annotation(sent, [[arg1_start, arg1_end], [arg2_start, arg2_end]])
         annotated_sent = annotated_sent[p["l"]:]
         annotated.append(annotated_sent)
@@ -385,6 +378,5 @@ def main(model, results_sents, spike_df, num_results, max_ngrams):
     # aggregate arguments
     args1, args2 = list(zip(*captures))
     arg1_counter, arg2_counter = Counter(args1), Counter(args2)
-    #tuples_counter = Counter(captures_tuples)
     
-    return annotated, arg1_counter.most_common(500), arg2_counter.most_common(500)#, tuples_counter.most_common(500)
+    return annotated, arg1_counter.most_common(500), arg2_counter.most_common(500) 
