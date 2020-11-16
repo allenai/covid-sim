@@ -378,6 +378,7 @@ def main(model, results_sents, spike_df, num_results, max_ngrams):
     
     # aggregate arguments
     args1, args2 = list(zip(*captures))
+    st.write(args1[:5]))
     arg1_counter, arg2_counter = Counter(args1), Counter(args2)
     
     return annotated, arg1_counter.most_common(500), arg2_counter.most_common(500) 
