@@ -333,9 +333,9 @@ if start:
                             arg1_counts_df = pd.DataFrame(arg1_items, columns =['entity', 'count'])
                             arg2_counts_df = pd.DataFrame(arg2_items, columns =['entity', 'count']) 
                             st.sidebar.write('ARG1 Aggregation')
-                            st.sidebar.write(arg1_counts_df)
+                            st.sidebar.write(arg1_counts_df.head(15))
                             st.sidebar.write('ARG2 Aggregation')
-                            st.sidebar.write(arg2_counts_df)
+                            st.sidebar.write(arg2_counts_df.head(15))
                            
                             for s in annotated_sents:
                                 annotated_text(*s)
