@@ -329,6 +329,8 @@ if start:
                             if alignment_method == "Naive":
                                 colored_sents, annotated_sents = alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], number_of_sentences_to_align)
                             else:
+                                st.write(result_sents.head(10))
+                                st.write(results_df.head(10))
                                 annotated_sents= alignment_supervised.main(bert_alignment_supervised, result_sents, results_df, number_of_sentences_to_align, max_ngrams+1)
                             for s in annotated_sents:
                                 annotated_text(*s)
