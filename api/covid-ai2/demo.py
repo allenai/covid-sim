@@ -330,10 +330,8 @@ if start:
                                 colored_sents, annotated_sents = alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], number_of_sentences_to_align)
                             else:
                                 annotated_sents, arg1_items, arg2_items = alignment_supervised.main(bert_alignment_supervised, result_sents, results_df, number_of_sentences_to_align, max_ngrams+1)
-                            arg1_counts_df = pd.DataFrame(arg1_items, columns =['entity', 'count'])
-                            arg2_counts_df = pd.DataFrame(arg2_items, columns =['entity', 'count'])
-                            arg1_counts_df.reset_index(drop=True, inplace = True)
-                            arg2_counts_df.reset_index(drop=True, inplace = True)
+                            arg1_counts_df = pd.DataFrame(arg1_items, columns =['entity', 'count'], index = False)
+                            arg2_counts_df = pd.DataFrame(arg2_items, columns =['entity', 'count'], index = False)
                             
                             st.sidebar.write('ARG1 Aggregation')
                             st.sidebar.write(arg1_counts_df.head(15))
