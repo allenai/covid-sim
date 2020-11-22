@@ -124,7 +124,6 @@ if mode == "Start with Sentence":
 
 
     filter_by =  st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
-    must_include = st.text_input('Get only results containing the following words', '')
     query_type = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
     filter_by_spike = query_type is not None
 
@@ -159,7 +158,7 @@ elif mode == "Start with Query":
        input_query = st.text_input('Query to augment', TOKEN_QUERY_DEFAULT)
 
     max_results = st.slider('Max number of SPIKE results', 1, 1000, SPIKE_RESULTS_DEFAULT)  #int(st.text_input("Max number of results", 25))
-    max_number_of_augmented_results = st.slider('Number of Augmented results', 1, 2500, 500)
+    max_number_of_augmented_results = st.slider('Number of Augmented results', 1, 15000, 500)
     if query_type == "syntactic":
         perform_alignment = st.checkbox("Perform argument alignment", value=False, key=None)
     else:
@@ -171,7 +170,8 @@ elif mode == "Start with Query":
         alignment_method = st.radio("Alignment model", ('Metric model', 'Naive'))
         if alignment_method != "Naive": 
             max_ngrams = st.select_slider('Maximum span size to align', options=[1, 2, 3, 4, 5, 6, 7, 8,9,10,11,12,13,14,15], value = DEFAULT_MAX_NGRAM)
-        
+    
+    must_include = st.text_input('Get only results containing the following words', '')
     filter_by = st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
     query_type_filtration = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
     filter_by_spike = query_type_filtration is not None
