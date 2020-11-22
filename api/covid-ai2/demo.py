@@ -159,7 +159,7 @@ elif mode == "Start with Query":
        input_query = st.text_input('Query to augment', TOKEN_QUERY_DEFAULT)
 
     max_results = st.slider('Max number of SPIKE results', 1, 1000, SPIKE_RESULTS_DEFAULT)  #int(st.text_input("Max number of results", 25))
-    max_number_of_augmented_results = st.slider('Number of Augmented results', 1, 15000, 500)
+    max_number_of_augmented_results = st.slider('Number of Augmented results', 1, 250000, 1000)
     if query_type == "syntactic":
         perform_alignment = st.checkbox("Perform argument alignment", value=False, key=None)
     else:
