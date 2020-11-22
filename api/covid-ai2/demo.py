@@ -123,7 +123,8 @@ if mode == "Start with Sentence":
     input_sentence = st.text_input('Enter a sentence for similarity search', 'The virus can spread rapidly via different transimission vectors.')
 
 
-    filter_by =  st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query')) 
+    filter_by =  st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
+    must_include = st.text_input('Get only results containing the following words', '')
     query_type = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
     filter_by_spike = query_type is not None
 
@@ -137,7 +138,6 @@ if mode == "Start with Sentence":
     if query_type is not None:
 
         filter_size = st.slider('Max number of results', 1, 10000, 3000)
-
         results_df = spike_queries.perform_query(filter_query, dataset_name = "covid19", num_results = filter_size, query_type = query_type)
         results_sents = np.array(results_df["sentence_text"].tolist())
         results_ids = [hash(s) for s in results_sents]
@@ -252,6 +252,8 @@ if start:
                     encoding = np.mean(encoding, axis = 0)
                     D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), max_number_of_augmented_results)
                     result_sents = [sents[i].replace("/","-") for i in I.squeeze()]
+                    if must_include != "":
+                        resulkts_sents = [sents[i].replace("/","-") for i in I.squeeze() if must_include in sents[i]]
 
                     if filter_by_spike:
                         with st.spinner('Filtering...'):
