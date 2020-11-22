@@ -20,6 +20,7 @@ BOOLEAN_QUERY_DEFAULT = "virus lemma=originate"
 TOKEN_QUERY_DEFAULT = "novel coronavirus"
 SYNTACTIC_QUERY_DEFAULT = "<>arg1:[e=CHEMICAL|SIMPLE_CHEMICAL]paracetamol $[lemma=word|act]works $by <>arg2:activation of something" #"<>arg1:[e]paracetamol is the recommended $treatment for <>arg2:[e]asthma."
 SPIKE_RESULTS_DEFAULT = 75
+must_include = ""
 
 @st.cache(allow_output_mutation=True)
 def load_sents_and_ids():
@@ -357,7 +358,7 @@ if start:
             st.write("No resutls found.")
 
  if show_results:
-    results = [sents[i] for i in I.squeeze()]
+    results = [sents[i] for i in I.squeeze() if must_include in sents[i]]
     if RESULT_FILTREATION:
         results = result_sents
     st.write("Performed query of type '{}'. Similarity search results:".format(mode))
