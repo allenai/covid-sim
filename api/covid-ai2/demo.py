@@ -253,7 +253,7 @@ if start:
                     D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), max_number_of_augmented_results)
                     result_sents = [sents[i].replace("/","-") for i in I.squeeze()]
                     if must_include != "":
-                        resulkts_sents = [sents[i].replace("/","-") for i in I.squeeze() if must_include in sents[i]]
+                        result_sents = [sents[i].replace("/","-") for i in I.squeeze() if must_include in sents[i]]
 
                     if filter_by_spike:
                         with st.spinner('Filtering...'):
