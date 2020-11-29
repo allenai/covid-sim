@@ -26,25 +26,25 @@ import streamlit as st
 
 class BertModel(torch.nn.Module):
 
-    def __init__(self):
+    def __init__(self, device: str, mode: str = "eval", load_existing = True):
         
         super().__init__()
         
-        config = AutoConfig.from_pretrained('finetuned_model/metric_model3', output_hidden_states=True)
-        self.tokenizer = AutoTokenizer.from_pretrained('finetuned_model/metric_model3')
-        self.model = AutoModel.from_pretrained('finetuned_model/metric_model3', config=config)            
+        config = AutoConfig.from_pretrained('Shauli/RE-metric-model-siamese-spike', output_hidden_states=True)
+        self.tokenizer = AutoTokenizer.from_pretrained('Shauli/RE-metric-model-siamese-spike')
+        self.model = AutoModel.from_pretrained('Shauli/RE-metric-model-siamese-spike', config=config)            
         
         self.train_dataset = train_dataset
         self.dev_dataset = dev_dataset
         self.linear_arg1_1 = torch.nn.Linear(768, 64) #torch.load("finetuned_model/metric_model/linear.pt") #torch.nn.Linear(768, 64)
-        self.linear_arg1_1.load_state_dict(torch.load("finetuned_model/metric_model3/linear.pt"))
+        self.linear_arg1_1.load_state_dict(torch.load("linear1.pt"))
         self.linear_arg2_1 = torch.nn.Linear(768, 64)
         self.linear_arg1_2 = torch.nn.Linear(768, 64)
-        self.linear_arg1_2.load_state_dict(torch.load("finetuned_model/metric_model3/linear2.pt"))
+        self.linear_arg1_2.load_state_dict(torch.load("linear2.pt"))
 
         self.linear_arg2_2 = torch.nn.Linear(768, 64)
         self.linear_is_same_relation = torch.nn.Linear(768, 1)
-        self.linear_is_same_relation.load_state_dict(torch.load("finetuned_model/metric_model3/linear_rel_clf.pt"))
+        #self.linear_is_same_relation.load_state_dict(torch.load("finetuned_model/metric_model3/linear_rel_clf.pt"))
         
         self.bce_loss = torch.nn.BCEWithLogitsLoss()
         
