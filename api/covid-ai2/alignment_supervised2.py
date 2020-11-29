@@ -212,7 +212,7 @@ def evaluate_model(spike_df, sents, model, k, max_ngrams = 5, num_examples = 200
             bert_tokens, orig_to_tok_map, tok_to_orig_map, tokens_tensor = model.tokenize(sents[i].split(" "), add_sep = True, add_cls = False)
             x = torch.unsqueeze(tokens_tensor,0)
             
-            idx_arg1_all, idx_arg2_all, all_ngrams, is_neg_pred = model.forward_with_loss_calculation_inference(x, sent1_arg1_vec, sent1_arg2_vec, orig_to_tok_map, mode = "eval", n_max=max_ngrams)
+            idx_arg1_all, idx_arg2_all, all_ngrams, is_neg_pred = model.forward_with_loss_calculation_inference(x, arg1_mean, arg2_mean, orig_to_tok_map, mode = "eval", n_max=max_ngrams)
         preds.append({"sent": sents_concat, "tokens": bert_tokens, "tok2orig": tok_to_orig_map, "orig2tok": orig_to_tok_map,
                      "preds_arg1_tokens": idx_arg1_all, "preds_arg2_tokens": idx_arg2_all,
                       "all_ngrams": all_ngrams})
