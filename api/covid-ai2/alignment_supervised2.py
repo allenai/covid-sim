@@ -230,7 +230,7 @@ def get_query_rep(spike_df, model, k = 5):
     
     arg1_vecs, arg2_vecs = [], []
     
-    for i in range(k):
+    for i in range(min(len(spike_df), k)):
     
         sent1 = query_sents[i] # use first query in all examples.
         arg1_sent1 = [query_arg1_starts[i], query_arg1_ends[i]]
@@ -293,23 +293,7 @@ def main(model, results_sents, spike_df, num_results, max_ngrams):
         return sent_new
 
     results_sents = results_sents[:num_results]
-    
-    query_sents = spike_df["sentence_text"].tolist()
-    query_arg1_starts = spike_df["arg1_first_index"]
-    query_arg1_ends = spike_df["arg1_last_index"]
-    query_arg2_starts = spike_df["arg2_first_index"]
-    query_arg2_ends = spike_df["arg2_last_index"]
-    
-    query_used = query_sents[0] # use first query in all examples.
-    query_used_arg1 = [query_arg1_starts[0], query_arg1_ends[0]]
-    query_used_arg2 = [query_arg2_starts[0], query_arg2_ends[0]]
-    
-    sents2 = results_sents
-    sents1 = [query_used] * len(sents2)
-    query_used_arg1 = [query_used_arg1] * len(sents2)
-    query_used_arg2 = [query_used_arg2] * len(sents2)
-    
-    results = evaluate_model(sents1, sents2, query_used_arg1, query_used_arg2, model, max_ngrams = max_ngrams, num_examples = len(sents1))
+    results = evaluate_model(spike_df, results_sents, model, k=5, max_ngrams = max_ngrams, num_examples = len(results_sents):
     annotated = []
     
     for p in results:
