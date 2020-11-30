@@ -11,7 +11,8 @@ import sklearn
 import time
 import alignment
 import bert_all_seq
-import alignment_supervised2 as alignment_supervised
+#import alignment_supervised2 as alignment_supervised
+import alignment_supervised
 from annot import annotation, annotated_text
 import time
 NUM_RESULTS_TO_ALIGN_DEFAULT = 200
