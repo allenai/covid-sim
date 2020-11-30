@@ -64,6 +64,9 @@ class BertModel(torch.nn.Module):
 
         if add_cls:
             bert_tokens = ["[CLS]"]
+        else:
+            bert_tokens = []
+            
         orig_to_tok_map = {}
         tok_to_orig_map = {}
         has_subwords = False
@@ -175,7 +178,6 @@ def get_all_ngrams_spans(seq_len, forbidden_ranges: List[tuple], start_ind = 0, 
     all_ngrams = [ngram for ngram in all_ngrams if not any(is_intersecting(ngram, forbidden_ranges))]
     return all_ngrams
 
-
 def add_arguments(sent:str, arg1_start, arg1_end, arg2_start, arg2_end):
     
         s_lst = sent.split(" ")
@@ -189,14 +191,14 @@ def add_arguments(sent:str, arg1_start, arg1_end, arg2_start, arg2_end):
         s_with_args = s_lst[:arg1_start] + [arg1_str] + s_lst[arg1_start:arg1_end+1] + [">>"] + s_lst[arg1_end+1:arg2_start] + [arg2_str] + s_lst[arg2_start:arg2_end+1] + ["}}"] +s_lst[arg2_end+1:]  
         #s_with_args = s_lst[:arg1_start] + [arg1_str+s_lst[arg1_ind]] + s_lst[arg1_ind+1:arg2_ind] + [arg2_str+s_lst[arg2_ind]] + s_lst[arg2_ind+1:]
         s_with_args = " ".join(s_with_args).replace("ARG1: ", "ARG1:").replace("ARG2: ", "ARG2:")
-        s_with_args = s_with_args.replace(" >>", ">>").replace(" }}", "}}").
+        s_with_args = s_with_args.replace(" >>", ">>").replace(" }}", "}}")
         return s_with_args
     
 def prepare_example(sent1, arg1_sent1, arg2_sent1):
 
             sent1 = add_arguments(sent1, arg1_sent1[0], arg1_sent1[1], arg2_sent1[0], arg2_sent1[1])
             idx = [[[arg1_sent1[0], arg1_sent1[1]], [arg2_sent1[0], arg2_sent1[1]]], [[0, 1], [0, 1]]] 
-            return sent1, torch.tensor(idx).int()
+            return sent1, np.array(idx)
         
 def evaluate_model(spike_df, sents, model, k, max_ngrams = 5, num_examples = 200):
     
@@ -210,7 +212,7 @@ def evaluate_model(spike_df, sents, model, k, max_ngrams = 5, num_examples = 200
                
         with torch.no_grad():
             bert_tokens, orig_to_tok_map, tok_to_orig_map, tokens_tensor = model.tokenize(sents[i].split(" "), add_sep = True, add_cls = False)
-            x = torch.unsqueeze(tokens_tensor,0)
+            x = tokens_tensor
             
             idx_arg1_all, idx_arg2_all, all_ngrams, is_neg_pred = model.forward_with_loss_calculation_inference(x, arg1_mean, arg2_mean, orig_to_tok_map, mode = "eval", n_max=max_ngrams)
         preds.append({"sent": sents_concat, "tokens": bert_tokens, "tok2orig": tok_to_orig_map, "orig2tok": orig_to_tok_map,
@@ -235,21 +237,21 @@ def get_query_rep(spike_df, model, k = 5):
         sent1 = query_sents[i] # use first query in all examples.
         arg1_sent1 = [query_arg1_starts[i], query_arg1_ends[i]]
         arg2_sent1 = [query_arg2_starts[i], query_arg2_ends[i]]
-        sent1 = prepare_example(sent1, arg1_sent1, arg2_sent1)
+        sent1, idx = prepare_example(sent1, arg1_sent1, arg2_sent1)
         bert_tokens, orig_to_tok_map, tok_to_orig_map, tokens_tensor = model.tokenize(sent1.split(" "), add_sep = False, add_cls = True)
         
         with torch.no_grad():
             x = torch.unsqueeze(tokens_tensor,0)
-            states = model.forward_pass(x, is_query = True)
+            states = model.forward_pass(tokens_tensor, is_query = True)
             sent1_range_arg1 = get_entity_range_multiword_expression(idx[0][0], orig_to_tok_map)
             sent1_range_arg2 = get_entity_range_multiword_expression(idx[0][1], orig_to_tok_map)       
             sent1_arg1_vec, sent1_arg2_vec = states[sent1_range_arg1[0]:sent1_range_arg1[1]].mean(dim=0), states[sent1_range_arg2[0]:sent1_range_arg2[1]].mean(dim=0)
             arg1_vecs.append(sent1_arg1_vec)
             arg2_vecs.append(sent1_arg2_vec)
         
-        
-    arg1_mean = torch.cat(arg1_vecs, dim = 0).mean(dim = 0)
-    arg2_mean = torch.cat(arg2_vecs, dim = 0).mean(dim = 0)
+    
+    arg1_mean = torch.stack(arg1_vecs, dim = 0).mean(dim = 0)
+    arg2_mean = torch.stack(arg2_vecs, dim = 0).mean(dim = 0)
     
     return arg1_mean, arg2_mean
 
