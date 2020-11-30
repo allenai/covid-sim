@@ -36,8 +36,8 @@ RUN sh ./install.sh
 #RUN git clone https://github.com/Shaul1321/covid-ai2
 COPY covid-ai2 ./covid-ai2
 RUN wget https://s3.amazonaws.com/models.huggingface.co/bert/Shauli/RE-metric-model-spike/linear.pt -O ./covid-ai2/linear.pt
-RUN wget https://huggingface.co/Shauli/RE-metric-model-siamese-spike/blob/main/linear1.pt -O /covid-ai2/linear1.pt
-RUN wget https://huggingface.co/Shauli/RE-metric-model-siamese-spike/blob/main/linear2.pt -O /covid-ai2/linear2.pt
+RUN wget https://huggingface.co/Shauli/RE-metric-model-siamese-spike/blob/main/linear1.pt -O ./covid-ai2/linear1.pt
+RUN wget https://huggingface.co/Shauli/RE-metric-model-siamese-spike/blob/main/linear2.pt -O ./covid-ai2/linear2.pt
 
 #RUN wget https://huggingface.co/Shauli/IE-metric-model-spike/blob/main/linear.pt -O ./covid-ai2/linear.pt
 WORKDIR /usr/src/app/covid-ai2
