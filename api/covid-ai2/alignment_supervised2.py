@@ -295,7 +295,7 @@ def main(model, results_sents, spike_df, num_results, max_ngrams):
         return sent_new
 
     results_sents = results_sents[:num_results]
-    results = evaluate_model(spike_df, results_sents, model, k=5, max_ngrams = max_ngrams, num_examples = len(results_sents)
+    results = evaluate_model(spike_df, results_sents, model, k=5, max_ngrams = max_ngrams, num_examples = len(results_sents))
     annotated = []
     
     for p in results:
