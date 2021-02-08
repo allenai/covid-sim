@@ -72,22 +72,7 @@ def load_pca(pooling):
     
         return pickle.load(f)
     
-@st.cache(allow_output_mutation=True)        
-def present_results(results, to_enhance, to_decrease):
-    for i in range(len(results)):
-                    
-                cols = st.beta_columns((10,1,1))
-                cols[0].write(results[i])
-                enhance = cols[1].checkbox('✓', key = "en-"+str(i))
-                decrease = cols[2].checkbox('✗', key = "dec-"+str(i))
-                if enhance:
-                    st.write("yay enhance")
-                    to_enhance.append(i)
-                if decrease:
-                    st.write("yay decrease")
-                    to_decrease.append(i)
-    
-    
+               
 st.title('COVID-19 Similarity Search')
 RESULT_FILTREATION = False
 #a = st.empty()
@@ -241,20 +226,19 @@ if start:
     results = [sents[i] for i in I.squeeze() if must_include in sents[i]]
     if RESULT_FILTREATION:
         results = result_sents
-    
-    present_results(results, to_enhance, to_decrease)
-#     for i in range(len(results)):
                     
-#                 cols = st.beta_columns((10,1,1))
-#                 cols[0].write(results[i])
-#                 enhance = cols[1].checkbox('✓', key = "en-"+str(i))
-#                 decrease = cols[2].checkbox('✗', key = "dec-"+str(i))
-#                 if enhance:
-#                     st.write("yay enhance")
-#                     to_enhance.append(i)
-#                 if decrease:
-#                     st.write("yay decrease")
-#                     to_decrease.append(i)
+    for i in range(len(results)):
+                    
+                cols = st.beta_columns((10,1,1))
+                cols[0].write(results[i])
+                enhance = cols[1].checkbox('✓', key = "en-"+str(i))
+                decrease = cols[2].checkbox('✗', key = "dec-"+str(i))
+                if enhance:
+                    st.write("yay enhance")
+                    to_enhance.append(i)
+                if decrease:
+                    st.write("yay decrease")
+                    to_decrease.append(i)
         
 
             
