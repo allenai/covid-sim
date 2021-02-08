@@ -222,23 +222,24 @@ if start:
                 results = [sents[i] for i in I.squeeze() if must_include in sents[i]]
                 if RESULT_FILTREATION:
                     results = result_sents
-                
-                for i in range(len(results)):
-                    
-                    cols = st.beta_columns((10,1,1))
-                    cols[0].write(results[i])
-                    enhance = cols[1].checkbox('✓', key = "en-"+str(i))
-                    decrease = cols[2].checkbox('✗', key = "dec-"+str(i))
-                    if enhance:
-                        st.write("yay enhance")
-                        to_enhance.append(i)
-                    if decrease:
-                        st.write("yay decrease")
-                        to_decrease.append(i)
-        
         else:
             show_results = False
             st.write("SPIKE search results are not indexed.")
+            
+        for i in range(len(results)):
+                    
+                cols = st.beta_columns((10,1,1))
+                cols[0].write(results[i])
+                enhance = cols[1].checkbox('✓', key = "en-"+str(i))
+                decrease = cols[2].checkbox('✗', key = "dec-"+str(i))
+                if enhance:
+                    st.write("yay enhance")
+                    to_enhance.append(i)
+                if decrease:
+                    st.write("yay decrease")
+                    to_decrease.append(i)
+        
+
             
  elif mode == "IDs":
     input_ids = st.text_input('Input ids', '39, 41, 49, 50, 112, 116, 119, 229, 286, 747')
