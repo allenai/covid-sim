@@ -197,15 +197,12 @@ elif mode == "Start with Query":
         RESULT_FILTREATION = True
 show_results = True
 start = st.button('Run')
-if start:
-    session_state.enhance = []
-    session_state.decrease = []
+
 
 if start or session_state.start:
  if mode == "Start with Sentence": session_state.start = True
     
  if mode == "Start with Sentence":
-
     
     if len(session_state.enhance) == 0 or not start:
        st.write("USING USER PROVIDED SENTENCE")
@@ -218,7 +215,9 @@ if start or session_state.start:
        if len(session_state.decrease) != 0:
             encoding_neg += np.mean(np.array([index.reconstruct(i) for i in session_state.decrease]), axis = 0)
        encoding = encoding - encoding_neg
-        
+       session_state.enhance = []
+       session_state.decrease = []
+    
     if not filter_by_spike:
         #st.write(encoding.shape, pca.components_.shape, index.d)
         #st.write(help(index))
