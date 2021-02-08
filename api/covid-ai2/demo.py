@@ -130,7 +130,7 @@ print("Try accessing the demo under localhost:8080 (or the default port).")
 if mode == "Start with Sentence":
 
     input_sentence = st.text_input('Enter a sentence for similarity search', 'The virus can spread rapidly via different transimission vectors.')
-    st.write("try", session_state.enhance, session_state.decrease)
+    #st.write("try", session_state.enhance, session_state.decrease)
 
     filter_by =  st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
     query_type = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
@@ -205,13 +205,13 @@ if start or session_state.start:
  if mode == "Start with Sentence":
     
     if len(session_state.enhance) == 0:
-       st.write("USING USER PROVIDED SENTENCE")
+       st.write("USING A USER-PROVIDED SENTENCE")
        encoding = encode(input_sentence, pca, bert, pooling) #pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False))
        session_state.vec = encoding
     
     if start and len(session_state.enhance) != 0:
     
-       st.write("USING THE VECTORS THE USER MARKED")
+       st.write("USING THE {} VECTORS THE USER MARKED".format(len(session_state.enhance) + len(session_state.decrease)))
        encoding_pos = np.array([index.reconstruct(id2ind[i]) for i in session_state.enhance if i in id2ind]) #np.array([index.reconstruct(i) for i in session_state.enhance])
        encoding = np.mean(encoding_pos, axis = 0)
        encoding_neg = np.zeros_like(encoding_pos)
@@ -247,10 +247,12 @@ if start or session_state.start:
             show_results = False
             st.write("SPIKE search results are not indexed.")
     
-    st.write("TRY", I.squeeze())
+    # TODO: CHECK WHY ROWS  RE ADDED TO I AFTER MARKING
+    #st.write("TRY", I.squeeze())
     I = I.squeeze()
     if len(I.shape) != 1:
         I = I[0]
+    
     results = [sents[i] for i in I if must_include in sents[i]]
     if RESULT_FILTREATION:
         results = result_sents
