@@ -15,6 +15,7 @@ import bert_all_seq
 import alignment_supervised
 from annot import annotation, annotated_text
 import time
+import SessionState
 NUM_RESULTS_TO_ALIGN_DEFAULT = 200
 DEFAULT_MAX_NGRAM = 5
 BOOLEAN_QUERY_DEFAULT = "virus lemma=originate"
@@ -71,6 +72,10 @@ def load_pca(pooling):
     with open(fname, "rb") as f:
     
         return pickle.load(f)
+
+@st.cache(allow_output_mutation=True)        
+def encode(input_sentence, pca, bert, pooling):
+    return pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False))
     
                
 st.title('COVID-19 Similarity Search')
@@ -80,8 +85,9 @@ mode = st.sidebar.radio("Mode", ("Start with Sentence", "Start with Query"))
 similarity = "dot product" #st.sidebar.selectbox('Similarity', ('dot product', "l2"))
 pooling = st.sidebar.selectbox('Pooling', ('cls', 'mean-cls'))
 to_decrease, to_enhance = [], []
+session_state = SessionState.get(run=False)
 
-#if mode == "Sentence":
+#if mode == "Sentencve":
 #    filter_by_spike = True if st.sidebar.selectbox('Filter by SPIKE query?', ('False', 'True'))=="True" else False
 
 sents, ids, id2ind, ind2id = load_sents_and_ids()
@@ -147,7 +153,7 @@ if mode == "Start with Sentence":
         st.write("Found {} matches".format(len(results_ids)))
     else:
 
-        number_of_sentence_results  = st.slider('Number of results', 1, 1000, 100) #int(st.text_input('Number of results',  100))
+        number_of_sentence_results  = st.slider('Number of results', 1, 1000, 50) #int(st.text_input('Number of results',  100))
 
 elif mode == "Start with Query":
 
@@ -193,11 +199,13 @@ show_results = True
 start = st.button('Run')
 
 
-if start:
+if start or session_state.start:
+ if mode == "Start with Sentence": session_state.start = True
+    
  if mode == "Start with Sentence":
 
     #input_sentence = st.text_input('Input sentence', 'The virus can spread rapidly via different transimission vectors.')
-    encoding = pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False))#.squeeze()
+    encoding = encode(input_sentence, pca, bert, pooling) #pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False))
     #st.write("filter by spike: ", filter_by_spike)
     #st.write(encoding.shape)
     #st.write(index.d)
