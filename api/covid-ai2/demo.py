@@ -226,7 +226,7 @@ if start:
             show_results = False
             st.write("SPIKE search results are not indexed.")
             
-        for i in range(len(results)):
+    for i in range(len(results)):
                     
                 cols = st.beta_columns((10,1,1))
                 cols[0].write(results[i])
