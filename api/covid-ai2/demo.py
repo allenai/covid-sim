@@ -247,6 +247,7 @@ if start or session_state.start:
             show_results = False
             st.write("SPIKE search results are not indexed.")
     
+    st.write("TRY", I.squeeze())
     results = [sents[i] for i in I.squeeze() if must_include in sents[i]]
     if RESULT_FILTREATION:
         results = result_sents
