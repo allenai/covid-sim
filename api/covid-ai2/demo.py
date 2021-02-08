@@ -379,8 +379,9 @@ if start:
             st.write("No resutls found.")
 
  if show_results:
-    results = [sents[i] for i in I.squeeze() if must_include in sents[i]]
-    if RESULT_FILTREATION:
-        results = result_sents
-    st.write("Performed query of type '{}'. Similarity search results:".format(mode))
-    st.write(st.table(results))
+    pass
+#     results = [sents[i] for i in I.squeeze() if must_include in sents[i]]
+#     if RESULT_FILTREATION:
+#         results = result_sents
+#     st.write("Performed query of type '{}'. Similarity search results:".format(mode))
+#     st.write(st.table(results))
