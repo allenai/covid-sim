@@ -209,11 +209,11 @@ if start or session_state.start:
        encoding = encode(input_sentence, pca, bert, pooling) #pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False))
     else:
        st.write("USING THE VECTORS THE USER MARKED")
-       encoding_pos = np.array([index.reconstruct(i) for i in session_state.enhance])
+       encoding_pos = np.array([index.reconstruct(id2ind[i]) for i in session_state.enhance if i in id2ind]) #np.array([index.reconstruct(i) for i in session_state.enhance])
        encoding = np.mean(encoding, axis = 0)
        encoding_neg = np.zeros_like(encoding_pos)
        if len(session_state.decrease) != 0:
-            encoding_neg += np.mean(np.array([index.reconstruct(i) for i in session_state.decrease]), axis = 0)
+            encoding_neg += np.mean(np.array([index.reconstruct(id2ind[i]) for i in session_state.decrease if i in id2ind]), axis = 0)
        encoding = encoding - encoding_neg
        session_state.enhance = []
        session_state.decrease = []
@@ -250,9 +250,9 @@ if start or session_state.start:
                 enhance = cols[1].checkbox('✓', key = "en-"+str(i))
                 decrease = cols[2].checkbox('✗', key = "dec-"+str(i))
                 if enhance:
-                    session_state.enhance.append(I.squeeze()[i])
+                    session_state.enhance.append(hash(results[i]))
                 if decrease:
-                    session_state.decrease.append(I.squeeze()[i])
+                    session_state.decrease.append(hash(results[i]))
         
 
             
