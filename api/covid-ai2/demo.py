@@ -89,7 +89,7 @@ mode = st.sidebar.radio("Mode", ("Start with Sentence", "Start with Query"))
 similarity = "dot product" #st.sidebar.selectbox('Similarity', ('dot product', "l2"))
 pooling = st.sidebar.selectbox('Pooling', ('cls', 'mean-cls'))
 to_decrease, to_enhance = [], []
-session_state = SessionState.get(start=False, enhance=[], decrease=[], interactive = False)
+session_state = SessionState.get(start=False, enhance=[], decrease=[], interactive = False, started = False)
 
 #if mode == "Sentencve":
 #    filter_by_spike = True if st.sidebar.selectbox('Filter by SPIKE query?', ('False', 'True'))=="True" else False
@@ -134,7 +134,7 @@ print("Try accessing the demo under localhost:8080 (or the default port).")
 if mode == "Start with Sentence":
 
     placeholder = st.empty()
-    input_sentence = placeholder.text_input('Enter a sentence for similarity search', 'The virus can spread rapidly via different transimission vectors.')
+    input_sentence = placeholder.text_input('Enter a sentence for similarity search', '')
     #input_sentence = st.text_input('Enter a sentence for similarity search', 'The virus can spread rapidly via different transimission vectors.')
     #st.write("try", session_state.enhance, session_state.decrease)
 
@@ -208,9 +208,10 @@ if is_interactive_button == "✓":
 else:
     session_state.interactive = False
 start = st.button('Run')
+if start:
+    session_state.started = True
 
-
-if start or session_state.start:
+if (start or session_state.start) and session_state.started:
  if mode == "Start with Sentence": session_state.start = True
     
  if mode == "Start with Sentence":
