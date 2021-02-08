@@ -210,7 +210,7 @@ if start or session_state.start:
     else:
        st.write("USING THE VECTORS THE USER MARKED")
        encoding_pos = np.array([index.reconstruct(id2ind[i]) for i in session_state.enhance if i in id2ind]) #np.array([index.reconstruct(i) for i in session_state.enhance])
-       encoding = np.mean(encoding, axis = 0)
+       encoding = np.mean(encoding_pos, axis = 0)
        encoding_neg = np.zeros_like(encoding_pos)
        if len(session_state.decrease) != 0:
             encoding_neg += np.mean(np.array([index.reconstruct(id2ind[i]) for i in session_state.decrease if i in id2ind]), axis = 0)
