@@ -262,11 +262,11 @@ if start or session_state.start:
                 if enhance:
                     session_state.enhance.append(hash_val)
                 else:
-                    if hash_val in session_state: session_state.remove(hash_val)
+                    if hash_val in session_state.enhance: session_state.enhance.remove(hash_val)
                 if decrease:
                     session_state.decrease.append(hash(results[i]))
                 else:
-                     if hash_val in session_state: session_state.remove(hash_val)
+                     if hash_val in session_state.decrease: session_state.decrease.remove(hash_val)
         
 
             
