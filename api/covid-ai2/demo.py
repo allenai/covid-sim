@@ -204,10 +204,13 @@ if start or session_state.start:
     
  if mode == "Start with Sentence":
     
-    if len(session_state.enhance) == 0 or not start:
+    if len(session_state.enhance) == 0:
        st.write("USING USER PROVIDED SENTENCE")
        encoding = encode(input_sentence, pca, bert, pooling) #pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False))
-    else:
+       session_state.vec = encoding
+    
+    if start and len(session_state.enhance) != 0:
+    
        st.write("USING THE VECTORS THE USER MARKED")
        encoding_pos = np.array([index.reconstruct(id2ind[i]) for i in session_state.enhance if i in id2ind]) #np.array([index.reconstruct(i) for i in session_state.enhance])
        encoding = np.mean(encoding_pos, axis = 0)
@@ -217,6 +220,11 @@ if start or session_state.start:
        encoding = encoding - encoding_neg
        session_state.enhance = []
        session_state.decrease = []
+       session_state.vec = encoding
+    
+    if not start and len(session_state.enhance) != 0:
+        
+        encoding = session_state.vec
     
     if not filter_by_spike:
         #st.write(encoding.shape, pca.components_.shape, index.d)
