@@ -257,10 +257,15 @@ if start or session_state.start:
                 cols[0].write(results[i])
                 enhance = cols[1].checkbox('✓', key = "en-"+str(i))
                 decrease = cols[2].checkbox('✗', key = "dec-"+str(i))
+                hash_val = hash(results[i])
                 if enhance:
-                    session_state.enhance.append(hash(results[i]))
+                    session_state.enhance.append(hash_val)
+                else:
+                    if hash_val in session_state: session_state.remove(hash_val)
                 if decrease:
                     session_state.decrease.append(hash(results[i]))
+                else:
+                     if hash_val in session_state: session_state.remove(hash_val)
         
 
             
