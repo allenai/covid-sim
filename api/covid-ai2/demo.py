@@ -79,6 +79,7 @@ RESULT_FILTREATION = False
 mode = st.sidebar.radio("Mode", ("Start with Sentence", "Start with Query"))
 similarity = "dot product" #st.sidebar.selectbox('Similarity', ('dot product', "l2"))
 pooling = st.sidebar.selectbox('Pooling', ('cls', 'mean-cls'))
+to_decrease, to_enhance = [], []
 
 #if mode == "Sentence":
 #    filter_by_spike = True if st.sidebar.selectbox('Filter by SPIKE query?', ('False', 'True'))=="True" else False
@@ -123,7 +124,7 @@ print("Try accessing the demo under localhost:8080 (or the default port).")
 if mode == "Start with Sentence":
 
     input_sentence = st.text_input('Enter a sentence for similarity search', 'The virus can spread rapidly via different transimission vectors.')
-
+    st.write("try", to_enhance, to_decrease)
 
     filter_by =  st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
     query_type = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
@@ -211,12 +212,30 @@ if start:
         
         encoding_of_spike_results = np.array([index.reconstruct(id2ind[i]) for i in results_ids if i in id2ind])
         if encoding_of_spike_results.shape[0] > 0:
-            
+            show_results = False
             with st.spinner('Retrieving simialr sentences...'):
                 sims = sklearn.metrics.pairwise.cosine_similarity(encoding, encoding_of_spike_results)
                 idx_sorted = sims.argsort()[0]
                 spike_sents_sorted = results_sents[idx_sorted][::-1]
                 I = np.array([[id2ind[hash(s)] for s in spike_sents_sorted if hash(s) in id2ind]])
+                
+                results = [sents[i] for i in I.squeeze() if must_include in sents[i]]
+                if RESULT_FILTREATION:
+                    results = result_sents
+                
+                for i in range(len(results)):
+                    
+                    cols = st.beta_columns((10,1,1))
+                    cols[0].write(results[i])
+                    enhance = cols[1].checkbox('✓', key = "en-"+str(i))
+                    decrease = cols[2].checkbox('✗', key = "dec-"+str(i))
+                    if enhance:
+                        st.write("yay enhance")
+                        to_enhance.append(i)
+                    if decrease:
+                        st.write("yay decrease")
+                        to_decrease.append(i)
+        
         else:
             show_results = False
             st.write("SPIKE search results are not indexed.")
