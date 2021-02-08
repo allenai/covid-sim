@@ -249,9 +249,9 @@ if start or session_state.start:
                 enhance = cols[1].checkbox('✓', key = "en-"+str(i))
                 decrease = cols[2].checkbox('✗', key = "dec-"+str(i))
                 if enhance:
-                    session_state.enhance.append(I.squeeze(i))
+                    session_state.enhance.append(I.squeeze()[i])
                 if decrease:
-                    session_state.decrease.append(I.squeeze(i))
+                    session_state.decrease.append(I.squeeze()[i])
         
 
             
