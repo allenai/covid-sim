@@ -89,7 +89,7 @@ mode = st.sidebar.radio("Mode", ("Start with Sentence", "Start with Query"))
 similarity = "dot product" #st.sidebar.selectbox('Similarity', ('dot product', "l2"))
 pooling = st.sidebar.selectbox('Pooling', ('cls', 'mean-cls'))
 to_decrease, to_enhance = [], []
-session_state = SessionState.get(start=False, enhance=[], decrease=[], interactive = False, started = False)
+session_state = SessionState.get(start=False, enhance=[], decrease=[], interactive = False, started = False, vec=None)
 
 #if mode == "Sentencve":
 #    filter_by_spike = True if st.sidebar.selectbox('Filter by SPIKE query?', ('False', 'True'))=="True" else False
