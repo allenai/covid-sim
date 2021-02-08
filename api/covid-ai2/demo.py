@@ -85,7 +85,7 @@ mode = st.sidebar.radio("Mode", ("Start with Sentence", "Start with Query"))
 similarity = "dot product" #st.sidebar.selectbox('Similarity', ('dot product', "l2"))
 pooling = st.sidebar.selectbox('Pooling', ('cls', 'mean-cls'))
 to_decrease, to_enhance = [], []
-session_state = SessionState.get(start=False, enhance=[], decrease=[])
+session_state = SessionState.get(start=False, enhance=[], decrease=[], interactive = False)
 
 #if mode == "Sentencve":
 #    filter_by_spike = True if st.sidebar.selectbox('Filter by SPIKE query?', ('False', 'True'))=="True" else False
@@ -196,6 +196,11 @@ elif mode == "Start with Query":
         filtration_batch_size = st.slider('Filtration batch size', 1, 250, 50)
         RESULT_FILTREATION = True
 show_results = True
+is_interactive_button = st.radio("Interactive?", ('✓', '✗'), index=0 if session_state.interactive else 1)
+if is_interactive_button == "✓":
+    session_state.interactive = True
+else:
+    session_state.interactive = False
 start = st.button('Run')
 
 
@@ -204,13 +209,13 @@ if start or session_state.start:
     
  if mode == "Start with Sentence":
     
-    if len(session_state.enhance) == 0:
+    if len(session_state.enhance) == 0 and not is_interactive_button=="✓":
        st.write("USING A USER-PROVIDED SENTENCE")
        encoding = encode(input_sentence, pca, bert, pooling) #pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False))
        session_state.vec = encoding
     
     if start and len(session_state.enhance) != 0:
-    
+       session_state.interactive = True
        st.write("USING THE {} VECTORS THE USER MARKED".format(len(session_state.enhance) + len(session_state.decrease)))
        encoding_pos = np.array([index.reconstruct(id2ind[i]) for i in session_state.enhance if i in id2ind]) #np.array([index.reconstruct(i) for i in session_state.enhance])
        encoding = np.mean(encoding_pos, axis = 0)
