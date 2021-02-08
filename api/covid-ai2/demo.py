@@ -217,15 +217,16 @@ if start:
                 sims = sklearn.metrics.pairwise.cosine_similarity(encoding, encoding_of_spike_results)
                 idx_sorted = sims.argsort()[0]
                 spike_sents_sorted = results_sents[idx_sorted][::-1]
-                I = np.array([[id2ind[hash(s)] for s in spike_sents_sorted if hash(s) in id2ind]])
-                
-                results = [sents[i] for i in I.squeeze() if must_include in sents[i]]
-                if RESULT_FILTREATION:
-                    results = result_sents
+                I = np.array([[id2ind[hash(s)] for s in spike_sents_sorted if hash(s) in id2ind]])   
+
         else:
             show_results = False
             st.write("SPIKE search results are not indexed.")
-            
+    
+    results = [sents[i] for i in I.squeeze() if must_include in sents[i]]
+    if RESULT_FILTREATION:
+    results = result_sents
+                    
     for i in range(len(results)):
                     
                 cols = st.beta_columns((10,1,1))
