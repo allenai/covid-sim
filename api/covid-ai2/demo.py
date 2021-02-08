@@ -215,7 +215,7 @@ if start or session_state.start:
        encoding_neg = np.zeros_like(encoding_pos)
        if len(session_state.decrease) != 0:
             encoding_neg += np.mean(np.array([index.reconstruct(i) for i in session_state.decrease]), axis = 0)
-        encoding = encoding - encoding_neg
+       encoding = encoding - encoding_neg
         
     if not filter_by_spike:
         #st.write(encoding.shape, pca.components_.shape, index.d)
