@@ -202,11 +202,11 @@ elif mode == "Start with Query":
         filtration_batch_size = st.slider('Filtration batch size', 1, 250, 50)
         RESULT_FILTREATION = True
 show_results = True
-is_interactive_button = st.radio("Interactive?", ('✓', '✗'), index=0 if session_state.interactive else 1)
-if is_interactive_button == "✓":
-    session_state.interactive = True
-else:
-    session_state.interactive = False
+#is_interactive_button = st.radio("Interactive?", ('✓', '✗'), index=0 if session_state.interactive else 1)
+#if is_interactive_button == "✓":
+#    session_state.interactive = True
+#else:
+#    session_state.interactive = False
 start = st.button('Run')
 if start:
     session_state.started = True
@@ -276,8 +276,8 @@ if (start or session_state.start) and session_state.started:
                     
                 cols = st.beta_columns((10,1,1))
                 cols[0].write(results[i])
-                enhance = cols[1].checkbox('✓', key = "en-"+str(i))
-                decrease = cols[2].checkbox('✗', key = "dec-"+str(i))
+                enhance = cols[1].checkbox('✓', key = "en-"+str(i),value=False)
+                decrease = cols[2].checkbox('✗', key = "dec-"+str(i),value=False)
                 hash_val = hash(results[i])
                 if enhance:
                     session_state.enhance.append(hash_val)
