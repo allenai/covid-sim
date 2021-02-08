@@ -8,6 +8,7 @@ from bert import BertEncoder
 import pickle
 import spike_queries
 import sklearn
+import random
 import time
 import alignment
 import bert_all_seq
@@ -129,7 +130,9 @@ print("Try accessing the demo under localhost:8080 (or the default port).")
 
 if mode == "Start with Sentence":
 
-    input_sentence = st.text_input('Enter a sentence for similarity search', 'The virus can spread rapidly via different transimission vectors.')
+    placeholder = st.empty()
+    input_sentence = placeholder.text_input('Enter a sentence for similarity search', 'The virus can spread rapidly via different transimission vectors.')
+    #input_sentence = st.text_input('Enter a sentence for similarity search', 'The virus can spread rapidly via different transimission vectors.')
     #st.write("try", session_state.enhance, session_state.decrease)
 
     filter_by =  st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
@@ -209,7 +212,8 @@ if start or session_state.start:
     
  if mode == "Start with Sentence":
     
-    if len(session_state.enhance) == 0 and not is_interactive_button=="✓":
+    if len(session_state.enhance) == 0 and input_sentence != "": #not is_interactive_button=="✓":
+       input_sentence = placeholder.text_input('Enter a sentence for similarity search', value="", key = random.randint(0,int(1e7)))
        st.write("USING A USER-PROVIDED SENTENCE")
        encoding = encode(input_sentence, pca, bert, pooling) #pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False))
        session_state.vec = encoding
@@ -227,7 +231,7 @@ if start or session_state.start:
        session_state.decrease = []
        session_state.vec = encoding
     
-    if not start and len(session_state.enhance) != 0:
+    if ((not start) and len(session_state.enhance) != 0) or (input_sentence=""):
         
         encoding = session_state.vec
     
