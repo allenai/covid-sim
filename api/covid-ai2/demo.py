@@ -85,7 +85,7 @@ mode = st.sidebar.radio("Mode", ("Start with Sentence", "Start with Query"))
 similarity = "dot product" #st.sidebar.selectbox('Similarity', ('dot product', "l2"))
 pooling = st.sidebar.selectbox('Pooling', ('cls', 'mean-cls'))
 to_decrease, to_enhance = [], []
-session_state = SessionState.get(start=False)
+session_state = SessionState.get(start=False, enhance=[], decrease=[])
 
 #if mode == "Sentencve":
 #    filter_by_spike = True if st.sidebar.selectbox('Filter by SPIKE query?', ('False', 'True'))=="True" else False
@@ -130,7 +130,7 @@ print("Try accessing the demo under localhost:8080 (or the default port).")
 if mode == "Start with Sentence":
 
     input_sentence = st.text_input('Enter a sentence for similarity search', 'The virus can spread rapidly via different transimission vectors.')
-    st.write("try", to_enhance, to_decrease)
+    st.write("try", session_state.enhance, session_state.decrease)
 
     filter_by =  st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
     query_type = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
@@ -197,19 +197,26 @@ elif mode == "Start with Query":
         RESULT_FILTREATION = True
 show_results = True
 start = st.button('Run')
-
+if start:
+    session_state.enhance = []
+    session_state.decrease = []
 
 if start or session_state.start:
  if mode == "Start with Sentence": session_state.start = True
     
  if mode == "Start with Sentence":
 
-    #input_sentence = st.text_input('Input sentence', 'The virus can spread rapidly via different transimission vectors.')
-    encoding = encode(input_sentence, pca, bert, pooling) #pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False))
-    #st.write("filter by spike: ", filter_by_spike)
-    #st.write(encoding.shape)
-    #st.write(index.d)
     
+    if len(session_state.enhance) == 0:
+       encoding = encode(input_sentence, pca, bert, pooling) #pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False))
+    else:
+       encoding_pos = np.array([index.reconstruct(i) for i in session_state.enhance])
+       encoding = np.mean(encoding, axis = 0)
+       encoding_neg = np.zeros_like(encoding_pos)
+       if len(session_state.decrease) != 0:
+            encoding_neg += np.mean(np.array([index.reconstruct(i) for i in session_state.decrease]), axis = 0)
+        encoding = encoding - encoding_neg
+        
     if not filter_by_spike:
         #st.write(encoding.shape, pca.components_.shape, index.d)
         #st.write(help(index))
@@ -242,11 +249,9 @@ if start or session_state.start:
                 enhance = cols[1].checkbox('✓', key = "en-"+str(i))
                 decrease = cols[2].checkbox('✗', key = "dec-"+str(i))
                 if enhance:
-                    st.write("yay enhance")
-                    to_enhance.append(i)
+                    session_state.enhance.append(I.squeeze(i))
                 if decrease:
-                    st.write("yay decrease")
-                    to_decrease.append(i)
+                    session_state.decrease.append(I.squeeze(i))
         
 
             
