@@ -77,7 +77,10 @@ def load_pca(pooling):
 @st.cache(allow_output_mutation=True)        
 def encode(input_sentence, pca, bert, pooling):
     return pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False))
+
+def zero_input():
     
+    input_sentence = placeholder.text_input('Enter a sentence for similarity search', value="", key = random.randint(0,int(1e7)))
                
 st.title('COVID-19 Similarity Search')
 RESULT_FILTREATION = False
@@ -213,12 +216,14 @@ if start or session_state.start:
  if mode == "Start with Sentence":
     
     if len(session_state.enhance) == 0 and input_sentence != "": #not is_interactive_button=="✓":
-       input_sentence = placeholder.text_input('Enter a sentence for similarity search', value="", key = random.randint(0,int(1e7)))
+       zero_input()
        st.write("USING A USER-PROVIDED SENTENCE")
        encoding = encode(input_sentence, pca, bert, pooling) #pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False))
        session_state.vec = encoding
     
     if start and len(session_state.enhance) != 0:
+       
+       zero_input()
        session_state.interactive = True
        st.write("USING THE {} VECTORS THE USER MARKED".format(len(session_state.enhance) + len(session_state.decrease)))
        encoding_pos = np.array([index.reconstruct(id2ind[i]) for i in session_state.enhance if i in id2ind]) #np.array([index.reconstruct(i) for i in session_state.enhance])
@@ -231,7 +236,7 @@ if start or session_state.start:
        session_state.decrease = []
        session_state.vec = encoding
     
-    if ((not start) and len(session_state.enhance) != 0) or (input_sentence=""):
+    if ((not start) and len(session_state.enhance) != 0) or (input_sentence==""):
         
         encoding = session_state.vec
     
