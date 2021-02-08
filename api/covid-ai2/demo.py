@@ -225,7 +225,7 @@ if start:
     
     results = [sents[i] for i in I.squeeze() if must_include in sents[i]]
     if RESULT_FILTREATION:
-    results = result_sents
+        results = result_sents
                     
     for i in range(len(results)):
                     
