@@ -207,7 +207,7 @@ if start or session_state.start:
  if mode == "Start with Sentence":
 
     
-    if len(session_state.enhance) == 0:
+    if len(session_state.enhance) == 0 or not start:
        encoding = encode(input_sentence, pca, bert, pooling) #pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False))
     else:
        encoding_pos = np.array([index.reconstruct(i) for i in session_state.enhance])
