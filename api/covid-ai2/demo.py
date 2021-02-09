@@ -78,7 +78,7 @@ def load_pca(pooling):
 
 @st.cache(allow_output_mutation=True)        
 def encode(input_sentence, pca, bert, pooling):
-    return pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False))
+    return pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False, current_query=""))
 
 def zero_input():
     
@@ -237,7 +237,7 @@ show_results = True
 #else:
 #    session_state.interactive = False
 start = st.button('Run')
-st.write("Current query: {}".format(input_sentence))
+st.write("Current query: {}".format(session_state.current_query))
 if start:
     session_state.started = True
 
@@ -247,6 +247,7 @@ if (start or session_state.start) and session_state.started:
  if mode == "Start with Sentence":
     
     if len(session_state.enhance) == 0 and input_sentence != "": #not is_interactive_button=="✓":
+       session_state.current_query = input_sentence
        zero_input()
        st.write("USING A USER-PROVIDED SENTENCE")
        encoding = encode(input_sentence, pca, bert, pooling) #pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False))
