@@ -82,8 +82,31 @@ def encode(input_sentence, pca, bert, pooling):
 
 def zero_input():
     
-    input_sentence = placeholder.text_input('Enter a sentence for similarity search', value="", key = random.randint(0,int(1e7)))
-               
+    input_sentence = placeholder.text_input('Enter a sentence for similarity search', value="", key = random.randint(0,int(1e16)))
+
+    
+def write_results_menu(results, session_state):
+    
+    cols = st.beta_columns((10,1,1))
+    cols[0].markdown("<b>Sentence</b>", unsafe_allow_html = True)
+    cols[1].markdown("<b>Enhance?</b>", unsafe_allow_html = True)
+    cols[2].markdown("<b>Decrease?</b>", unsafe_allow_html = True)
+    for i in range(len(results)):
+                
+                cols[0].write(results[i])
+                enhance = cols[1].checkbox('✓', key = random.randint(0,int(1e16)),value=False)
+                decrease = cols[2].checkbox('✗', key = random.randint(0,int(1e16)),value=False)
+                hash_val = hash(results[i])
+                if enhance:
+                    session_state.enhance.append(hash_val)
+                else:
+                    if hash_val in session_state.enhance: session_state.enhance.remove(hash_val)
+                if decrease:
+                    session_state.decrease.append(hash(results[i]))
+                else:
+                     if hash_val in session_state.decrease: session_state.decrease.remove(hash_val)
+                            
+    
 st.title('COVID-19 Similarity Search')
 RESULT_FILTREATION = False
 #a = st.empty()
@@ -238,6 +261,7 @@ if (start or session_state.start) and session_state.started:
        session_state.enhance = []
        session_state.decrease = []
        session_state.vec = encoding
+       write_results_menu(results, session_state)
     
     if ((not start) and len(session_state.enhance) != 0) or (input_sentence==""):
         
@@ -272,26 +296,8 @@ if (start or session_state.start) and session_state.started:
     
     results = [sents[i] for i in I if must_include in sents[i]]
     if RESULT_FILTREATION:
-        results = result_sents
-    
-    cols = st.beta_columns((10,1,1))
-    cols[0].markdown("<b>Sentence</b>", unsafe_allow_html = True)
-    cols[1].markdown("<b>Enhance?</b>", unsafe_allow_html = True)
-    cols[2].markdown("<b>Decrease?</b>", unsafe_allow_html = True)
-    for i in range(len(results)):
-                
-                cols[0].write(results[i])
-                enhance = cols[1].checkbox('✓', key = "en-"+str(i),value=False)
-                decrease = cols[2].checkbox('✗', key = "dec-"+str(i),value=False)
-                hash_val = hash(results[i])
-                if enhance:
-                    session_state.enhance.append(hash_val)
-                else:
-                    if hash_val in session_state.enhance: session_state.enhance.remove(hash_val)
-                if decrease:
-                    session_state.decrease.append(hash(results[i]))
-                else:
-                     if hash_val in session_state.decrease: session_state.decrease.remove(hash_val)
+        results = result_sents 
+    write_results_menu(results, session_state)
         
 
             
