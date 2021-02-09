@@ -228,7 +228,7 @@ if (start or session_state.start) and session_state.started:
        
        zero_input()
        session_state.interactive = True
-       st.write("USING THE {} VECTORS THE USER MARKED".format(len(session_state.enhance) + len(session_state.decrease)))
+       #st.write("USING THE {} VECTORS THE USER MARKED".format(len(session_state.enhance) + len(session_state.decrease)))
        encoding_pos = np.array([index.reconstruct(id2ind[i]) for i in session_state.enhance if i in id2ind]) #np.array([index.reconstruct(i) for i in session_state.enhance])
        encoding = np.mean(encoding_pos, axis = 0)
        encoding_neg = np.zeros_like(encoding_pos)
