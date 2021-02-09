@@ -25,7 +25,7 @@ SYNTACTIC_QUERY_DEFAULT = "<>arg1:[e=CHEMICAL|SIMPLE_CHEMICAL]paracetamol $[lemm
 SPIKE_RESULTS_DEFAULT = 75
 must_include = ""
 
-st.beta_set_page_config(layout="wide")
+st.set_page_config(layout="wide")
 
 @st.cache(allow_output_mutation=True)
 def load_sents_and_ids():
