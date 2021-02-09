@@ -93,6 +93,8 @@ def write_results_menu(results, session_state, keys="random"):
     cols[2].markdown("<b>Decrease?</b>", unsafe_allow_html = True)
     for i in range(min(len(results), 50)):
                 
+                if len(results[i]) < 3: continue
+                    
                 cols[0].write(results[i])
                 enhance = cols[1].checkbox('✓', key = "en"+str(i) if keys=="normal" else random.randint(0,int(1e16)),value=False)
                 decrease = cols[2].checkbox('✗', key = "de"+str(i) if keys == "normal" else random.randint(0,int(1e16)),value=False)
