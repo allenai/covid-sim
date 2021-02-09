@@ -307,17 +307,17 @@ if (start or session_state.start) and session_state.started:
     cols[0].markdown("<b>Sentence</b>", unsafe_allow_html = True)
     cols[1].markdown("<b>Enhance?</b>", unsafe_allow_html = True)
     cols[2].markdown("<b>Decrease?</b>", unsafe_allow_html = True)
-    for i in range(min(len(results), 25)):
+    for i in range(min(len(results), 50)):
                                     
                 cols[0].write(results[i])
                 enhance = cols[1].checkbox('✓', key = "en"+str(i) ,value=False)
                 decrease = cols[2].checkbox('✗', key = "de"+str(i),value=False)
                 hash_val = hash(results[i])
                 if enhance:
-                    st.write("added sentence {}".format(results[i]))
+                    #st.write("added sentence {}".format(results[i]))
                     session_state.enhance.add(hash_val)
                 else:
-                    st.write("removed sentence {}".format(results[i]))
+                    #st.write("removed sentence {}".format(results[i]))
                     if hash_val in session_state.enhance: session_state.enhance.remove(hash_val)
                 if decrease:
                     session_state.decrease.add(hash(results[i]))
