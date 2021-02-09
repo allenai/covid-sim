@@ -470,8 +470,8 @@ if (start or session_state.start) and session_state.started:
 
  if show_results:
     pass
-#     results = [sents[i] for i in I.squeeze() if must_include in sents[i]]
-#     if RESULT_FILTREATION:
-#         results = result_sents
-#     st.write("Performed query of type '{}'. Similarity search results:".format(mode))
-#     st.write(st.table(results))
+    results = [sents[i] for i in I.squeeze() if must_include in sents[i]]
+    if RESULT_FILTREATION:
+        results = result_sents
+    st.write("Performed query of type '{}'. Similarity search results:".format(mode))
+    st.write(st.table(results))
