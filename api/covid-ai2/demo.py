@@ -85,7 +85,7 @@ def zero_input():
     input_sentence = placeholder.text_input('Enter a sentence for similarity search', value="", key = random.randint(0,int(1e16)))
 
     
-def write_results_menu(results, session_state):
+def write_results_menu(results, session_state, keys="random"):
     
     cols = st.beta_columns((10,1,1))
     cols[0].markdown("<b>Sentence</b>", unsafe_allow_html = True)
@@ -94,8 +94,8 @@ def write_results_menu(results, session_state):
     for i in range(len(results)):
                 
                 cols[0].write(results[i])
-                enhance = cols[1].checkbox('✓', key = random.randint(0,int(1e16)),value=False)
-                decrease = cols[2].checkbox('✗', key = random.randint(0,int(1e16)),value=False)
+                enhance = cols[1].checkbox('✓', key = "en"+str(i) if keys=="normal" else random.randint(0,int(1e16)),value=False)
+                decrease = cols[2].checkbox('✗', key = "de"+str(i) if keys == "normal" else random.randint(0,int(1e16)),value=False)
                 hash_val = hash(results[i])
                 if enhance:
                     session_state.enhance.append(hash_val)
@@ -297,7 +297,7 @@ if (start or session_state.start) and session_state.started:
     results = [sents[i] for i in I if must_include in sents[i]]
     if RESULT_FILTREATION:
         results = result_sents 
-    write_results_menu(results, session_state)
+    write_results_menu(results, session_state, keys = "normal")
         
 
             
