@@ -273,10 +273,13 @@ if (start or session_state.start) and session_state.started:
     results = [sents[i] for i in I if must_include in sents[i]]
     if RESULT_FILTREATION:
         results = result_sents
-                    
+    
+    cols = st.beta_columns((10,1,1))
+    cols[0].markdown("<b>Sentence</b>", unsafe_allow_html = True)
+    cols[1].markdown("<b>Enhance?</b>", unsafe_allow_html = True)
+    cols[2].markdown("<b>Decrease?</b>", unsafe_allow_html = True)
     for i in range(len(results)):
-                    
-                cols = st.beta_columns((10,1,1))
+                
                 cols[0].write(results[i])
                 enhance = cols[1].checkbox('✓', key = "en-"+str(i),value=False)
                 decrease = cols[2].checkbox('✗', key = "dec-"+str(i),value=False)
