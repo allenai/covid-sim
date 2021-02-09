@@ -307,7 +307,7 @@ if (start or session_state.start) and session_state.started:
     cols[0].markdown("<b>Sentence</b>", unsafe_allow_html = True)
     cols[1].markdown("<b>Enhance?</b>", unsafe_allow_html = True)
     cols[2].markdown("<b>Decrease?</b>", unsafe_allow_html = True)
-    for i in range(min(len(results), 50)):
+    for i in range(min(len(results), 20)):
                                     
                 cols[0].write(results[i])
                 enhance = cols[1].checkbox('✓', key = "en"+str(i) ,value=False)
