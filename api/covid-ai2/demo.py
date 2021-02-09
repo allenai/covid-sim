@@ -87,7 +87,7 @@ def zero_input():
     
 def write_results_menu(results, session_state, keys="random"):
     
-    cols = st.beta_columns((10,1,1))
+    cols = st.beta_columns((8,1,1))
     cols[0].markdown("<b>Sentence</b>", unsafe_allow_html = True)
     cols[1].markdown("<b>Enhance?</b>", unsafe_allow_html = True)
     cols[2].markdown("<b>Decrease?</b>", unsafe_allow_html = True)
@@ -100,8 +100,10 @@ def write_results_menu(results, session_state, keys="random"):
                 decrease = cols[2].checkbox('✗', key = "de"+str(i) if keys == "normal" else random.randint(0,int(1e16)),value=False)
                 hash_val = hash(results[i])
                 if enhance:
+                    st.write("added sentence {}".format(results[i]))
                     session_state.enhance.add(hash_val)
                 else:
+                    st.write("removed sentence {}".format(results[i]))
                     if hash_val in session_state.enhance: session_state.enhance.remove(hash_val)
                 if decrease:
                     session_state.decrease.add(hash(results[i]))
@@ -299,7 +301,30 @@ if (start or session_state.start) and session_state.started:
     results = [sents[i] for i in I if must_include in sents[i]]
     if RESULT_FILTREATION:
         results = result_sents 
-    write_results_menu(results, session_state, keys = "normal")
+        
+        
+    cols = st.beta_columns((8,1,1))
+    cols[0].markdown("<b>Sentence</b>", unsafe_allow_html = True)
+    cols[1].markdown("<b>Enhance?</b>", unsafe_allow_html = True)
+    cols[2].markdown("<b>Decrease?</b>", unsafe_allow_html = True)
+    for i in range(min(len(results), 50)):
+                
+                if len(results[i]) < 3: continue
+                    
+                cols[0].write(results[i])
+                enhance = cols[1].checkbox('✓', key = "en"+str(i) ,value=False)
+                decrease = cols[2].checkbox('✗', key = "de"+str(i),value=False)
+                hash_val = hash(results[i])
+                if enhance:
+                    st.write("added sentence {}".format(results[i]))
+                    session_state.enhance.add(hash_val)
+                else:
+                    st.write("removed sentence {}".format(results[i]))
+                    if hash_val in session_state.enhance: session_state.enhance.remove(hash_val)
+                if decrease:
+                    session_state.decrease.add(hash(results[i]))
+                else:
+                     if hash_val in session_state.decrease: session_state.decrease.remove(hash_val)
         
 
             
