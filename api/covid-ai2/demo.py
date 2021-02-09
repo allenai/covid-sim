@@ -237,6 +237,7 @@ show_results = True
 #else:
 #    session_state.interactive = False
 start = st.button('Run')
+st.write("Current query: {}".format(input_sentence))
 if start:
     session_state.started = True
 
