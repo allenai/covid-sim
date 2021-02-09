@@ -100,10 +100,10 @@ def write_results_menu(results, session_state, keys="random"):
                 decrease = cols[2].checkbox('✗', key = "de"+str(i) if keys == "normal" else random.randint(0,int(1e16)),value=False)
                 hash_val = hash(results[i])
                 if enhance:
-                    st.write("added sentence {}".format(results[i]))
+                    #st.write("added sentence {}".format(results[i]))
                     session_state.enhance.add(hash_val)
                 else:
-                    st.write("removed sentence {}".format(results[i]))
+                    #st.write("removed sentence {}".format(results[i]))
                     if hash_val in session_state.enhance: session_state.enhance.remove(hash_val)
                 if decrease:
                     session_state.decrease.add(hash(results[i]))
