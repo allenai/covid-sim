@@ -303,19 +303,19 @@ if (start or session_state.start) and session_state.started:
         results = result_sents 
         
         
-    cols = st.beta_columns((8,1,1))
+    cols = st.beta_columns((10))
     cols[0].markdown("<b>Sentence</b>", unsafe_allow_html = True)
-    cols[1].markdown("<b>Enhance?</b>", unsafe_allow_html = True)
-    cols[2].markdown("<b>Decrease?</b>", unsafe_allow_html = True)
+    #cols[1].markdown("<b>Enhance?</b>", unsafe_allow_html = True)
+    #cols[2].markdown("<b>Decrease?</b>", unsafe_allow_html = True)
     for i in range(min(len(results), 25)):
                                     
                 cols[0].write(results[i])
-                enhance = cols[1].checkbox('✓', key = "en"+str(i) ,value=False)
-                decrease = cols[2].checkbox('✗', key = "de"+str(i),value=False)
+                enhance = cols[0].checkbox('✓', key = "en"+str(i) ,value=False)
+                decrease = cols[0].checkbox('✗', key = "de"+str(i),value=False)
                 
-                cols[0].write("")
-                cols[1].write("")
-                cols[2].write("")
+                #cols[0].write("")
+                #cols[1].write("")
+                #cols[2].write("")
                 
                 hash_val = hash(results[i])
                 if enhance:
