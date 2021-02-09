@@ -98,11 +98,11 @@ def write_results_menu(results, session_state, keys="random"):
                 decrease = cols[2].checkbox('✗', key = "de"+str(i) if keys == "normal" else random.randint(0,int(1e16)),value=False)
                 hash_val = hash(results[i])
                 if enhance:
-                    session_state.enhance.append(hash_val)
+                    session_state.enhance.add(hash_val)
                 else:
                     if hash_val in session_state.enhance: session_state.enhance.remove(hash_val)
                 if decrease:
-                    session_state.decrease.append(hash(results[i]))
+                    session_state.decrease.add(hash(results[i]))
                 else:
                      if hash_val in session_state.decrease: session_state.decrease.remove(hash_val)
                             
@@ -114,7 +114,7 @@ mode = st.sidebar.radio("Mode", ("Start with Sentence", "Start with Query"))
 similarity = "dot product" #st.sidebar.selectbox('Similarity', ('dot product', "l2"))
 pooling = st.sidebar.selectbox('Pooling', ('cls', 'mean-cls'))
 to_decrease, to_enhance = [], []
-session_state = SessionState.get(start=False, enhance=[], decrease=[], interactive = False, started = False, vec=None)
+session_state = SessionState.get(start=False, enhance=set(), decrease=set(), interactive = False, started = False, vec=None)
 
 #if mode == "Sentencve":
 #    filter_by_spike = True if st.sidebar.selectbox('Filter by SPIKE query?', ('False', 'True'))=="True" else False
@@ -258,10 +258,10 @@ if (start or session_state.start) and session_state.started:
        if len(session_state.decrease) != 0:
             encoding_neg += np.mean(np.array([index.reconstruct(id2ind[i]) for i in session_state.decrease if i in id2ind]), axis = 0)
        encoding = encoding - encoding_neg
-       session_state.enhance = []
-       session_state.decrease = []
+       session_state.enhance = set()
+       session_state.decrease = set()
        session_state.vec = encoding
-       write_results_menu(results, session_state)
+       #write_results_menu(results, session_state)
     
     if ((not start) and len(session_state.enhance) != 0) or (input_sentence==""):
         
