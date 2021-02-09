@@ -78,7 +78,7 @@ def load_pca(pooling):
 
 @st.cache(allow_output_mutation=True)        
 def encode(input_sentence, pca, bert, pooling):
-    return pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False, current_query=""))
+    return pca.transform(bert.encode([input_sentence], [1], batch_size = 1, strategy = pooling, fname = "dummy.txt", write = False))
 
 def zero_input():
     
@@ -118,7 +118,7 @@ mode = st.sidebar.radio("Mode", ("Start with Sentence", "Start with Query"))
 similarity = "dot product" #st.sidebar.selectbox('Similarity', ('dot product', "l2"))
 pooling = st.sidebar.selectbox('Pooling', ('cls', 'mean-cls'))
 to_decrease, to_enhance = [], []
-session_state = SessionState.get(start=False, enhance=set(), decrease=set(), interactive = False, started = False, vec=None)
+session_state = SessionState.get(start=False, enhance=set(), decrease=set(), interactive = False, started = False, vec=None, current_query="")
 
 #if mode == "Sentencve":
 #    filter_by_spike = True if st.sidebar.selectbox('Filter by SPIKE query?', ('False', 'True'))=="True" else False
