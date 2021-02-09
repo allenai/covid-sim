@@ -303,11 +303,11 @@ if (start or session_state.start) and session_state.started:
         results = result_sents 
         
         
-    cols = st.beta_columns((10))
+    cols = st.beta_columns((10,1,1))
     cols[0].markdown("<b>Sentence</b>", unsafe_allow_html = True)
     #cols[1].markdown("<b>Enhance?</b>", unsafe_allow_html = True)
     #cols[2].markdown("<b>Decrease?</b>", unsafe_allow_html = True)
-    for i in range(min(len(results), 25)):
+    for i in range(min(len(results), 50)):
                                     
                 cols[0].write(results[i])
                 enhance = cols[0].checkbox('✓', key = "en"+str(i) ,value=False)
