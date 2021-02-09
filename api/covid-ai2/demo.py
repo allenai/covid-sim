@@ -25,6 +25,8 @@ SYNTACTIC_QUERY_DEFAULT = "<>arg1:[e=CHEMICAL|SIMPLE_CHEMICAL]paracetamol $[lemm
 SPIKE_RESULTS_DEFAULT = 75
 must_include = ""
 
+st.set_option('wideMode' , True)
+
 @st.cache(allow_output_mutation=True)
 def load_sents_and_ids():
     with st.spinner('Loading sentences and IDs...'):
