@@ -292,8 +292,8 @@ if (start or session_state.start) and session_state.started:
     if not filter_by_spike:
         #st.write(encoding.shape, pca.components_.shape, index.d)
         #st.write(help(index))
-        
-        D,I = index.search(np.ascontiguousarray(encoding).astype("float32"), number_of_sentence_results)
+        st.write(encoding.shape)
+        D,I = index.search(np.ascontiguousarray([encoding).astype("float32"), number_of_sentence_results)
     
     else:
         
