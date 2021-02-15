@@ -117,6 +117,7 @@ def project_out(positive, negative):
     positive,negative = np.array(positive), np.array(negative)
     pos_basis = scipy.linalg.orth(positive.T)
     P = pos_basis.dot(pos_basis.T)
+    st.write(P.shape, negative.shape, positive.shape)
     negative_different = negative - negative@P
     return positive - negative_different
     
