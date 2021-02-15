@@ -17,6 +17,8 @@ import alignment_supervised
 from annot import annotation, annotated_text
 import time
 import SessionState
+import scipy
+
 NUM_RESULTS_TO_ALIGN_DEFAULT = 200
 DEFAULT_MAX_NGRAM = 5
 BOOLEAN_QUERY_DEFAULT = "virus lemma=originate"
@@ -109,7 +111,14 @@ def write_results_menu(results, session_state, keys="random"):
                     session_state.decrease.add(hash(results[i]))
                 else:
                      if hash_val in session_state.decrease: session_state.decrease.remove(hash_val)
-                            
+
+def project_out(positive, negative):
+    
+    positive,negative = np.array(positive), np.array(negative)
+    pos_basis = scipy.linalg.orth(positive.T)
+    P = pos_basis.dot(pos_basis.T)
+    negative_different = negative - P@negative
+    return positive - negative_different
     
 st.title('COVID-19 Similarity Search')
 RESULT_FILTREATION = False
@@ -259,11 +268,17 @@ if (start or session_state.start) and session_state.started:
        session_state.interactive = True
        #st.write("USING THE {} VECTORS THE USER MARKED".format(len(session_state.enhance) + len(session_state.decrease)))
        encoding_pos = np.array([index.reconstruct(id2ind[i]) for i in session_state.enhance if i in id2ind]) #np.array([index.reconstruct(i) for i in session_state.enhance])
-       encoding = np.mean(encoding_pos, axis = 0)
+       #encoding = np.mean(encoding_pos, axis = 0)
        encoding_neg = np.zeros_like(encoding_pos)
-       if len(session_state.decrease) != 0:
-            encoding_neg += np.mean(np.array([index.reconstruct(id2ind[i]) for i in session_state.decrease if i in id2ind]), axis = 0)
-       encoding = encoding - encoding_neg
+       #if len(session_state.decrease) != 0:
+            #encoding_neg += np.mean(np.array([index.reconstruct(id2ind[i]) for i in session_state.decrease if i in id2ind]), axis = 0)    
+       if len(session_state.decrease) != 0
+           encoding_neg = np.array([index.reconstruct(id2ind[i]) for i in session_state.decrease if i in id2ind])
+           encoding_projected = project_out(encoding_pos, encoding_neg)
+       else:
+           encoding_projected = encoding_pos
+       enconding = np.mean(encoding_projected, axis = 0)
+       #encoding = encoding - encoding_neg
        session_state.enhance = set()
        session_state.decrease = set()
        session_state.vec = encoding
