@@ -272,7 +272,7 @@ if (start or session_state.start) and session_state.started:
        encoding_neg = np.zeros_like(encoding_pos)
        #if len(session_state.decrease) != 0:
             #encoding_neg += np.mean(np.array([index.reconstruct(id2ind[i]) for i in session_state.decrease if i in id2ind]), axis = 0)    
-       if len(session_state.decrease) != 0
+       if len(session_state.decrease) != 0:
            encoding_neg = np.array([index.reconstruct(id2ind[i]) for i in session_state.decrease if i in id2ind])
            encoding_projected = project_out(encoding_pos, encoding_neg)
        else:
