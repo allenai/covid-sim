@@ -278,7 +278,7 @@ if (start or session_state.start) and session_state.started:
            encoding_projected = project_out(encoding_pos, encoding_neg)
        else:
            encoding_projected = encoding_pos
-       enconding = np.mean(encoding_projected, axis = 0)
+       encoding = np.mean(encoding_projected, axis = 0)
        #encoding = encoding - encoding_neg
        session_state.enhance = set()
        session_state.decrease = set()
