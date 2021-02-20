@@ -110,7 +110,7 @@ def write_results_menu(results, session_state, keys="random"):
                 else:
                      if hash_val in session_state.decrease: session_state.decrease.remove(hash_val)
 
- def project_out(positive, negative):
+def project_out(positive, negative):
     
     positive,negative = np.array(positive), np.array(negative)
     pos_basis = scipy.linalg.orth(positive.T)
