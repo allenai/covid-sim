@@ -273,6 +273,7 @@ if (start or session_state.start) and session_state.started:
        if len(session_state.decrease) != 0:
             encoding_neg += np.mean(np.array([index.reconstruct(id2ind[i]) for i in session_state.decrease if i in id2ind]), axis = 0)
        encoding = encoding - encoding_neg
+       st.write(encoding.shape)
        session_state.enhance = set()
        session_state.decrease = set()
        session_state.vec = encoding
