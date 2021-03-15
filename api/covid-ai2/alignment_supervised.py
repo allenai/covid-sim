@@ -381,6 +381,7 @@ def main(model, results_sents, spike_df, num_results, max_ngrams):
         annotated.append(annotated_sent)
     
     # aggregate arguments
+    
     args1, args2 = list(zip(*captures))
     arg1_counter, arg2_counter, tuples_counter = Counter(args1), Counter(args2), Counter(captures_tuples)
     
