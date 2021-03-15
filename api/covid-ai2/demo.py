@@ -119,7 +119,17 @@ def project_out(positive, negative):
     negative_different = negative - negative@P
     return positive - negative_different
 
-    
+def get_table_download_link(df):
+    """Generates a link allowing the data in a given panda dataframe to be downloaded
+    in:  dataframe
+    out: href string
+    """
+    csv = df.to_csv(index=False)
+    b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
+    href = f'<a href="data:file/csv;base64,{b64}">Download csv file</a>'
+    return href
+
+
 st.title('COVID-19 Similarity Search')
 RESULT_FILTREATION = False
 #a = st.empty()
@@ -455,17 +465,19 @@ if (start or session_state.start) and session_state.started:
                             if alignment_method == "Naive":
                                 colored_sents, annotated_sents = alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], number_of_sentences_to_align)
                             else:
-                                annotated_sents, arg1_items, arg2_items, tuples_items = alignment_supervised.main(bert_alignment_supervised, result_sents, results_df, number_of_sentences_to_align, max_ngrams+1)
+                                annotated_sents, arg1_items, arg2_items, tuples_items, captures_tuples = alignment_supervised.main(bert_alignment_supervised, result_sents, results_df, number_of_sentences_to_align, max_ngrams+1)
                                 arg1_counts_df = pd.DataFrame(arg1_items, columns =['entity', 'count'])
                                 arg2_counts_df = pd.DataFrame(arg2_items, columns =['entity', 'count'])
                                 tuples_counts_df = pd.DataFrame(tuples_items, columns =['entity', 'count'])
-                            
+                                captures_df = = pd.DataFrame.from_records(captures_tuples, columns =['ARG1', 'ARG2'])
+                                
                                 st.sidebar.write('ARG1 Aggregation:')
                                 st.sidebar.write(arg1_counts_df.head(30))
                                 st.sidebar.write('ARG2 Aggregation:')
                                 st.sidebar.write(arg2_counts_df.head(30))
                                 st.sidebar.write('Tuples Aggregation:')
                                 st.sidebar.write(tuples_counts_df.head(30))
+                                st.markdown(get_table_download_link(captures_df), unsafe_allow_html=True)
                             
                             for s in annotated_sents:
                                 annotated_text(*s)
