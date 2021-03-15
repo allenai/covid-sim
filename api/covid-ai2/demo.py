@@ -24,6 +24,7 @@ TOKEN_QUERY_DEFAULT = "novel coronavirus"
 SYNTACTIC_QUERY_DEFAULT = "<>arg1:[e=CHEMICAL|SIMPLE_CHEMICAL]paracetamol $[lemma=word|act]works $by <>arg2:activation of something" #"<>arg1:[e]paracetamol is the recommended $treatment for <>arg2:[e]asthma."
 SPIKE_RESULTS_DEFAULT = 75
 must_include = ""
+import base64
 
 st.set_page_config(layout="wide")
 
