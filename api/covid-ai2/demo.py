@@ -25,7 +25,8 @@ SYNTACTIC_QUERY_DEFAULT = "<>arg1:[e=CHEMICAL|SIMPLE_CHEMICAL]paracetamol $[lemm
 SPIKE_RESULTS_DEFAULT = 75
 must_include = ""
 import base64
-
+ 
+    
 st.set_page_config(layout="wide")
 
 @st.cache(allow_output_mutation=True)
