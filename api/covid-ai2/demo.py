@@ -480,6 +480,7 @@ if (start or session_state.start) and session_state.started:
                                 st.sidebar.write(tuples_counts_df.head(30))
                                 st.markdown(get_table_download_link(captures_df), unsafe_allow_html=True)
                             
+                            
                             for s in annotated_sents:
                                 annotated_text(*s)
 
