@@ -494,6 +494,7 @@ if (start or session_state.start) and session_state.started:
             show_results = False
             st.write("No resutls found.")
 
+            
  if show_results:
     pass
     results = [sents[i] for i in I.squeeze() if must_include in sents[i]]
