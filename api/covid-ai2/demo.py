@@ -471,7 +471,7 @@ if (start or session_state.start) and session_state.started:
                                 arg2_counts_df = pd.DataFrame(arg2_items, columns =['entity', 'count'])
                                 tuples_counts_df = pd.DataFrame(tuples_items, columns =['entity', 'count'])
                                 captures_df = pd.DataFrame.from_records(captures_tuples, columns =['ARG1', 'ARG2'])
-                                
+                                captures_df["sentence"] = result_sents[:len(captures_tuples)]
                                 st.sidebar.write('ARG1 Aggregation:')
                                 st.sidebar.write(arg1_counts_df.head(30))
                                 st.sidebar.write('ARG2 Aggregation:')
