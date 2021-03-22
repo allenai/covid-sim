@@ -176,20 +176,20 @@ if mode == "Start with Query":
             max_ngrams = st.select_slider('Maximum span size to align', options=[1, 2, 3, 4, 5, 6, 7, 8,9,10,11,12,13,14,15], value = DEFAULT_MAX_NGRAM)
     
     must_include = st.text_input('Get only results containing the following words', '')
-    #filter_by = st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
-    query_type_filtration = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
-    filter_by_spike = query_type_filtration is not None
-    if filter_by_spike:
-        message = "Get only results NOT captured by this query"
-        if query_type_filtration == "syntactic":
-            filter_query = st.text_input(message, SYNTACTIC_QUERY_DEFAULT)
-        elif query_type_filtration == "boolean":
-            filter_query = st.text_input(message, BOOLEAN_QUERY_DEFAULT)
-        elif query_type_filtration == "token":
-            filter_query = st.text_input(message, TOKEN_QUERY_DEFAULT)
+#     #filter_by = st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
+#     query_type_filtration = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
+#     filter_by_spike = query_type_filtration is not None
+#     if filter_by_spike:
+#         message = "Get only results NOT captured by this query"
+#         if query_type_filtration == "syntactic":
+#             filter_query = st.text_input(message, SYNTACTIC_QUERY_DEFAULT)
+#         elif query_type_filtration == "boolean":
+#             filter_query = st.text_input(message, BOOLEAN_QUERY_DEFAULT)
+#         elif query_type_filtration == "token":
+#             filter_query = st.text_input(message, TOKEN_QUERY_DEFAULT)
 
-        filtration_batch_size = st.slider('Filtration batch size', 1, 250, 50)
-        RESULT_FILTREATION = True
+#         filtration_batch_size = st.slider('Filtration batch size', 1, 250, 50)
+#         RESULT_FILTREATION = True
 show_results = True
 
 start = st.button('Run')
