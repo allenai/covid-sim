@@ -5,5 +5,5 @@
 # symlink lets it find the files it needs.
 ln -s /skiff_files/apps/covid-sim/demo_data_02 /usr/src/app/covid-ai2/data
 
-streamlit run demo.py --server.enableCORS false
+streamlit run demo2.py --server.enableCORS false
 wget http://covid-sim.apps.allenai.org/
