@@ -21,7 +21,7 @@ NUM_RESULTS_TO_ALIGN_DEFAULT = 200
 DEFAULT_MAX_NGRAM = 5
 BOOLEAN_QUERY_DEFAULT = "virus lemma=originate"
 TOKEN_QUERY_DEFAULT = "novel coronavirus"
-SYNTACTIC_QUERY_DEFAULT = "a1:[w]COVID-19 was $identified $in arg2:somewhere" #"arg1:[e]paracetamol is the recommended $treatment for arg2:asthma."
+SYNTACTIC_QUERY_DEFAULT = "a1:[w]COVID-19 was $identified $in a2:somewhere" #"arg1:[e]paracetamol is the recommended $treatment for arg2:asthma."
 SPIKE_RESULTS_DEFAULT = 75
 must_include = ""
 import base64
