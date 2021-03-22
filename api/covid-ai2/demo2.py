@@ -176,7 +176,7 @@ if mode == "Start with Query":
             max_ngrams = st.select_slider('Maximum span size to align', options=[1, 2, 3, 4, 5, 6, 7, 8,9,10,11,12,13,14,15], value = DEFAULT_MAX_NGRAM)
     
     must_include = st.text_input('Get only results containing the following words', '')
-    filter_by = st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
+    #filter_by = st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
     query_type_filtration = "syntactic" if "syntactic" in filter_by.lower() else "boolean" if "boolean" in filter_by.lower() else "token" if "token" in filter_by.lower() else None
     filter_by_spike = query_type_filtration is not None
     if filter_by_spike:
@@ -222,53 +222,6 @@ if (start or session_state.start) and session_state.started:
                     result_sents = [sents[i].replace("/","-") for i in I.squeeze()]
                     if must_include != "":
                         result_sents = [sents[i].replace("/","-") for i in I.squeeze() if must_include in sents[i]]
-
-                    if filter_by_spike:
-                        with st.spinner('Filtering...'):
-
-                            start = time.time()
-                            # filter by lucene queries
-                            results_sents_filtered = []
-
-                            def remove_all_words(s):
-                                words_to_remove = [" is ", " are ", " the ", " a ", " an ", " to ", " as ", " from ",
-                                                   " and ", " or ", " of ", " in ", " be ", " this ", " that ", " , ", " these ", " those ",
-                                                   " with ", " within ", " can ", " / "]
-                                
-                                s = s.replace("The ", "").replace("In ", "").replace("Although ", "").replace("It ", "").replace(" (", "").replace(" )", "").replace("A ", "").replace("An ", "").replace(" [", "").replace(" ]", "")
-                                s = s.replace(' " ', ' ').replace(" ' ", " ")
-                                s = s.replace(" 's "," ").replace("(","").replace(")", "").replace("[","").replace("]","")
-                                for w in words_to_remove:
-                                    s = s.replace(w, " ")
-
-                                while "  " in s:
-                                    s = s.replace("  ", " ")
-                                    
-                                words = s.split(" ")
-                                s = " ".join([w for w in words if "-" not in w and "/" not in w and "'" not in w and ")" not in w and "(" not in w and "]" not in w
-                                             and "[" not in w and "," not in w and not w=="has" and not w=="have" and not w=="been" and not w=="on"])
-                               
-                                return s
-
-                            filtration_sents = []
-                            start_time = time.time()
-                            for b in range(0, len(result_sents), filtration_batch_size):
-                                start, end = b, b+filtration_batch_size     
-                                all_words = " OR ".join(["("+ " AND ".join(remove_all_words(s).split(" ")[:8])+")" for s in result_sents[start:end]][:])
-    
-                                results_df_filtration = spike_queries.perform_query(filter_query, dataset_name="covid19",
-                                                                      num_results=100000,
-                                                                      query_type=query_type_filtration,
-                                                                      lucene_query=all_words)
-                                filtration_sents.extend(results_df_filtration["sentence_text"].tolist())
-            
-
-                            st.write("Num filtration results: {}".format(len(filtration_sents)))
-                            st.write("==============================")
-
-
-                            result_sents = [s for s in result_sents if s not in set(filtration_sents)] # take only sents not captured by the query
-                            st.write("Filtration took {} seconds".format(time.time() - start_time))
 
                     if query_type == "syntactic"  and perform_alignment:
                         with st.spinner('Performing argument alignment...'):
