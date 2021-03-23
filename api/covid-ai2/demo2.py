@@ -193,7 +193,7 @@ if mode == "Start with Query":
 show_results = True
 
 start = st.button('Run')
-st.write("Current query: {}".format(session_state.current_query))
+#st.write("Current query: {}".format(session_state.current_query))
 if start:
     session_state.started = True
 
