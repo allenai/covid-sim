@@ -45,6 +45,16 @@ st.markdown(
     </style>
     """, unsafe_allow_html=True) 
 
+def print_spike_results(results):
+
+    html = """First search results: <br> <ul> """
+    for s in results:
+    
+        html+= "<li>{}</li>".format(s)
+    html+="</ul>"
+    st.markdown(html, unsafe_allow_html = True)
+    
+    
 @st.cache(allow_output_mutation=True)
 def load_sents_and_ids():
     with st.spinner('Loading sentences and IDs...'):
@@ -238,7 +248,8 @@ if (start or session_state.start) and session_state.started:
 
         if len(results_sents) > 0:
             st.write("First sentences retrieved:")
-            st.table(results_sents[:10])
+            #st.table(results_sents[:10])
+            print_spike_results(results_sents[:10])
             st.write("Neural similarity search results:")
             encoding = np.array([index.reconstruct(id2ind[i]) for i in results_ids if i in id2ind])
             if encoding.shape[0] > 0:
