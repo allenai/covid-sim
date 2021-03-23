@@ -166,7 +166,7 @@ if mode == "Start with Query":
     max_results = 100 #st.slider('Max number of SPIKE results', 1, 1000, SPIKE_RESULTS_DEFAULT)  
     max_number_of_augmented_results = 100 #st.slider('Number of Augmented results', 1, 250000, 1000)
     if query_type == "syntactic":
-        perform_alignment = st.checkbox("Perform argument alignment", value=False, key=None)
+        perform_alignment = st.checkbox("Perform argument alignment", value=True, key=None)
     
     if perform_alignment:
         
