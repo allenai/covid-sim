@@ -173,7 +173,7 @@ if mode == "Start with Query":
         number_of_sentences_to_align = 100 #st.select_slider('Number of sentences to align.', options=[1, 10, 25, 50, 100, 200, 250, 500], value = NUM_RESULTS_TO_ALIGN_DEFAULT)
         alignment_method = "Metric model" #st.radio("Alignment model", ('Metric model', 'Naive'))
         if alignment_method != "Naive": 
-            max_ngrams = st.select_slider('Maximum span size to align', options=[1, 2, 3, 4, 5, 6, 7, 8,9,10,11,12,13,14,15], value = DEFAULT_MAX_NGRAM)
+            max_ngrams = 5 #st.select_slider('Maximum span size to align', options=[1, 2, 3, 4, 5, 6, 7, 8,9,10,11,12,13,14,15], value = DEFAULT_MAX_NGRAM)
     
     must_include = st.text_input('Get only results containing the following words', '')
 #     #filter_by = st.selectbox('Filter results based on:', ('None', 'Boolean query', 'Token query', 'Syntactic query'))
