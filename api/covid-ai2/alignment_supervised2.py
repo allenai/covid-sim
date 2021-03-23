@@ -275,21 +275,29 @@ def main(model, results_sents, spike_df, num_results, max_ngrams):
 
     def perform_annotation(sent, arg_borders):
 
-        def is_between(k, borders):
+        def 
+        (k, borders):
             return len([(s, e) for (s, e) in borders if s <= k < e]) != 0
 
         sent_lst = sent.split(" ")
         sent_new = []
         arg_colors = ["#8ef", "#fea", "#faa", "#fea", "#8ef", "#afa", "#d8ff35", "#8c443b", "#452963"]
 
+        is_inside=False
+        
         for i, w in enumerate(sent_lst):
 
             for arg in range(len(arg_borders)):
+                
                 if is_between(i, [arg_borders[arg]]):
-                    sent_new.append((w, "ARG{}".format(arg+1), arg_colors[arg]))
+                    if not is_inside:                   
+                        sent_new.append((w, "ARG{}".format(arg+1), arg_colors[arg]))
+                    else:
+                        sent_new.append((w, arg_colors[arg]))
+                    is_inside = True
                     break
             else:
-
+                is_inside = False
                 sent_new.append(" " + w + " ")
 
         return sent_new
