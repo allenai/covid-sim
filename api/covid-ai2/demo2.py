@@ -163,15 +163,15 @@ if mode == "Start with Query":
     if query_type == "syntactic":
         input_query = st.text_input('Query to augment', SYNTACTIC_QUERY_DEFAULT)
         input_query = input_query.replace("a1:", "arg1:").replace("a2:", "arg2:")
-    max_results = st.slider('Max number of SPIKE results', 1, 1000, SPIKE_RESULTS_DEFAULT)  
-    max_number_of_augmented_results = st.slider('Number of Augmented results', 1, 250000, 1000)
+    max_results = 100 #st.slider('Max number of SPIKE results', 1, 1000, SPIKE_RESULTS_DEFAULT)  
+    max_number_of_augmented_results = 100 #st.slider('Number of Augmented results', 1, 250000, 1000)
     if query_type == "syntactic":
         perform_alignment = st.checkbox("Perform argument alignment", value=False, key=None)
     
     if perform_alignment:
         
-        number_of_sentences_to_align = st.select_slider('Number of sentences to align.', options=[1, 10, 25, 50, 100, 200, 250, 500], value = NUM_RESULTS_TO_ALIGN_DEFAULT)
-        alignment_method = st.radio("Alignment model", ('Metric model', 'Naive'))
+        number_of_sentences_to_align = 100 #st.select_slider('Number of sentences to align.', options=[1, 10, 25, 50, 100, 200, 250, 500], value = NUM_RESULTS_TO_ALIGN_DEFAULT)
+        alignment_method = "Metric model" #st.radio("Alignment model", ('Metric model', 'Naive'))
         if alignment_method != "Naive": 
             max_ngrams = st.select_slider('Maximum span size to align', options=[1, 2, 3, 4, 5, 6, 7, 8,9,10,11,12,13,14,15], value = DEFAULT_MAX_NGRAM)
     
@@ -202,18 +202,18 @@ if (start or session_state.start) and session_state.started:
  if mode == "Start with Query":
 
     with st.spinner('Performing SPIKE query...'):
-        st.write("Performing query '{}'".format(input_query))
+        #st.write("Performing query '{}'".format(input_query))
         results_df = spike_queries.perform_query(input_query, dataset_name = "covid19", num_results = max_results, query_type = query_type)
         results_sents = results_df["sentence_text"].tolist()
 
         results_ids = [hash(s) for s in results_sents] #results_df["sentence_id"].tolist()
 
-        st.write("Found {} matches".format(len(results_ids)))
+        #st.write("Found {} matches".format(len(results_ids)))
 
         if len(results_sents) > 0:
             st.write("First sentences retrieved:")
             st.table(results_sents[:10])
-
+            st.write("Neural similarity search results:")
             encoding = np.array([index.reconstruct(id2ind[i]) for i in results_ids if i in id2ind])
             if encoding.shape[0] > 0:
                 
