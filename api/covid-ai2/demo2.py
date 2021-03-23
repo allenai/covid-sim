@@ -28,6 +28,22 @@ import base64
  
     
 st.set_page_config(layout="wide")
+st.markdown(
+    f'''
+        <style>
+            .sidebar .sidebar-content {{
+                width: 375px;
+            }}
+        </style>
+    ''',
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    """<style>
+        .dataframe {text-align: left !important}
+    </style>
+    """, unsafe_allow_html=True) 
 
 @st.cache(allow_output_mutation=True)
 def load_sents_and_ids():
@@ -151,8 +167,18 @@ bert = load_bert()
 bert_all_seq = load_bert_all_seq()
 bert_alignment_supervised = load_bert_alignment_supervised()
 pca = load_pca(pooling)
-st.write("Uses {}-dimensional vectors".format(pca.components_.shape[0]))
-st.write("Number of indexed sentences: {}".format(len(sents)))
+
+my_expander = st.beta_expander("How to query?")
+my_expander.markdown("""Start by writing a query that aims to capture a relation between two entities. 
+<ul>
+  <li>Use <b><font color=‘blue’>$</font></b> or <b><font color=‘blue’>:[w]</font></b> to mark words that <b>must appear</b>. </li>
+  <li>Mark the <b>arguments</b> with <b><font color=‘orange’>a2:</font></b> and <b><font color=‘orange’>a2:</font></b> </li>
+  <li>Mark with <b><font color=‘brown’>:</font></b> additional captures that fix the required synatctic structure. </li>
+</ul>  
+For instance, in the query '<b><font color=‘orange’>a1:[w]</font></b>COVID-19 <b><font color=‘blue’>$</font></b>causes <b><font color=‘orange’>a2:</font></b>pain', we search for sentences where the syntactic relation between the first and second argument is the same as the relation between `COVID-19` and `pain` in this sentence (subject-object relation). We further request an exact match for the word `causes` and the argument `COVID-19`. <br> For more details on the query language, check out 
+<a href="https://spike.covid-19.apps.allenai.org/datasets/covid19/search/help">this</a> tutorial.""", unsafe_allow_html=True)
+#st.write("Uses {}-dimensional vectors".format(pca.components_.shape[0]))
+#st.write("Number of indexed sentences: {}".format(len(sents)))
 print("Try accessing the demo under localhost:8080 (or the default port).")
 
 
@@ -166,7 +192,7 @@ if mode == "Start with Query":
     max_results = 100 #st.slider('Max number of SPIKE results', 1, 1000, SPIKE_RESULTS_DEFAULT)  
     max_number_of_augmented_results = 100 #st.slider('Number of Augmented results', 1, 250000, 1000)
     if query_type == "syntactic":
-        perform_alignment = st.checkbox("Perform argument alignment", value=True, key=None)
+        perform_alignment = True #st.checkbox("Perform argument alignment", value=True, key=None)
     
     if perform_alignment:
         
