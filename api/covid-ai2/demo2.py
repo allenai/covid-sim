@@ -81,7 +81,7 @@ def plotly_table(results, title):
       
 def print_spike_results(results, title):
 
-    st.markdown("<h4>{}</h4>".format(title), unsafe_allow_html = True)
+    st.markdown("<h3>{}</h3>".format(title), unsafe_allow_html = True)
     html = """"""
     for s in results:
     
@@ -285,7 +285,7 @@ if (start or session_state.start) and session_state.started:
             #st.write("First sentences retrieved:")
             #st.table(results_sents[:10])
             print_spike_results(results_sents[:10], title = "First Sentences Retrived:")
-            st.markdown("<h4>Neural Similarity Search Results:</h4>", unsafe_allow_html = True)
+            st.markdown("<h3>Neural Similarity Search Results:</h3>", unsafe_allow_html = True)
             encoding = np.array([index.reconstruct(id2ind[i]) for i in results_ids if i in id2ind])
             if encoding.shape[0] > 0:
                 
