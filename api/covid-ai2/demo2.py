@@ -292,7 +292,7 @@ if (start or session_state.start) and session_state.started:
         if len(results_sents) > 0:
             #st.write("First sentences retrieved:")
             #st.table(results_sents[:10])
-            print_spike_results(results_sents[:10], list(zip(results_df["a1_first_index"], results_df["a1_last_index"])), list(zip(results_df["a2_first_index"], results_df["a2_last_index"])), title = "First Sentences Retrived:")
+            print_spike_results(results_sents[:10], list(zip(results_df["arg1_first_index"], results_df["arg1_last_index"])), list(zip(results_df["arg2_first_index"], results_df["arg2_last_index"])), title = "First Sentences Retrived:")
             st.markdown("<h3>Neural Similarity Search Results:</h3>", unsafe_allow_html = True)
             encoding = np.array([index.reconstruct(id2ind[i]) for i in results_ids if i in id2ind])
             if encoding.shape[0] > 0:
