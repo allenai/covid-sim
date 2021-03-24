@@ -85,14 +85,18 @@ def print_spike_results(results, arg1_lst, arg2_lst, title):
     for s,arg1,arg2 in zip(results,arg1_lst,arg2_lst):
         arg1_first_idx,arg1_last_index = arg1
         arg2_first_idx,arg2_last_index = arg2  
-        arg1_str = s[arg1_first_idx:arg1_last_index]    
-        arg1 = "<font color=‘orange’>{}</font>".format(arg1_str)
-        s = s[:arg1_first_idx] + arg1 + s[arg1_last_index:]
-
+        arg1_str = s[arg1_first_idx:arg1_last_index]
         arg2_str = s[arg2_first_idx:arg2_last_index]    
-        arg2 = "<font color=‘cyan’>{}</font>".format(arg2_str)
-        s = s[:arg2_first_idx] + arg2 + s[arg2_last_index:]
         
+        arg1 = "<font color=‘orange’>{}</font>".format(arg1_str)
+        arg2 = "<font color=‘cyan’>{}</font>".format(arg2_str)        
+        if arg1_first_idx > arg2_first_idx:
+            
+            arg1,arg2 = arg2.replace("cyan","orange"), arg1.replace("cyan","orange")
+            arg1_first_idx,arg1_last_index, arg2_first_idx,arg2_last_index = arg2_first_idx,arg2_last_index,  arg1_first_idx,arg1_last_index
+            
+        s = s[:arg1_first_idx] + arg1 + s[arg1_last_index:arg2_first_idx] + arg2 + s[arg2_last_index:]
+                
         html+= "<li>{}</li>".format(s)
     html+="</ul>"
     st.markdown(html, unsafe_allow_html = True)
