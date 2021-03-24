@@ -25,7 +25,7 @@ SYNTACTIC_QUERY_DEFAULT = "a1:[w]COVID-19 $causes a2:something" #"arg1:[e]parace
 SPIKE_RESULTS_DEFAULT = 75
 must_include = ""
 import base64
- 
+import plotly.graph_objects as go
     
 st.set_page_config(layout="wide")
 st.markdown(
@@ -45,6 +45,40 @@ st.markdown(
     </style>
     """, unsafe_allow_html=True) 
 
+def plotly_table(results, title):
+    st.header("Plotly Table (go.Table)")
+    style=True
+    filter_table = results# _filter_results(results, number_of_rows, number_of_columns)
+
+    header_values = list(filter_table.columns)
+    cell_values = []
+    for index in range(0, len(filter_table.columns)):
+        cell_values.append(filter_table.iloc[:, index : index + 1])
+
+    if not style:
+        fig = go.Figure(
+            data=[
+                go.Table(
+                    header=dict(values=header_values), cells=dict(values=cell_values)
+                )
+            ]
+        )
+    else:
+        fig = go.Figure(
+            data=[
+                go.Table(
+                    header=dict(
+                        values=header_values, fill_color="paleturquoise", align="left"
+                    ),
+                    cells=dict(values=cell_values, fill_color="lavender", align="left"),
+                )
+            ]
+        )
+
+    with st.beta_expander(title):
+        st.plotly_chart(fig)
+      
+      
 def print_spike_results(results, title):
 
     st.markdown("<h4>{}</h4>".format(title), unsafe_allow_html = True)
@@ -274,12 +308,17 @@ if (start or session_state.start) and session_state.started:
                                 tuples_counts_df = pd.DataFrame(tuples_items, columns =['entity', 'count'])
                                 captures_df = pd.DataFrame.from_records(captures_tuples, columns =['ARG1', 'ARG2'])
                                 captures_df["sentence"] = result_sents[:len(captures_tuples)]
-                                st.sidebar.write('ARG1 Aggregation:')
-                                st.sidebar.write(arg1_counts_df.head(30))
-                                st.sidebar.write('ARG2 Aggregation:')
-                                st.sidebar.write(arg2_counts_df.head(30))
-                                st.sidebar.write('Tuples Aggregation:')
-                                st.sidebar.write(tuples_counts_df.head(30))
+                                
+                                plotly_table(arg1_counts_df.head(50), "Argument 1 Aggregation") 
+                                plotly_table(arg2_counts_df.head(50), "Argument 2 Aggregation") 
+                                plotly_table(tuples_counts_df.head(50), "Tuples Aggregation") 
+                                
+                                #st.sidebar.write('ARG1 Aggregation:')
+                                #st.sidebar.write(arg1_counts_df.head(30))
+                                #st.sidebar.write('ARG2 Aggregation:')
+                                #st.sidebar.write(arg2_counts_df.head(30))
+                                #st.sidebar.write('Tuples Aggregation:')
+                                #st.sidebar.write(tuples_counts_df.head(30))
                                 
                                 st.markdown(get_table_download_link(captures_df), unsafe_allow_html=True) # download augmented results
      
