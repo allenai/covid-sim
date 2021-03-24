@@ -78,7 +78,7 @@ def plotly_table(results, title):
         st.plotly_chart(fig)
       
       
-def print_spike_results(results, title, arg1_lst, arg2_lst):
+def print_spike_results(results, arg1_lst, arg2_lst, title):
 
     st.markdown("<h3>{}</h3>".format(title), unsafe_allow_html = True)
     html = """"""
