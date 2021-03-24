@@ -78,12 +78,21 @@ def plotly_table(results, title):
         st.plotly_chart(fig)
       
       
-def print_spike_results(results, title):
+def print_spike_results(results, title, arg1_lst, arg2_lst):
 
     st.markdown("<h3>{}</h3>".format(title), unsafe_allow_html = True)
     html = """"""
-    for s in results:
-    
+    for s,arg1,arg2 in zip(results,arg1_lst,arg2_lst):
+        arg1_first_idx,arg1_last_index = arg1
+        arg2_first_idx,arg2_last_index = arg2  
+        arg1_str = s[arg1_first_idx:arg1_last_index]    
+        arg1 = "<font color=‘orange’>{}</font>".format(arg1_str)
+        s = s[:arg1_first_idx] + arg1 + s[arg1_last_index:]
+
+        arg2_str = s[arg2_first_idx:arg2_last_index]    
+        arg2 = "<font color=‘cyan’>{}</font>".format(arg2_str)
+        s = s[:arg2_first_idx] + arg2 + s[arg2_last_index:]
+        
         html+= "<li>{}</li>".format(s)
     html+="</ul>"
     st.markdown(html, unsafe_allow_html = True)
@@ -283,7 +292,7 @@ if (start or session_state.start) and session_state.started:
         if len(results_sents) > 0:
             #st.write("First sentences retrieved:")
             #st.table(results_sents[:10])
-            print_spike_results(results_sents[:10], title = "First Sentences Retrived:")
+            print_spike_results(results_sents[:10], list(zip(results_df["a1_first_index"], results_df["a1_last_index"])), list(zip(results_df["a2_first_index"], results_df["a2_last_index"])), title = "First Sentences Retrived:")
             st.markdown("<h3>Neural Similarity Search Results:</h3>", unsafe_allow_html = True)
             encoding = np.array([index.reconstruct(id2ind[i]) for i in results_ids if i in id2ind])
             if encoding.shape[0] > 0:
