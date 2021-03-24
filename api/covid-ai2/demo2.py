@@ -46,7 +46,6 @@ st.markdown(
     """, unsafe_allow_html=True) 
 
 def plotly_table(results, title):
-    st.header("Plotly Table (go.Table)")
     style=True
     filter_table = results# _filter_results(results, number_of_rows, number_of_columns)
 
