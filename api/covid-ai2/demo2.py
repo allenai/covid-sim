@@ -95,7 +95,7 @@ def print_spike_results(results, arg1_lst, arg2_lst, title):
             arg1,arg2 = arg2.replace("cyan","orange"), arg1.replace("cyan","orange")
             arg1_first_idx,arg1_last_index, arg2_first_idx,arg2_last_index = arg2_first_idx,arg2_last_index,  arg1_first_idx,arg1_last_index
             
-        s = s[:arg1_first_idx] + " " + arg1 + s[arg1_last_index:arg2_first_idx] + " " + arg2 + s[arg2_last_index:]
+        #s = s[:arg1_first_idx] + " " + arg1 + s[arg1_last_index:arg2_first_idx] + " " + arg2 + s[arg2_last_index:]
                 
         html+= "<li>{}</li>".format(s)
     html+="</ul>"
