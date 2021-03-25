@@ -17,7 +17,7 @@ import alignment_supervised
 from annot import annotation, annotated_text
 import time
 import SessionState
-NUM_RESULTS_TO_ALIGN_DEFAULT = 200
+NUM_RESULTS_TO_ALIGN_DEFAULT = 1500
 DEFAULT_MAX_NGRAM = 5
 BOOLEAN_QUERY_DEFAULT = "virus lemma=originate"
 TOKEN_QUERY_DEFAULT = "novel coronavirus"
@@ -253,7 +253,7 @@ if mode == "Start with Query":
     
     if perform_alignment:
         
-        number_of_sentences_to_align = 100 #st.select_slider('Number of sentences to align.', options=[1, 10, 25, 50, 100, 200, 250, 500], value = NUM_RESULTS_TO_ALIGN_DEFAULT)
+        number_of_sentences_to_align = 1000 #st.select_slider('Number of sentences to align.', options=[1, 10, 25, 50, 100, 200, 250, 500], value = NUM_RESULTS_TO_ALIGN_DEFAULT)
         alignment_method = "Metric model" #st.radio("Alignment model", ('Metric model', 'Naive'))
         if alignment_method != "Naive": 
             max_ngrams = 5 #st.select_slider('Maximum span size to align', options=[1, 2, 3, 4, 5, 6, 7, 8,9,10,11,12,13,14,15], value = DEFAULT_MAX_NGRAM)
@@ -315,9 +315,10 @@ if (start or session_state.start) and session_state.started:
                                 colored_sents, annotated_sents = alignment.main(bert_all_seq, result_sents, results_df, input_query, [-1], number_of_sentences_to_align)
                             else:
                                 annotated_sents, arg1_items, arg2_items, tuples_items, captures_tuples = alignment_supervised.main(bert_alignment_supervised, result_sents, results_df, number_of_sentences_to_align, max_ngrams+1)
-                                arg1_counts_df = pd.DataFrame(arg1_items, columns =['entity', 'count'])
-                                arg2_counts_df = pd.DataFrame(arg2_items, columns =['entity', 'count'])
-                                tuples_counts_df = pd.DataFrame(tuples_items, columns =['entity', 'count'])
+                                tuples_items = [(t[0], t[1], count) for t, count in tuples_items]
+                                arg1_counts_df = pd.DataFrame(arg1_items, columns =['ARG1', 'count'])
+                                arg2_counts_df = pd.DataFrame(arg2_items, columns =['ARG2', 'count'])
+                                tuples_counts_df = pd.DataFrame(tuples_items, columns =['ARG1', 'ARG2', 'count'])
                                 captures_df = pd.DataFrame.from_records(captures_tuples, columns =['ARG1', 'ARG2'])
                                 captures_df["sentence"] = result_sents[:len(captures_tuples)]
                                 
