@@ -26,7 +26,8 @@ SPIKE_RESULTS_DEFAULT = 75
 must_include = ""
 import base64
 import plotly.graph_objects as go
-    
+from collections import Counter
+
 st.set_page_config(layout="wide")
 st.markdown(
     f'''
@@ -305,6 +306,16 @@ if (start or session_state.start) and session_state.started:
                     encoding = np.mean(encoding, axis = 0)
                     D,I = index.search(np.ascontiguousarray([encoding]).astype("float32"), max_number_of_augmented_results)
                     result_sents = [sents[i].replace("/","-") for i in I.squeeze()]
+                    results_set = set()
+                    result_sents_clean = []
+                    for s in result_sents:
+                        
+                        if s not in results_set:
+                            results_set.add(s)
+                            result_sents_clean.append(s)
+                            
+                    result_sents = result_sents_clean
+                    
                     if must_include != "":
                         result_sents = [sents[i].replace("/","-") for i in I.squeeze() if must_include in sents[i]]
 
