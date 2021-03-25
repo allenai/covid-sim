@@ -247,7 +247,7 @@ if mode == "Start with Query":
         input_query = st.text_input('Query to augment', SYNTACTIC_QUERY_DEFAULT)
         input_query = input_query.replace("a1:", "arg1:").replace("a2:", "arg2:")
     max_results = 100 #st.slider('Max number of SPIKE results', 1, 1000, SPIKE_RESULTS_DEFAULT)  
-    max_number_of_augmented_results = 100 #st.slider('Number of Augmented results', 1, 250000, 1000)
+    max_number_of_augmented_results = 1000 #st.slider('Number of Augmented results', 1, 250000, 1000)
     if query_type == "syntactic":
         perform_alignment = True #st.checkbox("Perform argument alignment", value=True, key=None)
     
