@@ -289,7 +289,7 @@ if (start or session_state.start) and session_state.started:
         #st.write("Performing query '{}'".format(input_query))
         results_df = spike_queries.perform_query(input_query, dataset_name = "covid19", num_results = max_results, query_type = query_type)
         results_sents = results_df["sentence_text"].tolist()
-
+        results_sents = list(set(results_sents))
         results_ids = [hash(s) for s in results_sents] #results_df["sentence_id"].tolist()
 
         #st.write("Found {} matches".format(len(results_ids)))
