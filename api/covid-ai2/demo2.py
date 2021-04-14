@@ -82,7 +82,7 @@ def plotly_table(results, title):
 def print_spike_results(results, arg1_lst, arg2_lst, title):
 
     st.markdown("<h3>{}</h3>".format(title), unsafe_allow_html = True)
-    html = """"""
+    html = """<ul>"""
     for s,arg1,arg2 in zip(results,arg1_lst,arg2_lst):
         arg1_first_idx,arg1_last_index = arg1
         arg2_first_idx,arg2_last_index = arg2  
