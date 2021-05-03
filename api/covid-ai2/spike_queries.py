@@ -26,13 +26,14 @@ def perform_query(query_str: str, dataset_name: str = "pubmed", num_results: int
   "data_set_name": "{dataset_name}"
 }}"""
 
-    template = """{{
-      "queries": {{"{query_type}": "{query_content}", "lucene": "{lucene_query}"}},
-      "data_set_name": "{dataset_name}"
-    }}"""
-
-
-    query = template.format(query_content=query_str, dataset_name=dataset_name, query_type=query_type, lucene_query=lucene_query)
+    #template = """{{
+    #  "queries": {{"{query_type}": "{query_content}", "lucene": "{lucene_query}"}},
+    #  "data_set_name": "{dataset_name}"
+    #}}"""
+    
+    template = """{{"queries": {{"{query_type}": "{query_content}", "parent":"","expansion":""}},"data_set_name":"covid19","context":{{"lists":{{}},"tables":{{}},"case_strategy":"ignore"}}}}"""
+    query = template.format(query_content=query_str, query_type=query_type)
+    #query = template.format(query_content=query_str, dataset_name=dataset_name, query_type=query_type, lucene_query=lucene_query)
     #st.write("******************")
     #st.write(query)
     #st.write("******************")
