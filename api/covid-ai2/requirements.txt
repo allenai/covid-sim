@@ -10,4 +10,4 @@ torchvision==0.6.0a0+82fd1c8
 tqdm==4.42.1
 transformers==3.5.0
 pandas==0.25.3
-urllib3==1.25.8
+urllib3==1.26.5
