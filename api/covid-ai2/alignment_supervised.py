@@ -352,13 +352,7 @@ def main(model, results_sents, spike_df, num_results, max_ngrams):
     query_used = query_sents[0] # use first query in all examples.
     query_used_arg1 = [query_arg1_starts[0], query_arg1_ends[0]]
     query_used_arg2 = [query_arg2_starts[0], query_arg2_ends[0]]
-    i = 0
-    found = False
-    while (not found) and (i < 4):
-        query_used_arg2 = [query_arg2_starts[i], query_arg2_ends[i]]
-        if ((query_used_arg2[1] > query_used_arg1[1]) and (query_used_arg2[0] > query_used_arg1[1])) or ((query_used_arg2[0] < query_used_arg1[0]) and (query_used_arg2[1] < query_used_arg1[0])):
-            found = True    
-        i += 1    
+ 
     sents2 = results_sents
     sents1 = [query_used] * len(sents2)
     query_used_arg1 = [query_used_arg1] * len(sents2)
@@ -373,7 +367,15 @@ def main(model, results_sents, spike_df, num_results, max_ngrams):
         arg1_start = p["tok2orig"][ngram_pred_arg1_idx[0]]
         arg1_end = p["tok2orig"][ngram_pred_arg1_idx[1]]
         arg2_start = p["tok2orig"][ngram_pred_arg2_idx[0]]
-        arg2_end = p["tok2orig"][ngram_pred_arg2_idx[1]]        
+        arg2_end = p["tok2orig"][ngram_pred_arg2_idx[1]]
+        
+        i = 0
+        while i < 4:
+           arg2_start, arg2_end = p["tok2orig"][ngram_pred_arg2_idx[i]],  p["tok2orig"][ngram_pred_arg2_idx[i]]
+           if ((arg2_start > arg1_end) and (arg2_end > arg1_end)) or ((arg2_start < arg1_start) and (arg2_end < arg1_start)):
+               break    
+           i += 1           
+        
         sent = p["sent"]
         sent_lst = sent.split(" ")
         
