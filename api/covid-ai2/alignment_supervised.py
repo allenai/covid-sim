@@ -371,7 +371,8 @@ def main(model, results_sents, spike_df, num_results, max_ngrams):
         
         i = 0
         while i < 4:
-           arg2_start, arg2_end = p["tok2orig"][ngram_pred_arg2_idx[i]],  p["tok2orig"][ngram_pred_arg2_idx[i]]
+           ngram_pred_arg2_idx = p["all_ngrams"][pred_arg2[i]]
+           arg2_start, arg2_end = p["tok2orig"][ngram_pred_arg2_idx[0]],  p["tok2orig"][ngram_pred_arg2_idx[1]]
            if ((arg2_start > arg1_end) and (arg2_end > arg1_end)) or ((arg2_start < arg1_start) and (arg2_end < arg1_start)):
                break    
            i += 1           
