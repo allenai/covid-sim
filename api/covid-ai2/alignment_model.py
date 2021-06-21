@@ -46,7 +46,7 @@ class BertModel(pl.LightningModule):
         
         self.train_dataset = train_dataset
         self.dev_dataset = dev_dataset
-        self.linear_arg1_1 = torch.nn.Linear(768, 128) #torch.load("finetuned_model/metric_model/linear.pt") #torch.nn.Linear(768, 64)
+        self.linear_arg1_1 = torch.nn.Linear(768, 64) #torch.load("finetuned_model/metric_model/linear.pt") #torch.nn.Linear(768, 64)
         
         if pretrained:
             self.linear_arg1_1.load_state_dict(torch.load("linear.pt", map_location = torch.device('cpu')))
