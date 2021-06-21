@@ -28,7 +28,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 class BertModel(pl.LightningModule):
 
-    def __init__(self, train_dataset: Dataset, dev_dataset: Dataset, batch_size, device: str, mode: str = "eval", alpha=0.1, lr = 1e-4, momentum=0.5, l2_loss = False, same_rel_weight = 1, pretrained = True, train_only_linear=False):
+    def __init__(self, train_dataset: Dataset, dev_dataset: Dataset, batch_size, device: str, mode: str = "eval", alpha=0.1, lr = 1e-4, momentum=0.5, l2_loss = False, same_rel_weight = 1, pretrained = True, train_only_linear=True):
         
         super().__init__()
         
