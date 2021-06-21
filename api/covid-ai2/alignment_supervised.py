@@ -79,7 +79,7 @@ def add_annotation(pairs_data):
 def finetune(model, df):
 
     result_dict = get_result_dict(df)
-    pairs_data = generate_pairs_data(result_dict, k = 300)
+    pairs_data = generate_pairs_data(result_dict, k = 250)
     add_annotation(pairs_data)
     dataset = Dataset(pairs_data)    
     model_to_ft = alignment_model.BertModel(dataset, dataset, 1, "cpu", "train", alpha = 0.05, lr = 1e-3, momentum=0.5, l2_loss=True, same_rel_weight = 0.2, pretrained = True)
