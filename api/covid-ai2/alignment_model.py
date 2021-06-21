@@ -39,10 +39,10 @@ class BertModel(pl.LightningModule):
             self.tokenizer = AutoTokenizer.from_pretrained('allenai/scibert_scivocab_uncased')
             self.model = AutoModel.from_pretrained('allenai/scibert_scivocab_uncased', config=config) 
         else:
-         print("loading pretrained model")
-         config = AutoConfig.from_pretrained('finetuned_model/metric_model', output_hidden_states=True)
-         self.tokenizer = AutoTokenizer.from_pretrained('finetuned_model/metric_model')
-         self.model = AutoModel.from_pretrained('finetuned_model/metric_model', config=config)             
+            print("loading pretrained model")
+            config = AutoConfig.from_pretrained('Shauli/RE-metric-model-spike', output_hidden_states=True)
+            self.model = AutoModel.from_pretrained('Shauli/RE-metric-model-spike', config=config)    
+            self.tokenizer = AutoTokenizer.from_pretrained('Shauli/RE-metric-model-spike')          
         
         self.train_dataset = train_dataset
         self.dev_dataset = dev_dataset
