@@ -78,11 +78,11 @@ def add_annotation(pairs_data):
 
 def finetune(model, df):
 
-    model_to_ft = alignment_model.BertModel(dataset, dataset, 1, "cpu", "train", alpha = 0.05, lr = 1e-3, momentum=0.5, l2_loss=True, same_rel_weight = 0.2, pretrained = True)
     result_dict = get_result_dict(df)
     pairs_data = generate_pairs_data(result_dict, k = 100)
     add_annotation(pairs_data)
-    dataset = Dataset(pairs_data)
+    dataset = Dataset(pairs_data)    
+    model_to_ft = alignment_model.BertModel(dataset, dataset, 1, "cpu", "train", alpha = 0.05, lr = 1e-3, momentum=0.5, l2_loss=True, same_rel_weight = 0.2, pretrained = True)
     trainer = Trainer(max_epochs=1,min_epochs=1)
     train_gen = torch.utils.data.DataLoader(dataset, batch_size=1, drop_last=False, shuffle=True,
                                                     num_workers = 4)
