@@ -49,7 +49,7 @@ class BertModel(pl.LightningModule):
         self.linear_arg1_1 = torch.nn.Linear(768, 128) #torch.load("finetuned_model/metric_model/linear.pt") #torch.nn.Linear(768, 64)
         
         if pretrained:
-            self.linear_arg1_1.load_state_dict(torch.load("finetuned_model/metric_model/linear.pt"))
+            self.linear_arg1_1.load_state_dict(torch.load("linear.pt", map_location = torch.device('cpu')))
         self.same_rel_mlp = torch.nn.Sequential(*[torch.nn.Linear(768, 1)])#, torch.nn.ReLU(), torch.nn.Linear(128, 1)])     
         #if pretrained: 
         #    self.same_rel_mlp.load_state_dict(torch.load("finetuned_model/metric_model/same_rel_mlp.pt")) 
