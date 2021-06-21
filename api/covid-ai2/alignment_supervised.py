@@ -31,7 +31,7 @@ def get_result_dict(df):
     result_dict = df.to_dict("records")
     return result_dict
 
-def generate_pairs_data(results_dict, k = 1000):
+def generate_pairs_data(result_dict, k = 1000):
     pairs_data = []
     pairs = list(itertools.combinations(result_dict[:150], 2))
     pairs = [p for p in pairs if p[0] != p[1]]
