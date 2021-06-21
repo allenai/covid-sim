@@ -23,7 +23,70 @@ import nltk
 from nltk import ngrams as get_ngrams
 from termcolor import colored
 import streamlit as st
+from dataset import Dataset
 
+
+def get_result_dict(df):
+
+    result_dict = df.to_dict("records")
+    return result_dict
+
+def generate_pairs_data(results_dict, k = 1000):
+    pairs_data = []
+    pairs = list(itertools.combinations(result_dict[:150], 2))
+    pairs = [p for p in pairs if p[0] != p[1]]
+    random.seed(0)
+    random.shuffle(pairs)
+    
+    for j in range(k):
+        first, second = pairs[j]
+        new_dict = {"first": first["sentence_text"], "second": second["sentence_text"], 
+                    "first_arg1": [first["arg1_first_index"], first["arg1_last_index"]],
+                    "first_arg2": [first["arg2_first_index"], first["arg2_last_index"]],
+                   "second_arg1": [second["arg1_first_index"], second["arg1_last_index"]],
+                    "second_arg2": [second["arg2_first_index"], second["arg2_last_index"]]}
+        
+        pairs_data.append(new_dict)
+    
+    return pairs_data
+
+def add_annotation(pairs_data):
+    
+    def add(sent, idx, arg1=True):
+        
+        string = "<<ARG1:" if arg1 else "<<ARG2:"
+        sent_new = sent.split(" ")
+        sent_new = sent_new[:idx[0]] + [string] + sent_new[idx[0]:idx[1]+1] + [">>"] + sent_new[idx[1]+1:]
+        new = " ".join(sent_new).replace("<<ARG1: ", "<<ARG1:").replace("<<ARG2: ", "<<ARG2:").replace(" >>", ">>")
+        
+        return new
+        
+    for i,pair in enumerate(pairs_data):
+        first_arg1, first_arg2 = pair["first_arg1"], pair["first_arg2"]
+        second_arg1, second_arg2 = pair["second_arg1"], pair["second_arg2"]
+        
+        first_new = add(pair["first"], first_arg1, arg1=True)
+        first_new = add(first_new, first_arg2, arg1=False)
+        second_new = add(pair["second"], second_arg1, arg1=True)
+        second_new = add(second_new, second_arg2, arg1=False)
+        
+        pair["first"] = first_new
+        pair["second"] = second_new
+        
+        pairs_data[i] = pair
+
+
+def finetune(model, df):
+    result_dict = get_result_dict(df)
+    pairs_data = generate_pairs_data(result_dict, k = 100)
+    add_annotation(pairs_data)
+    dataset = Dataset(pairs_data)
+    trainer = Trainer(max_epochs=1,min_epochs=1)
+    train_gen = torch.utils.data.DataLoader(dataset, batch_size=1, drop_last=False, shuffle=True,
+                                                    num_workers = 4)
+    st.write("Fitting...")
+    trainer.fit(model, train_gen)
+    
 class BertModel(torch.nn.Module):
 
     def __init__(self, device: str, mode: str = "eval", load_existing = True):
@@ -309,6 +372,7 @@ def evaluate_model(sents1, sents2, arg1_sent1, arg2_sent1, model, max_ngrams = 5
 
 def main(model, results_sents, spike_df, num_results, max_ngrams):
 
+    finetune(model, spike_df)
     captures = []
     captures_tuples = []
     
