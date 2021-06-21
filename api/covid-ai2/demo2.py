@@ -17,7 +17,7 @@ import alignment_supervised
 from annot import annotation, annotated_text
 import time
 import SessionState
-NUM_RESULTS_TO_ALIGN_DEFAULT = 1500
+NUM_RESULTS_TO_ALIGN_DEFAULT = 150
 DEFAULT_MAX_NGRAM = 5
 BOOLEAN_QUERY_DEFAULT = "virus lemma=originate"
 TOKEN_QUERY_DEFAULT = "novel coronavirus"
