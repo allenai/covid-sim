@@ -38,7 +38,7 @@ def generate_pairs_data(result_dict, k = 1000):
     random.seed(0)
     random.shuffle(pairs)
     
-    for j in range(k):
+    for j in range(min(k, len(pairs))):
         first, second = pairs[j]
         new_dict = {"first": first["sentence_text"], "second": second["sentence_text"], 
                     "first_arg1": [first["arg1_first_index"], first["arg1_last_index"]],
@@ -375,7 +375,8 @@ def evaluate_model(sents1, sents2, arg1_sent1, arg2_sent1, model, max_ngrams = 5
 
 def main(model, results_sents, spike_df, num_results, max_ngrams):
 
-    finetune(model, spike_df)
+    if len(spike_df) > 100:
+        finetune(model, spike_df)
     captures = []
     captures_tuples = []
     
