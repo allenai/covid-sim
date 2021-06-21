@@ -9,7 +9,7 @@ import torch
 from transformers import BertTokenizer
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 from transformers import AutoTokenizer, AutoModel, AutoConfig
-from transformers import BertForSequenceClassification, AdamW, BertConfig, BertModel, AutoTokenizer, AutoModel, PreTrainedTokenizerFast
+from transformers import BertForSequenceClassification, AdamW, BertConfig, BertModel, AutoTokenizer, AutoModel
 import numpy as np
 from typing import List
 from torch import nn
