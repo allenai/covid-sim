@@ -33,6 +33,7 @@ class BertModel(pl.LightningModule):
         super().__init__()
         
         self.device_to_use = device
+        self.device = self.device_to_use
         
         if not pretrained:
             config = AutoConfig.from_pretrained('allenai/scibert_scivocab_uncased', output_hidden_states=True)
