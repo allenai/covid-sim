@@ -13,9 +13,11 @@ WIKIPEDIA_BASE_URL = "https://spike.staging.apps.allenai.org"
 
 
 def get_tsv_url(response: requests.models.Response, results_limit: int, base_url) -> str:
+    print("\n\n{}\n\n".format(response))
     tsv_location = response.headers["csv-location"]
     tsv_url = base_url + tsv_location + "?sentence_text=True&capture_indices=True&sentence_id=True&limit={}".format(
         results_limit)
+    print(tsv_url)
     return tsv_url
 
 
@@ -31,8 +33,10 @@ def perform_query(query_str: str, dataset_name: str = "pubmed", num_results: int
     #  "data_set_name": "{dataset_name}"
     #}}"""
     
-    template = """{{"queries": {{"{query_type}": "{query_content}", "parent":"","expansion":""}},"data_set_name":"covid19","context":{{"lists":{{}},"tables":{{}},"case_strategy":"ignore"}}}}"""
+    template = """{{"queries": {{"{query_type}": "{query_content}", "parent":"","expansion":""}},"data_set_name":"covid19","context":{{"lists":{{}},"tables":{{}},"case_strategy":"ignore",
+    "attempt_fuzzy": false}}}}"""
     query = template.format(query_content=query_str, query_type=query_type)
+    print("\n\n{}\n\n".format(query))
     #query = template.format(query_content=query_str, dataset_name=dataset_name, query_type=query_type, lucene_query=lucene_query)
     #st.write("******************")
     #st.write(query)
