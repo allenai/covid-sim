@@ -24,7 +24,7 @@ from nltk import ngrams as get_ngrams
 from termcolor import colored
 import streamlit as st
 from dataset import Dataset
-
+import alignment_model
 
 def get_result_dict(df):
 
@@ -77,6 +77,8 @@ def add_annotation(pairs_data):
 
 
 def finetune(model, df):
+
+    model_to_ft = alignment_model.BertModel(dataset, dataset, 1, "cpu", "train", alpha = 0.05, lr = 1e-3, momentum=0.5, l2_loss=True, same_rel_weight = 0.2, pretrained = True)
     result_dict = get_result_dict(df)
     pairs_data = generate_pairs_data(result_dict, k = 100)
     add_annotation(pairs_data)
@@ -85,7 +87,8 @@ def finetune(model, df):
     train_gen = torch.utils.data.DataLoader(dataset, batch_size=1, drop_last=False, shuffle=True,
                                                     num_workers = 4)
     st.write("Fitting...")
-    trainer.fit(model, train_gen)
+    trainer.fit(model_to_ft, train_gen)
+    model.linear_arg1_1 = model_to_ft.linear_arg1_1
     
 class BertModel(torch.nn.Module):
 
