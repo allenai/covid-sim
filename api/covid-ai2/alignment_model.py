@@ -9,7 +9,7 @@ import torch
 from transformers import BertTokenizer
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 from transformers import AutoTokenizer, AutoModel, AutoConfig
-from transformers import BertForSequenceClassification, AdamW, BertConfig, BertModel, AutoTokenizer, AutoModel
+from transformers import BertForSequenceClassification, AdamW, BertConfig, BertModel, AutoTokenizer, AutoModel, PreTrainedTokenizerFast
 import numpy as np
 from typing import List
 from torch import nn
@@ -33,7 +33,7 @@ class BertModel(pl.LightningModule):
         super().__init__()
         
         self.device_to_use = device
-        self.device = self.device_to_use
+
         
         if not pretrained:
             config = AutoConfig.from_pretrained('allenai/scibert_scivocab_uncased', output_hidden_states=True)
@@ -43,14 +43,17 @@ class BertModel(pl.LightningModule):
             print("loading pretrained model")
             config = AutoConfig.from_pretrained('Shauli/RE-metric-model-spike', output_hidden_states=True)
             self.model = AutoModel.from_pretrained('Shauli/RE-metric-model-spike', config=config)    
-            self.tokenizer = AutoTokenizer.from_pretrained('Shauli/RE-metric-model-spike')          
+            self.tokenizer = AutoTokenizer.from_pretrained('Shauli/RE-metric-model-spike')           
         
         self.train_dataset = train_dataset
         self.dev_dataset = dev_dataset
         self.linear_arg1_1 = torch.nn.Linear(768, 64) #torch.load("finetuned_model/metric_model/linear.pt") #torch.nn.Linear(768, 64)
-        
         if pretrained:
+        
             self.linear_arg1_1.load_state_dict(torch.load("linear.pt", map_location = torch.device('cpu')))
+        
+        #if pretrained:
+        #    self.linear_arg1_1.load_state_dict(torch.load("finetuned_model/metric_model/linear.pt"))
         self.same_rel_mlp = torch.nn.Sequential(*[torch.nn.Linear(768, 1)])#, torch.nn.ReLU(), torch.nn.Linear(128, 1)])     
         #if pretrained: 
         #    self.same_rel_mlp.load_state_dict(torch.load("finetuned_model/metric_model/same_rel_mlp.pt")) 
@@ -216,7 +219,7 @@ class BertModel(pl.LightningModule):
             loss_arg2 = (pos_arg2 / (pos_arg2 + neg_arg2))#**2
 
         
-        loss = states[0,0:1]**2 #torch.zeros(1).to(self.device)
+        loss = states[0,0:1]**2 #torch.zeros(1).to(self.device_to_usedevice)
         loss2_isnan = np.isnan(loss_arg2.detach().cpu().numpy().item())
         loss1_isnan = np.isnan(loss_arg1.detach().cpu().numpy().item())
         if not loss2_isnan:
@@ -255,7 +258,7 @@ class BertModel(pl.LightningModule):
             
             loss, _, _, _, _, _, _, is_neg_pred = self.forward_with_loss_calculation(bert_tokens, tokens_tensor, range_sent1, range_sent2, orig_to_tok_map, l, l_tokens, nb = batch_nb)
         else:
-            loss = torch.zeros(1).to(self.device)       
+            loss = torch.zeros(1).to(self.device_to_use)       
             outputs = self.model(tokens_tensor)
             states = outputs[0][0]
             is_neg_pred = self.same_rel_mlp(states[0])
@@ -263,7 +266,7 @@ class BertModel(pl.LightningModule):
         if (is_negative and is_neg_pred.detach().cpu().numpy().item() > 0) or ((not is_negative) and (is_neg_pred.detach().cpu().numpy().item() < 0)):
             self.count_same_rel += 1
             
-        y = torch.ones(1).to(self.device) if is_negative else torch.zeros(1).to(self.device)   
+        y = torch.ones(1).to(self.device_to_use) if is_negative else torch.zeros(1).to(self.device_to_use)   
         loss += self.same_rel_weight * self.bce_loss(is_neg_pred, y)
         #loss = self.same_rel_weight * self.bce_loss(is_neg_pred, y)
         
