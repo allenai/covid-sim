@@ -9,7 +9,7 @@ import torch
 from transformers import BertTokenizer
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 from transformers import AutoTokenizer, AutoModel, AutoConfig
-from transformers import BertForSequenceClassification, AdamW, BertConfig, BertModel, AutoTokenizer, AutoModel
+from transformers import BertForSequenceClassification, AdamW, BertConfig, BertModel, AutoTokenizer, AutoModel, PreTrainedTokenizerFast
 import numpy as np
 from typing import List
 from torch import nn
@@ -139,15 +139,21 @@ class BertModel(pl.LightningModule):
     
 
     def forward_with_loss_calculation(self, bert_tokens, x, range_sent1, range_sent2, orig_to_tok_map, l, l_tokens,
-                                      metric = "l2", n_max = 9, mode = "train", normalize=False, nb=0):
+                                      metric = "l2", n_max = 9, mode = "train", normalize=False, nb=0, h = None):
         idx_arg1_all, idx_arg2_all, all_ngrams = None, None, None
         
-        if self.train_only_linear:
-          with torch.no_grad():
-            outputs = self.model(x)
+        
+        if h is None:
+            if self.train_only_linear:
+             with torch.no_grad():
+                outputs = self.model(x)
+            else:
+                outputs = self.model(x)
+            states = outputs[0][0] #[seq_len, 768]
         else:
-            outputs = self.model(x)
-        states = outputs[0][0] #[seq_len, 768]
+        
+            states = h
+        
         if not self.l2_loss or normalize:
             states = states / (torch.norm(states, dim = 1, keepdim = True)+1e-8)
         
@@ -239,53 +245,75 @@ class BertModel(pl.LightningModule):
         return loss, idx_arg1, idx_arg2, idx_arg1_all, idx_arg2_all, all_false_ngrams_ranges, all_ngrams, is_neg_pred
         #return loss, np.argsort(dists_arg1+mask_gold_arg1)
         
+    def forward_batch(self, batch):
+        tokenizer = self.tokenizer
+        sents = [s.split(" ") for s in batch[0]]
+        batch_encoded = tokenizer(list(sents), is_split_into_words = True, padding = True)
+        input_ids = torch.tensor(batch_encoded["input_ids"])
+        att_mask = torch.tensor(batch_encoded["attention_mask"])
+        with torch.no_grad():
+                outputs = self.model(input_ids = input_ids, attention_mask = att_mask)
+                
+        return outputs, batch_encoded["input_ids"], att_mask
+        
     def training_step(self, batch, batch_nb):
         
-        sents_concat, idx, l, sent2_with_args, is_negative, id1, id2 = batch
-        idx = idx.detach().cpu().numpy()[0]
-        bert_tokens, orig_to_tok_map, tok_to_orig_map, tokens_tensor = self.tokenize(sents_concat[0].split(" "))             
-        self.total_same_rel += 1
+        outputs, input_ids, att_mask = self.forward_batch(batch)
+        H = outputs[0]
+
+        batch_loss = torch.zeros(1)
+        sents_concat, idx_all, l, sent2_with_args, is_negative, id1, id2 = batch
         
-        if not is_negative:
-            l_tokens = len(bert_tokens[:orig_to_tok_map[l.detach().cpu().numpy().item()-1]]) 
-            sent1_range_arg1 = get_entity_range_multiword_expression(idx[0][0], orig_to_tok_map)
-            sent1_range_arg2 = get_entity_range_multiword_expression(idx[0][1], orig_to_tok_map)
-            sent2_range_arg1 = get_entity_range_multiword_expression(idx[1][0], orig_to_tok_map)
-            sent2_range_arg2 = get_entity_range_multiword_expression(idx[1][1], orig_to_tok_map)
-            range_sent1 = [sent1_range_arg1, sent1_range_arg2]
-            range_sent2 = [sent2_range_arg1, sent2_range_arg2]
-            
-            
-            loss, _, _, _, _, _, _, is_neg_pred = self.forward_with_loss_calculation(bert_tokens, tokens_tensor, range_sent1, range_sent2, orig_to_tok_map, l, l_tokens, nb = batch_nb)
-        else:
-            loss = torch.zeros(1).to(self.device_to_use)       
-            outputs = self.model(tokens_tensor)
-            states = outputs[0][0]
-            is_neg_pred = self.same_rel_mlp(states[0])
+        for batch_idx in range(len(batch[0])):
+            length = input_ids[batch_idx].index(0) if 0 in input_ids[batch_idx] else len(input_ids[batch_idx])
+        #for sents_concat, idx, l, sent2_with_args, is_negative, id1, id2 in batch:
+            print(f"batch index {batch_idx}/{len(batch[0])}")
+            idx = idx_all.detach().cpu().numpy()[batch_idx]
+            bert_tokens, orig_to_tok_map, tok_to_orig_map, tokens_tensor = self.tokenize(sents_concat[batch_idx].split(" "))             
+            self.total_same_rel += 1
         
-        if (is_negative and is_neg_pred.detach().cpu().numpy().item() > 0) or ((not is_negative) and (is_neg_pred.detach().cpu().numpy().item() < 0)):
-            self.count_same_rel += 1
+            if not is_negative[batch_idx]:
+                l_tokens = len(bert_tokens[:orig_to_tok_map[l[batch_idx].detach().cpu().numpy().item()-1]]) 
+                sent1_range_arg1 = get_entity_range_multiword_expression(idx[0][0], orig_to_tok_map)
+                sent1_range_arg2 = get_entity_range_multiword_expression(idx[0][1], orig_to_tok_map)
+                sent2_range_arg1 = get_entity_range_multiword_expression(idx[1][0], orig_to_tok_map)
+                sent2_range_arg2 = get_entity_range_multiword_expression(idx[1][1], orig_to_tok_map)
+                range_sent1 = [sent1_range_arg1, sent1_range_arg2]
+                range_sent2 = [sent2_range_arg1, sent2_range_arg2]
             
-        y = torch.ones(1).to(self.device_to_use) if is_negative else torch.zeros(1).to(self.device_to_use)   
-        loss += self.same_rel_weight * self.bce_loss(is_neg_pred, y)
-        #loss = self.same_rel_weight * self.bce_loss(is_neg_pred, y)
+            
+                loss, _, _, _, _, _, _, is_neg_pred = self.forward_with_loss_calculation(bert_tokens, tokens_tensor, range_sent1, range_sent2, orig_to_tok_map, l[batch_idx], l_tokens, nb = batch_nb, h = H[batch_idx, :length])
+            else:
+                loss = torch.zeros(1).to(self.device_to_use)       
+                outputs = self.model(tokens_tensor)
+                states = outputs[0][0]
+                is_neg_pred = self.same_rel_mlp(states[0])
+        
+            if (is_negative[batch_idx] and is_neg_pred.detach().cpu().numpy().item() > 0) or ((not is_negative[batch_idx]) and (is_neg_pred.detach().cpu().numpy().item() < 0)):
+                self.count_same_rel += 1
+            
+            y = torch.ones(1).to(self.device_to_use) if is_negative[batch_idx] else torch.zeros(1).to(self.device_to_use)   
+            loss += self.same_rel_weight * self.bce_loss(is_neg_pred, y)
+            #loss = self.same_rel_weight * self.bce_loss(is_neg_pred, y)
         
 #         if np.isnan(loss.detach().cpu().numpy().item()) or loss.detach().cpu().numpy().item() > 1e4:
 #             print("ERRROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 #             print(sents_concat, range_sent1, range_sent2, sent1_idx, sent2_idx)
 #             return {"loss": loss*0}
 
-        if self.total%500 == 0 and self.total > 1:
-            self.log('train_loss_1k', self.count/self.total)
-            self.log("train_loss_1k_same_rel", self.count_same_rel/self.total_same_rel)
-            print("argument identification accuracy", self.count/self.total)
-            print("same-relation identification accuracy", self.count_same_rel/self.total_same_rel)
-            self.count = 0
-            self.count_same_rel = 0
-            self.total = 0
-            self.total_same_rel = 0
+            if self.total%500 == 0 and self.total > 1:
+                self.log('train_loss_1k', self.count/self.total)
+                self.log("train_loss_1k_same_rel", self.count_same_rel/self.total_same_rel)
+                print("argument identification accuracy", self.count/self.total)
+                print("same-relation identification accuracy", self.count_same_rel/self.total_same_rel)
+                self.count = 0
+                self.count_same_rel = 0
+                self.total = 0
+                self.total_same_rel = 0
             
-        return {'loss': loss}
+            batch_loss += loss
+            
+        return {'loss': batch_loss/len(batch)}
     
     """
     def validation_step(self, batch, batch_nb):
