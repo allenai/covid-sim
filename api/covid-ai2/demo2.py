@@ -17,7 +17,7 @@ import alignment_supervised
 from annot import annotation, annotated_text
 import time
 import SessionState
-NUM_RESULTS_TO_ALIGN_DEFAULT = 150
+NUM_RESULTS_TO_ALIGN_DEFAULT = 50
 DEFAULT_MAX_NGRAM = 5
 BOOLEAN_QUERY_DEFAULT = "virus lemma=originate"
 TOKEN_QUERY_DEFAULT = "novel coronavirus"
@@ -254,7 +254,7 @@ if mode == "Start with Query":
     
     if perform_alignment:
         
-        number_of_sentences_to_align = 1000 #st.select_slider('Number of sentences to align.', options=[1, 10, 25, 50, 100, 200, 250, 500], value = NUM_RESULTS_TO_ALIGN_DEFAULT)
+        number_of_sentences_to_align = 50 #st.select_slider('Number of sentences to align.', options=[1, 10, 25, 50, 100, 200, 250, 500], value = NUM_RESULTS_TO_ALIGN_DEFAULT)
         alignment_method = "Metric model" #st.radio("Alignment model", ('Metric model', 'Naive'))
         if alignment_method != "Naive": 
             max_ngrams = 5 #st.select_slider('Maximum span size to align', options=[1, 2, 3, 4, 5, 6, 7, 8,9,10,11,12,13,14,15], value = DEFAULT_MAX_NGRAM)
