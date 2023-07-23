@@ -11,5 +11,5 @@ tqdm==4.42.1
 transformers==2.8.0
 pandas==0.25.3
 urllib3==1.25.8
-nltk==3.4.5
+nltk==3.6.6
 plotly==4.14.3
